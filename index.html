@@ -25,27 +25,20 @@ button{font-family:inherit;cursor:pointer;-webkit-appearance:none}
 .btn-purple{background:#CE82FF;box-shadow:0 4px 0 #A55DD5}
 input{font-family:inherit;background:var(--cb);color:var(--txt);border:2px solid var(--bc);border-radius:12px;padding:12px 16px;font-size:16px;width:100%;outline:none}
 input:focus{border-color:var(--g)}
+.loading{display:flex;align-items:center;justify-content:center;height:100%;font-size:18px;font-weight:800;color:var(--g)}
 </style>
 </head>
 <body>
-<div id="app"></div>
+<div id="app" class="loading">Loading...</div>
 <script>
 // Firebase
 let db=null;
 try{
   if(typeof firebase!=="undefined"&&!window._noFB){
-    firebase.initializeApp({
-      apiKey:"AIzaSyCLC23aASA2NFK1eUdrECWz0D9Qojgl_vg",
-      authDomain:"sat-vocab-4bbe0.firebaseapp.com",
-      projectId:"sat-vocab-4bbe0",
-      storageBucket:"sat-vocab-4bbe0.firebasestorage.app",
-      messagingSenderId:"1080222913619",
-      appId:"1:1080222913619:web:af440bb9f134f7e46822a6"
-    });
+    firebase.initializeApp({apiKey:"AIzaSyCLC23aASA2NFK1eUdrECWz0D9Qojgl_vg",authDomain:"sat-vocab-4bbe0.firebaseapp.com",projectId:"sat-vocab-4bbe0",storageBucket:"sat-vocab-4bbe0.firebasestorage.app",messagingSenderId:"1080222913619",appId:"1:1080222913619:web:af440bb9f134f7e46822a6"});
     db=firebase.firestore();
   }
-}catch(e){console.log("Firebase not available");}
-
+}catch(e){}
 
 // Data
 const UNITS=[
@@ -75,34 +68,93 @@ const SK="sat-vocab-pwa-v1";
 let S={np:[1,0,0,0,0,0,0],ws:ALL.map((_,i)=>({i,nc:0,nw:0,h:0,lp:0,seen:false})),xp:0,str:0,gems:50,ld:0,txp:0,name:""};
 let screen="path",curNode=0,exs=[],exi=0,hearts=5,picked=null,isOk=null,lc=0,lw=0,missed=[];
 let leaderboard=[];
+let syncStatus="";
 const dailyGoal=50;
-
-function save(){try{localStorage.setItem(SK,JSON.stringify(S));}catch(e){}}
-function load(){try{const d=localStorage.getItem(SK);if(d){S=JSON.parse(d);return true;}}catch(e){}return false;}
-load();
 const today=todayNum();
-if(S.ld>0&&S.ld<today-1)S.str=0;
-if(S.ld<today)S.txp=0;
-if(!S.name)screen="setup";
-save();
 
-// Firebase sync
-async function syncToFirebase(){
-  if(!S.name||!db)return;
+// ═══ STORAGE: Firestore primary, localStorage cache ═══
+function saveLocal(){try{localStorage.setItem(SK,JSON.stringify(S));}catch(e){}}
+function loadLocal(){try{const d=localStorage.getItem(SK);if(d){S=JSON.parse(d);return true;}}catch(e){}return false;}
+
+async function saveCloud(){
+  if(!db||!S.name)return;
   try{
+    // Save full progress
+    await db.collection("users").doc(S.name).set(S);
+    // Update leaderboard
     await db.collection("leaderboard").doc(S.name).set({
-      name:S.name,xp:S.xp,streak:S.str,words:S.ws.filter(w=>w.seen).length,
-      gems:S.gems,updated:Date.now()
+      name:S.name,xp:S.xp,streak:S.str,
+      words:S.ws.filter(w=>w.seen).length,gems:S.gems,updated:Date.now()
     });
-  }catch(e){console.log("sync err",e);}
+    syncStatus="\u2601\uFE0F synced";
+  }catch(e){syncStatus="\u26A0 offline";console.log("cloud save err",e);}
 }
+
+async function loadCloud(name){
+  if(!db)return false;
+  try{
+    const doc=await db.collection("users").doc(name).get();
+    if(doc.exists){
+      const d=doc.data();
+      // Merge: keep structure, load data
+      if(d.np)S.np=d.np;
+      if(d.ws)S.ws=d.ws;
+      if(d.xp!=null)S.xp=d.xp;
+      if(d.str!=null)S.str=d.str;
+      if(d.gems!=null)S.gems=d.gems;
+      if(d.ld)S.ld=d.ld;
+      if(d.txp!=null)S.txp=d.txp;
+      S.name=name;
+      syncStatus="\u2601\uFE0F loaded from cloud";
+      return true;
+    }
+  }catch(e){syncStatus="\u26A0 cloud error";console.log("cloud load err",e);}
+  return false;
+}
+
 async function loadLeaderboard(){
-  if(!db){leaderboard=[{name:"Leaderboard requires internet",xp:0,streak:0,words:0}];return;}
+  if(!db){leaderboard=[{name:"Need internet for leaderboard",xp:0}];return;}
   try{
     const snap=await db.collection("leaderboard").orderBy("xp","desc").limit(50).get();
-    leaderboard=[];
-    snap.forEach(doc=>leaderboard.push(doc.data()));
+    leaderboard=[];snap.forEach(doc=>leaderboard.push(doc.data()));
   }catch(e){console.log("lb err",e);}
+}
+
+// Save both local + cloud
+function saveAll(){saveLocal();saveCloud();}
+
+// ═══ INIT ═══
+async function init(){
+  // Try localStorage first for name
+  loadLocal();
+  
+  // Streak check
+  if(S.ld>0&&S.ld<today-1)S.str=0;
+  if(S.ld<today)S.txp=0;
+  
+  // If has name, try loading from cloud (might have newer data)
+  if(S.name&&db){
+    try{
+      const doc=await db.collection("users").doc(S.name).get();
+      if(doc.exists){
+        const cloud=doc.data();
+        // Use whichever has more XP (more recent progress)
+        if(cloud.xp!=null&&cloud.xp>=S.xp){
+          S=cloud;
+          syncStatus="\u2601\uFE0F cloud sync";
+        }else{
+          syncStatus="\uD83D\uDCF1 local newer";
+        }
+      }
+    }catch(e){syncStatus="\uD83D\uDCF1 offline mode";}
+    // Re-check streak after cloud load
+    if(S.ld>0&&S.ld<today-1)S.str=0;
+    if(S.ld<today)S.txp=0;
+  }
+  
+  if(!S.name)screen="setup";
+  saveLocal();
+  render();
 }
 
 // Helpers
@@ -110,11 +162,9 @@ function getWeakWords(upToUnit){const mx=(upToUnit+1)*5;return S.ws.filter((w,i)
 function reviewHasWords(ni){return getWeakWords(Math.floor(ni/2)).length>0;}
 function buildLearn(ui){const base=ui*5,e=[];for(let i=0;i<5;i++)e.push({type:"intro",gi:base+i});for(const i of shuffle([0,1,2,3,4]))e.push({type:"pickDef",gi:base+i,opts:makeOpts(base+i)});for(const i of shuffle([0,1,2,3,4]))e.push({type:"pickWord",gi:base+i,opts:makeOpts(base+i)});return e;}
 function buildReview(ni){const weak=getWeakWords(Math.floor(ni/2));if(!weak.length)return[];const batch=shuffle(weak).slice(0,10);const e=[];for(const w of shuffle(batch))e.push({type:"pickDef",gi:w.i,opts:makeOpts(w.i)});for(const w of shuffle(batch))e.push({type:"pickWord",gi:w.i,opts:makeOpts(w.i)});return e;}
-function completeNode(ni){S.np[ni]=2;if(ni+1<S.np.length&&S.np[ni+1]===0)S.np[ni+1]=1;save();}
+function completeNode(ni){S.np[ni]=2;if(ni+1<S.np.length&&S.np[ni+1]===0)S.np[ni+1]=1;}
 
-// ═══════════════════════════════════════
-// RENDER
-// ═══════════════════════════════════════
+// ═══ RENDER ═══
 function render(){
   const isNewDay=S.ld<today;
   const goalPct=Math.min(100,((isNewDay?0:S.txp)/dailyGoal)*100);
@@ -127,17 +177,17 @@ function render(){
     h+=`<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center">
       <div style="font-size:56px;margin-bottom:16px">\uD83D\uDCDA</div>
       <div style="font-size:26px;font-weight:900;color:var(--g);margin-bottom:8px">SAT Vocab Trainer</div>
-      <div style="font-size:14px;color:var(--sub);margin-bottom:30px">Duolingo-style \u00B7 HLR Algorithm \u00B7 20 Words</div>
-      <div style="font-size:13px;color:var(--sub);margin-bottom:8px;font-weight:700">Enter your name for the leaderboard:</div>
+      <div style="font-size:14px;color:var(--sub);margin-bottom:30px">Duolingo-style \u00B7 HLR Algorithm</div>
+      <div style="font-size:13px;color:var(--sub);margin-bottom:8px;font-weight:700">Enter your name:</div>
       <input id="name-input" placeholder="Your name" style="margin-bottom:16px;text-align:center" maxlength="20">
       <button class="btn btn-g" onclick="submitName()">Start Learning</button>
+      <div style="margin-top:20px;font-size:11px;color:var(--dim)">Progress saves to cloud \u2601\uFE0F<br>Works on any device!</div>
     </div>`;
   }
 
   // ═══ PATH ═══
   if(screen==="path"){
     h+=`<div style="flex:1;display:flex;flex-direction:column;overflow:hidden">`;
-    // Header
     h+=`<div style="padding:12px 18px;border-bottom:1px solid var(--bc);flex-shrink:0">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
         <span style="font-size:20px;font-weight:900;color:var(--g)">SAT Vocab</span>
@@ -151,74 +201,48 @@ function render(){
         <span style="font-size:11px;font-weight:700;color:var(--sub)">Daily Goal</span>
         <span style="font-size:11px;font-weight:700;color:${goalMet?"var(--g)":"var(--sub)"}">${goalMet?"\u2705 Done!":(isNewDay?0:S.txp)+"/"+dailyGoal+" XP"}</span>
       </div>
-      <div style="height:8px;background:#1e3040;border-radius:4px;overflow:hidden">
-        <div style="height:100%;border-radius:4px;width:${goalPct}%;background:${goalMet?"linear-gradient(90deg,var(--g),#89E219)":"linear-gradient(90deg,var(--gold),#ffb74d)"};transition:width 0.5s"></div>
-      </div>
+      <div style="height:8px;background:#1e3040;border-radius:4px;overflow:hidden"><div style="height:100%;border-radius:4px;width:${goalPct}%;background:${goalMet?"linear-gradient(90deg,var(--g),#89E219)":"linear-gradient(90deg,var(--gold),#ffb74d)"};transition:width 0.5s"></div></div>
       <div style="margin-top:6px;display:flex;justify-content:space-between">
-        <span style="font-size:11px;color:var(--dim)">${dateStr} \u00B7 ${S.name}</span>
-        ${S.str>0?`<span style="font-size:11px;color:var(--fire);font-weight:700">${S.str} day streak!</span>`:""}
+        <span style="font-size:11px;color:var(--dim)">${dateStr} \u00B7 ${S.name} ${syncStatus?"<span style='color:var(--blue)'>"+syncStatus+"</span>":""}</span>
+        ${S.str>0?`<span style="font-size:11px;color:var(--fire);font-weight:700">${S.str}d streak!</span>`:""}
       </div>
     </div>`;
 
-    // Leaderboard button + path
     h+=`<div style="flex:1;overflow-y:auto;padding:16px 18px;-webkit-overflow-scrolling:touch">`;
     h+=`<button class="btn btn-purple" onclick="showLeaderboard()">\uD83C\uDFC6 Leaderboard</button>`;
 
-    // Path nodes
+    // Path
     h+=`<div style="display:flex;flex-direction:column;align-items:center">`;
     PATH.forEach((node,ni)=>{
       const st=S.np[ni],locked=st===0,done=st===2,avail=st===1;
-      const isRev=node.type==="review";
-      const hasWork=isRev&&avail&&reviewHasWords(ni);
-      const noWork=isRev&&avail&&!reviewHasWords(ni);
+      const isRev=node.type==="review",hasWork=isRev&&avail&&reviewHasWords(ni),noWork=isRev&&avail&&!reviewHasWords(ni);
       const sz=isRev?52:68;
       if(ni>0)h+=`<div style="width:4px;height:${isRev?14:20}px;background:${done||avail||noWork?"var(--g)":"#2a3a42"};border-radius:2px;margin-bottom:4px"></div>`;
       const borderC=(avail&&(!isRev||hasWork))?(isRev?"var(--blue)":"var(--g)"):done||noWork?"var(--g)":"#2a3a42";
       const bg=done||noWork?"var(--g)":avail?"var(--cb)":"#1a2530";
       const shadow=avail&&(!isRev||hasWork)?"0 5px 0 "+(isRev?"#1390C8":"var(--g2)"):done||noWork?"0 3px 0 var(--g2)":"0 3px 0 #1a2530";
       const icon=done||noWork?"\u2705":isRev&&hasWork?"\uD83D\uDD04":node.icon;
-      h+=`<button onclick="startNode(${ni})" ${locked?"disabled":""} style="width:${sz}px;height:${sz}px;border-radius:50%;border:4px solid ${borderC};background:${bg};box-shadow:${shadow};opacity:${locked?0.3:1};display:flex;align-items:center;justify-content:center;position:relative;cursor:${locked?"not-allowed":"pointer"}">
+      h+=`<button onclick="startNode(${ni})" ${locked?"disabled":""} style="width:${sz}px;height:${sz}px;border-radius:50%;border:4px solid ${borderC};background:${bg};box-shadow:${shadow};opacity:${locked?0.3:1};display:flex;align-items:center;justify-content:center;position:relative">
         <span style="font-size:${isRev?16:22}px">${icon}</span>
         ${avail&&!noWork?`<div style="position:absolute;bottom:-7px;left:50%;transform:translateX(-50%);background:${isRev?"var(--blue)":"var(--g)"};color:#fff;font-size:7px;font-weight:800;padding:2px 7px;border-radius:7px">${isRev?"REVIEW":"START"}</div>`:""}
       </button>`;
-      h+=`<div style="margin-top:6px;text-align:center;margin-bottom:2px">
-        <div style="font-size:10px;font-weight:800;color:${locked?"#5a6a72":"var(--txt)"}">${node.name}</div>`;
-      if(node.type==="learn"&&done){
-        const base=node.unit*5;
-        h+=`<div style="display:flex;gap:3px;justify-content:center;margin-top:2px">`;
-        S.ws.slice(base,base+5).forEach(w=>{const p=recallP(w.h,today-w.lp);h+=`<div style="width:6px;height:6px;border-radius:3px;background:${rclr(p)}"></div>`;});
-        h+=`</div>`;
-      }
-      if(isRev&&hasWork)h+=`<div style="font-size:8px;color:var(--blue);font-weight:700;margin-top:1px">${getWeakWords(Math.floor(ni/2)).length} weak</div>`;
-      if(isRev&&(done||noWork))h+=`<div style="font-size:8px;color:var(--g);font-weight:700;margin-top:1px">All strong</div>`;
+      h+=`<div style="margin-top:6px;text-align:center;margin-bottom:2px"><div style="font-size:10px;font-weight:800;color:${locked?"#5a6a72":"var(--txt)"}">${node.name}</div>`;
+      if(node.type==="learn"&&done){const base=node.unit*5;h+=`<div style="display:flex;gap:3px;justify-content:center;margin-top:2px">`;S.ws.slice(base,base+5).forEach(w=>{const p=recallP(w.h,today-w.lp);h+=`<div style="width:6px;height:6px;border-radius:3px;background:${rclr(p)}"></div>`;});h+=`</div>`;}
+      if(isRev&&hasWork)h+=`<div style="font-size:8px;color:var(--blue);font-weight:700">${getWeakWords(Math.floor(ni/2)).length} weak</div>`;
+      if(isRev&&(done||noWork))h+=`<div style="font-size:8px;color:var(--g);font-weight:700">All strong</div>`;
       if(locked)h+=`<div style="font-size:8px;color:#5a6a72">\uD83D\uDD12</div>`;
       h+=`</div>`;
     });
     h+=`</div>`;
 
-    // Memory tracker
-    const seenWords=S.ws.filter(w=>w.seen);
-    if(seenWords.length>0){
-      h+=`<div style="margin-top:20px;padding:10px 12px;background:var(--cb);border-radius:12px;border:1px solid var(--bc)">
-        <div style="font-size:10px;font-weight:700;color:var(--g);margin-bottom:6px">Memory Tracker</div>`;
-      seenWords.forEach(w=>{const p=recallP(w.h,today-w.lp);
-        h+=`<div style="display:flex;align-items:center;gap:5px;margin-bottom:3px">
-          <span style="font-size:10px;font-weight:700;width:65px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${ALL[w.i][0]}</span>
-          <div style="flex:1;height:6px;background:#1e3040;border-radius:3px;overflow:hidden"><div style="height:100%;border-radius:3px;width:${Math.round(p*100)}%;background:${rclr(p)}"></div></div>
-          <span style="font-size:8px;font-weight:700;color:${rclr(p)};width:25px;text-align:right">${Math.round(p*100)}%</span>
-        </div>`;
-      });
+    // Memory
+    const seen=S.ws.filter(w=>w.seen);
+    if(seen.length>0){
+      h+=`<div style="margin-top:20px;padding:10px 12px;background:var(--cb);border-radius:12px;border:1px solid var(--bc)"><div style="font-size:10px;font-weight:700;color:var(--g);margin-bottom:6px">Memory Tracker</div>`;
+      seen.forEach(w=>{const p=recallP(w.h,today-w.lp);h+=`<div style="display:flex;align-items:center;gap:5px;margin-bottom:3px"><span style="font-size:10px;font-weight:700;width:65px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${ALL[w.i][0]}</span><div style="flex:1;height:6px;background:#1e3040;border-radius:3px;overflow:hidden"><div style="height:100%;border-radius:3px;width:${Math.round(p*100)}%;background:${rclr(p)}"></div></div><span style="font-size:8px;font-weight:700;color:${rclr(p)};width:25px;text-align:right">${Math.round(p*100)}%</span></div>`;});
       h+=`</div>`;
     }
-    // Backup
-    h+=`<div style="margin-top:12px;padding:8px 12px;background:#0d1a20;border-radius:8px;display:flex;justify-content:space-between;align-items:center">
-      <span style="font-size:9px;color:var(--dim)">\uD83D\uDCBE Progress saved locally</span>
-      <div style="display:flex;gap:4px">
-        <button onclick="copyProgress()" style="font-size:9px;font-weight:700;padding:3px 8px;border-radius:5px;border:1px solid var(--bc);background:var(--cb);color:var(--sub)">Copy</button>
-        <button onclick="showRestore()" style="font-size:9px;font-weight:700;padding:3px 8px;border-radius:5px;border:1px solid var(--bc);background:var(--cb);color:var(--sub)">Restore</button>
-      </div>
-    </div>`;
-    h+=`<div id="backup-msg"></div><div id="restore-box" style="display:none"><input class="restore-input" id="restore-input" placeholder="Paste save code..." style="font-size:11px;margin-top:6px"><button class="btn btn-blue" style="margin-top:4px;padding:8px;font-size:11px" onclick="restoreProgress()">Restore</button></div>`;
+    h+=`<div style="margin-top:12px;text-align:center;font-size:9px;color:var(--dim)">\u2601\uFE0F Data syncs to cloud \u00B7 Works on any device</div>`;
     h+=`</div></div>`;
   }
 
@@ -229,36 +253,23 @@ function render(){
         <button onclick="goPath()" style="background:none;border:none;color:var(--sub);font-size:16px">\u2190 Back</button>
         <span style="font-size:18px;font-weight:900">\uD83C\uDFC6 Leaderboard</span>
         <button onclick="showLeaderboard()" style="background:none;border:none;color:var(--sub);font-size:14px">\u21BB</button>
-      </div>
-      <div style="flex:1;overflow-y:auto;padding:16px 18px">`;
-    if(leaderboard.length===0){
-      h+=`<div style="text-align:center;color:var(--dim);padding:40px 0">Loading...</div>`;
-    }else{
-      leaderboard.forEach((p,i)=>{
-        const isMe=p.name===S.name;
-        const medals=["\uD83E\uDD47","\uD83E\uDD48","\uD83E\uDD49"];
-        const rank=i<3?medals[i]:(i+1);
-        h+=`<div style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:${isMe?"#1a3a2a":"var(--cb)"};border-radius:12px;margin-bottom:8px;border:${isMe?"2px solid var(--g)":"1px solid var(--bc)"}">
-          <span style="font-size:${i<3?20:14}px;font-weight:900;width:30px;text-align:center">${rank}</span>
-          <div style="flex:1">
-            <div style="font-size:14px;font-weight:800;color:${isMe?"var(--g)":"var(--txt)"}">${p.name}${isMe?" (you)":""}</div>
-            <div style="font-size:11px;color:var(--dim)">${p.words||0} words \u00B7 \uD83D\uDD25${p.streak||0}d streak</div>
-          </div>
-          <div style="text-align:right">
-            <div style="font-size:16px;font-weight:900;color:var(--gold)">${p.xp||0}</div>
-            <div style="font-size:9px;color:var(--dim)">XP</div>
-          </div>
-        </div>`;
-      });
-    }
+      </div><div style="flex:1;overflow-y:auto;padding:16px 18px">`;
+    if(!leaderboard.length)h+=`<div style="text-align:center;color:var(--dim);padding:40px 0">Loading...</div>`;
+    else leaderboard.forEach((p,i)=>{
+      const isMe=p.name===S.name;const medals=["\uD83E\uDD47","\uD83E\uDD48","\uD83E\uDD49"];
+      h+=`<div style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:${isMe?"#1a3a2a":"var(--cb)"};border-radius:12px;margin-bottom:8px;border:${isMe?"2px solid var(--g)":"1px solid var(--bc)"}">
+        <span style="font-size:${i<3?20:14}px;font-weight:900;width:30px;text-align:center">${i<3?medals[i]:i+1}</span>
+        <div style="flex:1"><div style="font-size:14px;font-weight:800;color:${isMe?"var(--g)":"var(--txt)"}">${p.name}${isMe?" (you)":""}</div><div style="font-size:11px;color:var(--dim)">${p.words||0} words \u00B7 \uD83D\uDD25${p.streak||0}d</div></div>
+        <div style="text-align:right"><div style="font-size:16px;font-weight:900;color:var(--gold)">${p.xp||0}</div><div style="font-size:9px;color:var(--dim)">XP</div></div>
+      </div>`;
+    });
     h+=`</div></div>`;
   }
 
   // ═══ LESSON ═══
   if(screen==="lesson"&&exs[exi]){
-    const ex=exs[exi],word=ALL[ex.gi];
-    const progress=exs.length>0?((exi+1)/exs.length)*100:0;
-    const isRev=PATH[curNode].type==="review";
+    const ex=exs[exi],word=ALL[ex.gi],isRev=PATH[curNode].type==="review";
+    const progress=((exi+1)/exs.length)*100;
     h+=`<div style="flex:1;display:flex;flex-direction:column;overflow:hidden">`;
     h+=`<div style="padding:16px 18px;display:flex;align-items:center;gap:10px;flex-shrink:0">
       <button onclick="goPath()" style="background:none;border:none;color:var(--sub);font-size:22px;padding:8px 12px">\u2715</button>
@@ -269,36 +280,26 @@ function render(){
     h+=`<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px;overflow-y:auto">`;
 
     if(ex.type==="intro"){
-      h+=`<div style="width:100%;text-align:center">
-        <div style="font-size:13px;color:var(--sub);font-weight:700;margin-bottom:12px">New Word</div>
+      h+=`<div style="width:100%;text-align:center"><div style="font-size:13px;color:var(--sub);font-weight:700;margin-bottom:12px">New Word</div>
         <div style="background:var(--cb);border:2px solid var(--bc);border-radius:18px;padding:24px 20px;margin-bottom:16px">
           <div style="font-size:36px;font-weight:900;margin-bottom:4px">${word[0]}</div>
           <div style="font-size:13px;color:var(--g);font-weight:700;margin-bottom:14px">${word[1]}</div>
           <div style="font-size:17px;color:#c8e0e8;line-height:1.5;padding-top:14px;border-top:1px solid var(--bc)">${word[2]}</div>
           <div style="margin-top:14px;padding:10px 14px;background:#162228;border-radius:10px;border-left:3px solid var(--g)">
             <div style="font-size:9px;color:var(--g);font-weight:700;margin-bottom:3px">EXAMPLE</div>
-            <div style="font-size:13px;color:#9ab8c4;font-style:italic">${word[3]}</div>
-          </div>
-        </div>
-        <button class="btn btn-g" onclick="handleNext()">Got it</button>
-      </div>`;
+            <div style="font-size:13px;color:#9ab8c4;font-style:italic">${word[3]}</div></div>
+        </div><button class="btn btn-g" onclick="handleNext()">Got it</button></div>`;
     }
 
     if(ex.type==="pickDef"||ex.type==="pickWord"){
       const isDef=ex.type==="pickDef";
-      h+=`<div style="width:100%;text-align:center">
-        <div style="font-size:13px;color:var(--sub);font-weight:700;margin-bottom:12px">${isDef?"What does this word mean?":"Which word matches?"}</div>
+      h+=`<div style="width:100%;text-align:center"><div style="font-size:13px;color:var(--sub);font-weight:700;margin-bottom:12px">${isDef?"What does this word mean?":"Which word matches?"}</div>
         <div style="background:var(--cb);border:2px solid var(--bc);border-radius:18px;padding:22px 18px;margin-bottom:16px">
           ${isDef?`<div style="font-size:30px;font-weight:900">${word[0]}</div><div style="font-size:12px;color:var(--g);font-weight:700">${word[1]}</div>`:`<div style="font-size:16px;color:#c8e0e8;line-height:1.5">${word[2]}</div>`}
-        </div>
-        <div style="display:flex;flex-direction:column;gap:8px">`;
+        </div><div style="display:flex;flex-direction:column;gap:8px">`;
       ex.opts.forEach(oi=>{
-        let cls="",sty=`padding:13px 16px;border:2px solid var(--bc);border-radius:13px;background:var(--cb);color:#c8e0e8;font-size:${isDef?"14":"17"}px;font-weight:${isDef?"600":"800"};text-align:left;width:100%;cursor:pointer;opacity:1`;
-        if(picked!==null){
-          if(oi===ex.gi)sty=sty.replace("var(--bc)","var(--g)").replace("var(--cb)","#1a3a1a").replace("#c8e0e8","var(--g)");
-          else if(oi===picked)sty=sty.replace("var(--bc)","var(--red)").replace("var(--cb)","#3a1a1a").replace("#c8e0e8","var(--red)");
-          else sty+=";opacity:0.3";
-        }
+        let sty=`padding:13px 16px;border:2px solid var(--bc);border-radius:13px;background:var(--cb);color:#c8e0e8;font-size:${isDef?"14":"17"}px;font-weight:${isDef?"600":"800"};text-align:left;width:100%;opacity:1`;
+        if(picked!==null){if(oi===ex.gi)sty=sty.replace("var(--bc)","var(--g)").replace("var(--cb)","#1a3a1a").replace("#c8e0e8","var(--g)");else if(oi===picked)sty=sty.replace("var(--bc)","var(--red)").replace("var(--cb)","#3a1a1a").replace("#c8e0e8","var(--red)");else sty+=";opacity:0.3";}
         h+=`<button style="${sty}" onclick="handlePick(${oi})" ${picked!==null?"disabled":""}>${isDef?ALL[oi][2]:ALL[oi][0]}</button>`;
       });
       h+=`</div>`;
@@ -307,9 +308,7 @@ function render(){
           <div style="padding:12px 16px;border-radius:12px;margin-bottom:12px;background:${isOk?"#1a3a1a":"#3a1a1a"};border:1px solid ${isOk?"var(--g)":"var(--red)"}">
             <div style="font-size:15px;font-weight:800;color:${isOk?"var(--g)":"var(--red)"}">${isOk?"\u2705 Correct!":"\u274C Incorrect"}</div>
             ${!isOk?`<div style="font-size:12px;color:var(--sub);margin-top:4px">Answer: ${isDef?word[2]:word[0]+" \u2014 "+word[2]}</div><div style="font-size:10px;color:var(--dim);margin-top:2px">\u21BB This word will come back</div>`:""}
-          </div>
-          <button class="btn ${isOk?"btn-g":"btn-red"}" onclick="handleNext()">Continue</button>
-        </div>`;
+          </div><button class="btn ${isOk?"btn-g":"btn-red"}" onclick="handleNext()">Continue</button></div>`;
       }
       h+=`</div>`;
     }
@@ -328,8 +327,9 @@ function render(){
       <div style="text-align:center"><div style="font-size:26px;font-weight:900;color:var(--g)">${lc}</div><div style="font-size:9px;color:var(--sub)">CORRECT</div></div>
       <div style="text-align:center"><div style="font-size:26px;font-weight:900;color:var(--red)">${lw}</div><div style="font-size:9px;color:var(--sub)">WRONG</div></div>
     </div>`;
-    h+=`<button class="btn btn-purple" onclick="showLeaderboard()" style="margin-bottom:6px">\uD83C\uDFC6 View Leaderboard</button>
+    h+=`<button class="btn btn-purple" onclick="showLeaderboard()" style="margin-bottom:6px">\uD83C\uDFC6 Leaderboard</button>
       <button class="btn btn-g" onclick="goPath()">Continue</button>
+      <div style="margin-top:8px;font-size:10px;color:var(--dim)">\u2601\uFE0F Progress synced to cloud</div>
     </div>`;
   }
 
@@ -340,41 +340,39 @@ function render(){
       <div style="font-size:24px;font-weight:900;margin-bottom:4px;color:var(--red)">Out of Hearts!</div>
       <div style="font-size:13px;color:var(--sub);margin-bottom:16px">${lc} correct, ${lw} wrong</div>
       <div style="width:100%;margin-bottom:16px">`;
-    [...new Set(missed)].forEach(gi=>{const w=S.ws[gi];const p=recallP(w.h,today-w.lp);
-      h+=`<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--cb);border-radius:8px;margin-bottom:3px;border:1px solid var(--bc)">
-        <span style="font-weight:800;font-size:12px;width:70px">${ALL[gi][0]}</span>
-        <div style="flex:1;height:5px;background:#1e3040;border-radius:3px;overflow:hidden"><div style="height:100%;border-radius:3px;width:${Math.round(p*100)}%;background:${rclr(p)}"></div></div>
-        <span style="font-size:8px;font-weight:700;color:${rclr(p)}">${Math.round(p*100)}%</span>
-      </div>`;
+    [...new Set(missed)].forEach(gi=>{const w=S.ws[gi],p=recallP(w.h,today-w.lp);
+      h+=`<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--cb);border-radius:8px;margin-bottom:3px;border:1px solid var(--bc)"><span style="font-weight:800;font-size:12px;width:70px">${ALL[gi][0]}</span><div style="flex:1;height:5px;background:#1e3040;border-radius:3px;overflow:hidden"><div style="height:100%;border-radius:3px;width:${Math.round(p*100)}%;background:${rclr(p)}"></div></div><span style="font-size:8px;font-weight:700;color:${rclr(p)}">${Math.round(p*100)}%</span></div>`;
     });
-    h+=`</div>
-      <button class="btn btn-blue" onclick="startNode(${curNode})">Try Again</button>
-      <button class="btn btn-dark" onclick="goPath()">Back</button>
-    </div>`;
+    h+=`</div><button class="btn btn-blue" onclick="startNode(${curNode})">Try Again</button><button class="btn btn-dark" onclick="goPath()">Back</button></div>`;
   }
 
   document.getElementById("app").innerHTML=h;
 }
 
-// ═══════════════════════════════════════
-// ACTIONS
-// ═══════════════════════════════════════
-window.submitName=function(){
+// ═══ ACTIONS ═══
+window.submitName=async function(){
   const v=document.getElementById("name-input").value.trim();
-  if(!v)return;S.name=v;save();screen="path";render();syncToFirebase();
+  if(!v)return;
+  // Check if this user exists in cloud
+  S.name=v;
+  if(db){
+    const loaded=await loadCloud(v);
+    if(loaded){saveLocal();}
+  }
+  saveAll();screen="path";render();
 };
 window.goPath=function(){screen="path";render();};
 window.startNode=function(ni){
   if(S.np[ni]===0)return;curNode=ni;
   if(PATH[ni].type==="learn")exs=buildLearn(PATH[ni].unit);
-  else{exs=buildReview(ni);if(!exs.length){completeNode(ni);screen="path";render();return;}}
+  else{exs=buildReview(ni);if(!exs.length){completeNode(ni);saveAll();screen="path";render();return;}}
   exi=0;hearts=5;picked=null;isOk=null;lc=0;lw=0;missed=[];screen="lesson";render();
 };
 window.handlePick=function(optIdx){
-  if(picked!==null)return;const ex=exs[exi];const correct=optIdx===ex.gi;
+  if(picked!==null)return;const ex=exs[exi],correct=optIdx===ex.gi;
   picked=optIdx;isOk=correct;const w=S.ws[ex.gi];
   if(correct){w.nc++;lc++;S.xp+=10;}else{w.nw++;lw++;hearts--;missed.push(ex.gi);}
-  w.h=calcHL(w.nc,w.nw,w.h);w.lp=today;w.seen=true;save();render();
+  w.h=calcHL(w.nc,w.nw,w.h);w.lp=today;w.seen=true;saveAll();render();
 };
 window.handleNext=function(){
   if(hearts<=0&&!isOk){screen="fail";render();return;}
@@ -383,15 +381,13 @@ window.handleNext=function(){
     if(uniq.length>0){const retry=[];for(const gi of shuffle(uniq))retry.push({type:Math.random()>0.5?"pickDef":"pickWord",gi,opts:makeOpts(gi)});exs=exs.concat(retry);missed=[];exi++;picked=null;isOk=null;render();return;}
     S.gems+=5;const earnedXp=lc*10;
     if(S.ld<today){S.str=S.ld===today-1?S.str+1:(S.ld===0?1:1);S.ld=today;S.txp=earnedXp;}else{S.txp+=earnedXp;}
-    completeNode(curNode);syncToFirebase();screen="complete";render();
+    completeNode(curNode);saveAll();screen="complete";render();
   }else{exi++;picked=null;isOk=null;render();}
 };
 window.showLeaderboard=async function(){screen="leaderboard";render();await loadLeaderboard();render();};
-window.copyProgress=function(){const code=btoa(JSON.stringify(S));navigator.clipboard.writeText(code).then(()=>{document.getElementById("backup-msg").innerHTML=`<div style="font-size:10px;color:var(--g);margin-top:4px;text-align:center">\u2705 Copied!</div>`;}).catch(()=>{const ta=document.createElement("textarea");ta.value=code;document.body.appendChild(ta);ta.select();document.execCommand("copy");document.body.removeChild(ta);document.getElementById("backup-msg").innerHTML=`<div style="font-size:10px;color:var(--g);margin-top:4px;text-align:center">\u2705 Copied!</div>`;});};
-window.showRestore=function(){const b=document.getElementById("restore-box");b.style.display=b.style.display==="none"?"block":"none";};
-window.restoreProgress=function(){const code=document.getElementById("restore-input").value.trim();if(!code)return;try{S=JSON.parse(atob(code));save();syncToFirebase();render();}catch(e){document.getElementById("backup-msg").innerHTML=`<div style="font-size:10px;color:var(--red);margin-top:4px;text-align:center">\u274C Invalid code</div>`;}};
 
-render();
+// Start
+init();
 </script>
 </body>
 </html>
