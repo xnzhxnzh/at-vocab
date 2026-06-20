@@ -14,7 +14,7 @@
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{--g:#58CC02;--g2:#45A000;--bg:#131F24;--cb:#1B2B31;--bc:#2a4a52;--red:#FF4B4B;--blue:#1CB0F6;--gold:#ffd54f;--fire:#ff7043;--txt:#fff;--sub:#8BA4AE;--dim:#5a7a84}
 html,body{height:100%;overflow:hidden}
-body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif;background:var(--bg);color:var(--txt);max-width:480px;margin:0 auto;display:flex;flex-direction:column;height:100dvh}
+body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif;background:var(--bg);color:var(--txt);max-width:480px;margin:0 auto;display:flex;flex-direction:column;height:100dvh;padding-top:env(safe-area-inset-top)}
 button{font-family:inherit;cursor:pointer;-webkit-appearance:none}
 .btn{width:100%;padding:15px;border:none;border-radius:14px;font-size:15px;font-weight:800;color:#fff;text-transform:uppercase;margin-bottom:10px}
 .btn:active{transform:translateY(2px);box-shadow:none}
@@ -260,8 +260,8 @@ function render(){
     const progress=exs.length>0?((exi+1)/exs.length)*100:0;
     const isRev=PATH[curNode].type==="review";
     h+=`<div style="flex:1;display:flex;flex-direction:column;overflow:hidden">`;
-    h+=`<div style="padding:12px 18px;display:flex;align-items:center;gap:10px;flex-shrink:0">
-      <button onclick="goPath()" style="background:none;border:none;color:var(--sub);font-size:18px">\u2715</button>
+    h+=`<div style="padding:16px 18px;display:flex;align-items:center;gap:10px;flex-shrink:0">
+      <button onclick="goPath()" style="background:none;border:none;color:var(--sub);font-size:22px;padding:8px 12px">\u2715</button>
       <div style="flex:1;height:14px;background:#2a3a42;border-radius:7px;overflow:hidden"><div style="height:100%;border-radius:7px;width:${progress}%;background:${isRev?"var(--blue)":"var(--g)"};transition:width 0.4s"></div></div>
       <div style="display:flex;gap:2px">${[0,1,2,3,4].map(i=>`<span style="font-size:15px;opacity:${i<hearts?1:0.15}">\u2764\uFE0F</span>`).join("")}</div>
     </div>`;
