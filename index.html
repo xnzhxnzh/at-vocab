@@ -501,10 +501,8 @@ window.saveProfileName=async function(){
   editingName=false;
   saveLocal();  // 先保存本地
   await saveCloud();  // 等待云端保存完成
-  // 改名后重新加载排行榜数据
-  if(leaderboard.length>0){
-    await loadLeaderboard();
-  }
+  // 无条件重新加载排行榜数据（不管之前是否加载过）
+  await loadLeaderboard();
   render();
 };
 window.doMigrate=async function(){
