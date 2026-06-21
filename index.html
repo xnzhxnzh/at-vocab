@@ -66,7 +66,7 @@ function saveLocal(){try{localStorage.setItem(SK,JSON.stringify(S));}catch(e){}}
 function loadLocal(){try{const d=localStorage.getItem(SK);if(d){const p=JSON.parse(d);if(p.uid){S=p;return true;}}}catch(e){}return false;}
 
 async function saveCloud(){
-  if(!db||!S.uid)return;
+  if(!db||!S.uid||S.uid==="undefined"||S.uid.length<10)return;
   try{
     await db.collection("users").doc(S.uid).set({
       uid:S.uid,name:S.name,np:S.np,ws:S.ws,xp:S.xp,str:S.str,gems:S.gems,ld:S.ld,txp:S.txp
@@ -96,7 +96,7 @@ async function loadCloud(uid){
 
 async function loadLeaderboard(){
   if(!db){leaderboard=[];return;}
-  try{const snap=await db.collection("leaderboard").orderBy("xp","desc").limit(50).get();leaderboard=[];snap.forEach(doc=>leaderboard.push(doc.data()));}catch(e){}
+  try{const snap=await db.collection("leaderboard").orderBy("xp","desc").limit(50).get();leaderboard=[];snap.forEach(doc=>{const data=doc.data();data._docId=doc.id;leaderboard.push(data);});}catch(e){}
 }
 
 function saveAll(){saveLocal();saveCloud();}
@@ -120,7 +120,7 @@ function render(){
       <div style="font-size:12px;color:#8BA4AE;margin-bottom:12px;text-align:center">Found your existing accounts. Select one to restore:</div>
       <div style="flex:1;overflow-y:auto;margin-bottom:16px">`;
     recoverUsers.forEach((u,i)=>{
-      const safeUid=(u.uid||"").replace(/'/g,"");
+      const safeUid=(u._uid||"").replace(/'/g,"");
       h+=`<button class="recover-btn" data-uid="${safeUid}" style="width:100%;background:${CB};border:2px solid ${BC};border-radius:12px;padding:12px;margin-bottom:8px;display:flex;align-items:center;gap:12px;cursor:pointer" onmouseover="this.style.borderColor='${G}'" onmouseout="this.style.borderColor='${BC}'">
         <div style="flex:1;text-align:left">
           <div style="font-size:16px;font-weight:900;color:#fff">${u.name}</div>
@@ -312,7 +312,7 @@ function render(){
       </div><div style="flex:1;overflow-y:auto;padding:12px 18px">`;
     if(!leaderboard.length)h+=`<div style="text-align:center;color:#5a7a84;padding:40px 0">Loading...</div>`;
     else leaderboard.forEach((p,i)=>{
-      const me=p.uid===S.uid,m=["\uD83E\uDD47","\uD83E\uDD48","\uD83E\uDD49"];
+      const me=(p._docId===S.uid),m=["\uD83E\uDD47","\uD83E\uDD48","\uD83E\uDD49"];
       h+=`<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:${me?"#1a3a2a":CB};border-radius:12px;margin-bottom:6px;border:${me?"2px solid "+G:"1px solid "+BC}">
         <span style="font-size:${i<3?18:13}px;font-weight:900;width:28px;text-align:center">${i<3?m[i]:i+1}</span>
         <div style="flex:1"><div style="font-size:13px;font-weight:800;color:${me?G:"#fff"}">${p.name||"???"}${me?" (you)":""}</div><div style="font-size:10px;color:#5a7a84">${p.words||0} words \u00B7 \uD83D\uDD25${p.streak||0}d</div></div>
@@ -428,16 +428,18 @@ window.submitName=async function(){
       const snap=await db.collection("users").where("name","==",v).get();
       if(!snap.empty){
         let bestUser=null;
+        let bestDoc=null;
         let maxXP=-1;
         snap.forEach(doc=>{
           const data=doc.data();
           if(data.xp&&data.xp>maxXP){
             maxXP=data.xp;
             bestUser=data;
+            bestDoc=doc;
           }
         });
-        if(bestUser){
-          S.uid=bestUser.uid;
+        if(bestUser&&bestDoc){
+          S.uid=bestDoc.id;  // 用文档ID，不用uid字段
           S.np=bestUser.np||S.np;
           S.ws=bestUser.ws||S.ws;
           S.xp=bestUser.xp;
@@ -528,7 +530,10 @@ window.showLeaderboard=async function(){screen="leaderboard";render();await load
         const users=[];
         snap.forEach(doc=>{
           const d=doc.data();
-          if(d.uid&&d.name&&d.xp>0)users.push(d);
+          if(d.name&&d.xp>0){
+            d._uid=doc.id;  // 保存真实的文档ID
+            users.push(d);
+          }
         });
         if(users.length>0){
           // 显示恢复界面
