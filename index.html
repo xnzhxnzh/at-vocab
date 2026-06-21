@@ -120,7 +120,8 @@ function render(){
       <div style="font-size:12px;color:#8BA4AE;margin-bottom:12px;text-align:center">Found your existing accounts. Select one to restore:</div>
       <div style="flex:1;overflow-y:auto;margin-bottom:16px">`;
     recoverUsers.forEach((u,i)=>{
-      h+=`<button onclick="window.doRecover('${u.uid}')" style="width:100%;background:${CB};border:2px solid ${BC};border-radius:12px;padding:12px;margin-bottom:8px;display:flex;align-items:center;gap:12px;cursor:pointer" onmouseover="this.style.borderColor='${G}'" onmouseout="this.style.borderColor='${BC}'">
+      const safeUid=(u.uid||"").replace(/'/g,"");
+      h+=`<button class="recover-btn" data-uid="${safeUid}" style="width:100%;background:${CB};border:2px solid ${BC};border-radius:12px;padding:12px;margin-bottom:8px;display:flex;align-items:center;gap:12px;cursor:pointer" onmouseover="this.style.borderColor='${G}'" onmouseout="this.style.borderColor='${BC}'">
         <div style="flex:1;text-align:left">
           <div style="font-size:16px;font-weight:900;color:#fff">${u.name}</div>
           <div style="font-size:11px;color:#8BA4AE">${u.words||0} words · \uD83D\uDD25${u.streak||0}d</div>
@@ -401,6 +402,18 @@ function render(){
   }
 
   document.getElementById("app").innerHTML=h;
+  
+  // Attach recover button listeners
+  if(screen==="recover"){
+    setTimeout(()=>{
+      document.querySelectorAll(".recover-btn").forEach(btn=>{
+        btn.addEventListener("click",async function(){
+          const uid=this.getAttribute("data-uid");
+          if(uid)await window.doRecover(uid);
+        });
+      });
+    },0);
+  }
 }
 
 // ══════════ ACTIONS ══════════
@@ -446,7 +459,7 @@ window.submitName=async function(){
   saveAll();screen="path";render();
 };
 window.doRecover=async function(uid){
-  if(!db)return;
+  if(!db||!uid||uid==="undefined")return;
   try{
     const doc=await db.collection("users").doc(uid).get();
     if(doc.exists){
@@ -464,7 +477,7 @@ window.doRecover=async function(uid){
       screen="path";
       render();
     }
-  }catch(e){}
+  }catch(e){console.error("doRecover error:",e);}
 };
 window.doRename=function(){
   const v=document.getElementById("rni").value.trim();
