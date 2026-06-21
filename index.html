@@ -254,26 +254,26 @@ function render(){
       </div>`;
     }
     h+=`</div>
-        <div style="background:${CB};border:2px solid ${BC};border-radius:16px;padding:20px;margin-bottom:16px">
-          <div style="font-size:12px;color:#8BA4AE;font-weight:700;margin-bottom:12px">STATISTICS</div>
-          <div style="display:flex;justify-content:space-around;margin-bottom:12px">
-            <div style="text-align:center"><div style="font-size:24px;font-weight:900;color:#ffd54f">${S.xp}</div><div style="font-size:10px;color:#8BA4AE;font-weight:700;margin-top:4px">Total XP</div></div>
-            <div style="text-align:center"><div style="font-size:24px;font-weight:900;color:#ff7043">\uD83D\uDD25${S.str}</div><div style="font-size:10px;color:#8BA4AE;font-weight:700;margin-top:4px">Streak</div></div>
-            <div style="text-align:center"><div style="font-size:24px;font-weight:900;color:${G}">${S.ws.filter(w=>w.seen).length}</div><div style="font-size:10px;color:#8BA4AE;font-weight:700;margin-top:4px">Words</div></div>
-          </div>
-        </div>
-        <div style="background:${CB};border:2px solid ${BC};border-radius:16px;padding:20px">
-          <div style="font-size:12px;color:#8BA4AE;font-weight:700;margin-bottom:8px">USER ID</div>
-          <div style="background:#0d1a20;border-radius:10px;padding:12px;border:1px solid ${BC};margin-bottom:10px;word-break:break-all;font-size:12px;font-weight:700;color:#58CC02;font-family:monospace">${S.uid}</div>
-          <button class="btn" style="background:${BL};box-shadow:0 4px 0 #1390C8;font-size:12px" onclick="window.copyUID()" id="cp"><span>\uD83D\uDC4B Copy ID</span></button>
+      <div style="background:${CB};border:2px solid ${BC};border-radius:16px;padding:20px;margin-bottom:16px">
+        <div style="font-size:12px;color:#8BA4AE;font-weight:700;margin-bottom:12px">STATISTICS</div>
+        <div style="display:flex;justify-content:space-around;margin-bottom:12px">
+          <div style="text-align:center"><div style="font-size:24px;font-weight:900;color:#ffd54f">${S.xp}</div><div style="font-size:10px;color:#8BA4AE;font-weight:700;margin-top:4px">Total XP</div></div>
+          <div style="text-align:center"><div style="font-size:24px;font-weight:900;color:#ff7043">\uD83D\uDD25${S.str}</div><div style="font-size:10px;color:#8BA4AE;font-weight:700;margin-top:4px">Streak</div></div>
+          <div style="text-align:center"><div style="font-size:24px;font-weight:900;color:${G}">${S.ws.filter(w=>w.seen).length}</div><div style="font-size:10px;color:#8BA4AE;font-weight:700;margin-top:4px">Words</div></div>
         </div>
       </div>
-      <div style="display:flex;border-top:1px solid ${BC};flex-shrink:0;padding:6px 0 max(6px,env(safe-area-inset-bottom))">
-        <button onclick="goPath()" style="flex:1;background:none;border:none;text-align:center;padding:4px 0"><div style="font-size:18px">\uD83C\uDFE0</div><div style="font-size:9px;font-weight:700;color:#8BA4AE">Home</div></button>
-        <button onclick="showLeaderboard()" style="flex:1;background:none;border:none;text-align:center;padding:4px 0"><div style="font-size:18px">\uD83C\uDFC6</div><div style="font-size:9px;font-weight:700;color:#8BA4AE">Rankings</div></button>
-        <button onclick="screen='profile';editingName=false;render()" style="flex:1;background:none;border:none;text-align:center;padding:4px 0"><div style="font-size:18px">\uD83D\uDC64</div><div style="font-size:9px;font-weight:700;color:${G}">Profile</div></button>
-        <button onclick="screen='migrate';render()" style="flex:1;background:none;border:none;text-align:center;padding:4px 0"><div style="font-size:18px">\uD83D\uDCF1</div><div style="font-size:9px;font-weight:700;color:#8BA4AE">Transfer</div></button>
+      <div style="background:${CB};border:2px solid ${BC};border-radius:16px;padding:20px">
+        <div style="font-size:12px;color:#8BA4AE;font-weight:700;margin-bottom:8px">USER ID</div>
+        <div style="background:#0d1a20;border-radius:10px;padding:12px;border:1px solid ${BC};margin-bottom:10px;word-break:break-all;font-size:12px;font-weight:700;color:#58CC02;font-family:monospace">${S.uid}</div>
+        <button class="btn" style="background:${BL};box-shadow:0 4px 0 #1390C8;font-size:12px" onclick="window.copyUID()" id="cp">\uD83D\uDC4B Copy ID</button>
       </div>
+    </div>
+    <div style="display:flex;border-top:1px solid ${BC};flex-shrink:0;padding:6px 0 max(6px,env(safe-area-inset-bottom))">
+      <button onclick="goPath()" style="flex:1;background:none;border:none;text-align:center;padding:4px 0"><div style="font-size:18px">\uD83C\uDFE0</div><div style="font-size:9px;font-weight:700;color:#8BA4AE">Home</div></button>
+      <button onclick="showLeaderboard()" style="flex:1;background:none;border:none;text-align:center;padding:4px 0"><div style="font-size:18px">\uD83C\uDFC6</div><div style="font-size:9px;font-weight:700;color:#8BA4AE">Rankings</div></button>
+      <button onclick="screen='profile';editingName=false;render()" style="flex:1;background:none;border:none;text-align:center;padding:4px 0"><div style="font-size:18px">\uD83D\uDC64</div><div style="font-size:9px;font-weight:700;color:${G}">Profile</div></button>
+      <button onclick="screen='migrate';render()" style="flex:1;background:none;border:none;text-align:center;padding:4px 0"><div style="font-size:18px">\uD83D\uDCF1</div><div style="font-size:9px;font-weight:700;color:#8BA4AE">Transfer</div></button>
+    </div>
     </div>`;
   }
 
@@ -399,6 +399,14 @@ window.copyUID=function(){
     btn.textContent="\u2705 Copied!";setTimeout(()=>{btn.textContent=origText;},2000);
   });
 };
+window.saveProfileName=function(){
+  const v=document.getElementById("pni").value.trim();
+  if(!v)return;
+  S.name=v;
+  editingName=false;
+  saveAll();
+  render();
+};
 window.doMigrate=async function(){
   const uid=document.getElementById("ri").value.trim();
   if(!uid){document.getElementById("rm").innerHTML=`<span style="color:${R}">Please paste a transfer code</span>`;return;}
@@ -407,14 +415,6 @@ window.doMigrate=async function(){
     if(ok){S.uid=uid;saveLocal();document.getElementById("rm").innerHTML=`<span style="color:${G}">\u2705 Restored! Welcome back ${S.name}!</span>`;setTimeout(()=>{screen="path";render();},1500);}
     else{document.getElementById("rm").innerHTML=`<span style="color:${R}">\u274C Code not found in cloud</span>`;}
   }else{document.getElementById("rm").innerHTML=`<span style="color:${R}">\u274C No internet connection</span>`;}
-};
-window.saveProfileName=function(){
-  const v=document.getElementById("pni").value.trim();
-  if(!v)return;
-  S.name=v;
-  editingName=false;
-  saveAll();
-  render();
 };
 window.goPath=function(){screen="path";render();};
 window.startNode=function(ni){if(S.np[ni]===0)return;curNode=ni;if(PATH[ni].type==="learn")exs=buildLearn(PATH[ni].unit);else{exs=buildReview(ni);if(!exs.length){completeNode(ni);saveAll();screen="path";render();return;}}exi=0;hearts=5;picked=null;isOk=null;lc=0;lw=0;missed=[];screen="lesson";render();};
