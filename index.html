@@ -57,7 +57,7 @@ function rclr(v){return v>0.8?"#58CC02":v>0.5?"#ffd54f":"#FF4B4B";}
 const SK="sat-vocab-pwa-v2";
 function defaultState(){return{uid:"",name:"",np:[1,0,0,0,0,0,0],ws:ALL.map((_,i)=>({i,nc:0,nw:0,h:0,lp:0,seen:false})),xp:0,str:0,gems:50,ld:0,txp:0};}
 let S=defaultState();
-let screen="path",curNode=0,exs=[],exi=0,hearts=5,picked=null,isOk=null,lc=0,lw=0,missed=[],leaderboard=[],editingName=false;
+let screen="path",curNode=0,exs=[],exi=0,hearts=5,picked=null,isOk=null,lc=0,lw=0,missed=[],leaderboard=[],editingName=false,recoverUsers=[];
 const dailyGoal=50,today=todayNum();
 const G="#58CC02",R="#FF4B4B",CB="#1B2B31",BC="#2a4a52",BL="#1CB0F6";
 
@@ -113,16 +113,40 @@ function render(){
   const isNew=S.ld<today,gp=Math.min(100,((isNew?0:S.txp)/dailyGoal)*100),gm=S.txp>=dailyGoal&&!isNew;
   let h="";
 
+  // ═══ RECOVER (restore existing account) ═══
+  if(screen==="recover"){
+    h+=`<div style="flex:1;display:flex;flex-direction:column;padding:24px;overflow:hidden">
+      <div style="font-size:24px;font-weight:900;margin-bottom:16px;text-align:center">👋 Welcome Back</div>
+      <div style="font-size:12px;color:#8BA4AE;margin-bottom:12px;text-align:center">Found your existing accounts. Select one to restore:</div>
+      <div style="flex:1;overflow-y:auto;margin-bottom:16px">`;
+    recoverUsers.forEach((u,i)=>{
+      h+=`<button onclick="window.doRecover('${u.uid}')" style="width:100%;background:${CB};border:2px solid ${BC};border-radius:12px;padding:12px;margin-bottom:8px;display:flex;align-items:center;gap:12px;cursor:pointer" onmouseover="this.style.borderColor='${G}'" onmouseout="this.style.borderColor='${BC}'">
+        <div style="flex:1;text-align:left">
+          <div style="font-size:16px;font-weight:900;color:#fff">${u.name}</div>
+          <div style="font-size:11px;color:#8BA4AE">${u.words||0} words · \uD83D\uDD25${u.streak||0}d</div>
+        </div>
+        <div style="text-align:right;color:#ffd54f;font-weight:900;font-size:14px">${u.xp}</div>
+      </button>`;
+    });
+    h+=`</div>
+      <div style="width:100%">
+        <button class="btn" style="background:${CB};color:#8BA4AE;box-shadow:0 4px 0 #0d1a20;margin-bottom:0" onclick="screen='setup';render()">Create New Account</button>
+      </div>
+    </div>`;
+  }
+
   // ═══ SETUP (first time) ═══
   if(screen==="setup"){
     h+=`<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center">
       <div style="font-size:48px;margin-bottom:12px">\uD83D\uDCDA</div>
       <div style="font-size:24px;font-weight:900;color:${G};margin-bottom:6px">SAT Vocab</div>
       <div style="font-size:13px;color:#8BA4AE;margin-bottom:30px">HLR spaced repetition</div>
-      <div style="font-size:13px;color:#8BA4AE;margin-bottom:8px;font-weight:700">What should we call you?</div>
-      <input id="ni" placeholder="Your display name" style="margin-bottom:16px;text-align:center" maxlength="20">
-      <button class="btn" style="background:${G};box-shadow:0 4px 0 #45A000" onclick="submitName()">Start Learning</button>
-      <div style="margin-top:16px;font-size:11px;color:#5a7a84">\u2601\uFE0F Progress syncs to cloud<br>You can change your name anytime</div>
+      <div id="setup-content" style="width:100%">
+        <div style="font-size:13px;color:#8BA4AE;margin-bottom:8px;font-weight:700">What should we call you?</div>
+        <input id="ni" placeholder="Your display name" style="margin-bottom:16px;text-align:center" maxlength="20">
+        <button class="btn" style="background:${G};box-shadow:0 4px 0 #45A000" onclick="submitName()">Start Learning</button>
+        <div style="margin-top:16px;font-size:11px;color:#5a7a84">\u2601\uFE0F Progress syncs to cloud<br>You can change your name anytime</div>
+      </div>
     </div>`;
   }
 
@@ -421,6 +445,27 @@ window.submitName=async function(){
   S.uid=genUUID();
   saveAll();screen="path";render();
 };
+window.doRecover=async function(uid){
+  if(!db)return;
+  try{
+    const doc=await db.collection("users").doc(uid).get();
+    if(doc.exists){
+      const d=doc.data();
+      S.uid=uid;
+      S.name=d.name||S.name;
+      S.np=d.np||S.np;
+      S.ws=d.ws||S.ws;
+      S.xp=d.xp!=null?d.xp:S.xp;
+      S.str=d.str!=null?d.str:S.str;
+      S.gems=d.gems!=null?d.gems:S.gems;
+      S.ld=d.ld||S.ld;
+      S.txp=d.txp!=null?d.txp:S.txp;
+      saveLocal();
+      screen="path";
+      render();
+    }
+  }catch(e){}
+};
 window.doRename=function(){
   const v=document.getElementById("rni").value.trim();
   if(!v)return;
@@ -462,7 +507,29 @@ window.showLeaderboard=async function(){screen="leaderboard";render();await load
   const loaded=loadLocal();
   if(S.ld>0&&S.ld<today-1)S.str=0;
   if(S.ld<today)S.txp=0;
-  if(!S.uid){screen="setup";render();return;}
+  if(!S.uid){
+    // 检查云端是否有现存账户
+    if(db){
+      try{
+        const snap=await db.collection("leaderboard").orderBy("xp","desc").limit(100).get();
+        const users=[];
+        snap.forEach(doc=>{
+          const d=doc.data();
+          if(d.uid&&d.name&&d.xp>0)users.push(d);
+        });
+        if(users.length>0){
+          // 显示恢复界面
+          screen="recover";
+          recoverUsers=users.slice(0,20);
+          render();
+          return;
+        }
+      }catch(e){}
+    }
+    screen="setup";
+    render();
+    return;
+  }
   // Try cloud sync
   if(db&&S.uid){
     try{const d=await db.collection("users").doc(S.uid).get();
