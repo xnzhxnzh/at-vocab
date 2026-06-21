@@ -501,7 +501,18 @@ window.saveProfileName=async function(){
   editingName=false;
   saveLocal();  // 先保存本地
   await saveCloud();  // 等待云端保存完成
-  // 无条件重新加载排行榜数据（不管之前是否加载过）
+  
+  // 直接更新内存中的leaderboard数据（如果已加载）
+  if(leaderboard.length>0){
+    leaderboard.forEach(p=>{
+      if(p._docId===S.uid){
+        p.name=S.name;  // 直接改内存中的名字
+      }
+    });
+  }
+  
+  // 强制清除并重新加载排行榜，确保完全同步
+  leaderboard=[];
   await loadLeaderboard();
   render();
 };
