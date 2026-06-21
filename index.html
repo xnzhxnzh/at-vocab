@@ -380,10 +380,45 @@ function render(){
 }
 
 // ══════════ ACTIONS ══════════
-window.submitName=function(){
+window.submitName=async function(){
   const v=document.getElementById("ni").value.trim();
   if(!v)return;
-  S.uid=genUUID();S.name=v;
+  S.name=v;
+  
+  // 检查云端是否有同名用户，自动恢复进度最高的
+  if(db){
+    try{
+      const snap=await db.collection("users").where("name","==",v).get();
+      if(!snap.empty){
+        let bestUser=null;
+        let maxXP=-1;
+        snap.forEach(doc=>{
+          const data=doc.data();
+          if(data.xp&&data.xp>maxXP){
+            maxXP=data.xp;
+            bestUser=data;
+          }
+        });
+        if(bestUser){
+          S.uid=bestUser.uid;
+          S.np=bestUser.np||S.np;
+          S.ws=bestUser.ws||S.ws;
+          S.xp=bestUser.xp;
+          S.str=bestUser.str!=null?bestUser.str:S.str;
+          S.gems=bestUser.gems!=null?bestUser.gems:S.gems;
+          S.ld=bestUser.ld||S.ld;
+          S.txp=bestUser.txp!=null?bestUser.txp:S.txp;
+          saveLocal();
+          screen="path";
+          render();
+          return;
+        }
+      }
+    }catch(e){}
+  }
+  
+  // 没找到同名用户，创建新用户
+  S.uid=genUUID();
   saveAll();screen="path";render();
 };
 window.doRename=function(){
