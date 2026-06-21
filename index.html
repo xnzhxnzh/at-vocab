@@ -494,12 +494,17 @@ window.copyUID=function(){
     btn.textContent="\u2705 Copied!";setTimeout(()=>{btn.textContent=origText;},2000);
   });
 };
-window.saveProfileName=function(){
+window.saveProfileName=async function(){
   const v=document.getElementById("pni").value.trim();
   if(!v)return;
   S.name=v;
   editingName=false;
-  saveAll();
+  saveLocal();  // 先保存本地
+  await saveCloud();  // 等待云端保存完成
+  // 改名后重新加载排行榜数据
+  if(leaderboard.length>0){
+    await loadLeaderboard();
+  }
   render();
 };
 window.doMigrate=async function(){
