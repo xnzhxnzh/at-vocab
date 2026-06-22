@@ -245,6 +245,20 @@ function render(){
     </div>`;
   }
 
+  // ═══ BACKUPS (7-day history) ═══
+  if(screen==="backups"){
+    h+=`<div style="flex:1;display:flex;flex-direction:column;overflow:hidden">
+      <div style="padding:12px 18px;border-bottom:1px solid ${BC}">
+        <div style="font-size:20px;font-weight:900">📅 Backup History</div>
+        <div style="font-size:12px;color:#8BA4AE;margin-top:4px">Last 7 days of progress</div>
+      </div>
+      <div style="flex:1;overflow-y:auto;padding:12px 18px;-webkit-overflow-scrolling:touch">
+        <div id="backupList" style="font-size:12px;color:#8BA4AE;text-align:center;padding:20px">Loading backups...</div>
+      </div>
+      <button class="btn" style="background:${CB};color:#8BA4AE;box-shadow:0 4px 0 #0d1a20;margin:12px 18px" onclick="screen='path';render()">Back</button>
+    </div>`;
+  }
+
   // ═══ PATH ═══
   if(screen==="path"){
     const seenN=S.ws.filter(w=>w.seen).length;
@@ -350,10 +364,15 @@ function render(){
           <div style="text-align:center"><div style="font-size:24px;font-weight:900;color:${G}">${S.ws.filter(w=>w.seen).length}</div><div style="font-size:10px;color:#8BA4AE;font-weight:700;margin-top:4px">Words</div></div>
         </div>
       </div>
-      <div style="background:${CB};border:2px solid ${BC};border-radius:16px;padding:20px">
+      <div style="background:${CB};border:2px solid ${BC};border-radius:16px;padding:20px;margin-bottom:16px">
         <div style="font-size:12px;color:#8BA4AE;font-weight:700;margin-bottom:8px">USER ID</div>
         <div style="background:#0d1a20;border-radius:10px;padding:12px;border:1px solid ${BC};margin-bottom:10px;word-break:break-all;font-size:12px;font-weight:700;color:#58CC02;font-family:monospace">${S.uid}</div>
         <button class="btn" style="background:${BL};box-shadow:0 4px 0 #1390C8;font-size:12px" onclick="window.copyUID()" id="cp">\uD83D\uDC4B Copy ID</button>
+      </div>
+      <div style="background:${CB};border:2px solid ${BC};border-radius:16px;padding:20px">
+        <div style="font-size:12px;color:#8BA4AE;font-weight:700;margin-bottom:8px">BACKUP HISTORY</div>
+        <div style="font-size:11px;color:#8BA4AE;margin-bottom:12px">View and restore progress from the last 7 days</div>
+        <button class="btn" style="background:${G};box-shadow:0 4px 0 #45A000;font-size:12px" onclick="window.showBackups()">📅 View Backups</button>
       </div>
     </div>
     <div style="display:flex;border-top:1px solid ${BC};flex-shrink:0;padding:6px 0 max(6px,env(safe-area-inset-bottom))">
@@ -671,6 +690,84 @@ window.toggleMulti=function(oi){if(picked!==null)return;if(multiSel.includes(oi)
 window.submitMulti=function(){if(picked!==null||multiSel.length===0)return;const ex=exs[exi],mopts=ex.mopts;const correctIdx=mopts.map((o,i)=>o.correct?i:-1).filter(i=>i>=0);const allCorrect=correctIdx.every(i=>multiSel.includes(i));const noWrong=multiSel.every(i=>mopts[i].correct);const ok=allCorrect&&noWrong;picked=1;isOk=ok;const w=S.ws[ex.gi];if(ok){w.nc++;lc++;S.xp+=10;}else{w.nw++;lw++;hearts--;missed.push(ex.gi);}w.h=calcHL(w.nc,w.nw,w.h);w.lp=today;w.seen=true;saveAll();render();};
 window.handleNext=function(){if(hearts<=0&&!isOk){screen="fail";render();return;}multiSel=[];if(exi+1>=exs.length){const u=[...new Set(missed)];if(u.length>0){const r=[];for(const gi of shuffle(u)){if(isMulti(gi))r.push({type:"pickMulti",gi,mopts:makeMultiOpts(gi)});else r.push({type:Math.random()>0.5?"pickDef":"pickWord",gi,opts:makeOpts(gi)});}exs=exs.concat(r);missed=[];exi++;picked=null;isOk=null;render();return;}S.gems+=5;const e=lc*10;if(S.ld<today){S.str=S.ld===today-1?S.str+1:(S.ld===0?1:1);S.ld=today;S.txp=e;}else S.txp+=e;completeNode(curNode);saveAll();screen="complete";render();}else{exi++;picked=null;isOk=null;render();}};
 window.showLeaderboard=async function(){screen="leaderboard";render();await loadLeaderboard();render();};
+window.showBackups=async function(){screen="backups";render();await loadBackups();};
+window.loadBackups=async function(){
+  if(!db||!S.uid){
+    document.getElementById("backupList").innerHTML=`<span style="color:${R}">No cloud backups available</span>`;
+    return;
+  }
+  try{
+    // 添加5秒超时
+    const timeoutPromise=new Promise((resolve,reject)=>
+      setTimeout(()=>reject(new Error("timeout")),5000)
+    );
+    const queryPromise=db.collection("users").doc(S.uid)
+      .collection("backups").orderBy("date","desc").get();
+    const snap=await Promise.race([queryPromise,timeoutPromise]);
+    
+    if(snap.empty){
+      document.getElementById("backupList").innerHTML=`<span style="color:#8BA4AE">No backups found</span>`;
+      return;
+    }
+    let html=``;
+    snap.forEach(doc=>{
+      const d=doc.data();
+      const date=new Date(d.date+"T00:00:00");
+      const dateStr=date.toLocaleDateString();
+      const xp=d.xp||0;
+      const words=d.wp?Object.keys(d.wp).filter(k=>d.wp[k].seen).length:0;
+      html+=`<div style="background:${CB};border:1px solid ${BC};border-radius:12px;padding:12px;margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <div style="font-weight:700;color:#fff">${dateStr}</div>
+          <button class="btn" style="background:${G};box-shadow:0 3px 0 #45A000;width:auto;padding:6px 12px;font-size:11px;margin:0" onclick="window.restoreBackup('${d.date}')">Restore</button>
+        </div>
+        <div style="font-size:11px;color:#8BA4AE">
+          ${xp} XP · ${words} words learned
+        </div>
+      </div>`;
+    });
+    document.getElementById("backupList").innerHTML=html;
+  }catch(e){
+    document.getElementById("backupList").innerHTML=`<span style="color:${R}">Failed to load backups (${e.message})</span>`;
+    console.log("Load backups error",e);
+  }
+};
+window.restoreBackup=async function(dateStr){
+  if(!db||!S.uid)return;
+  if(!confirm(`Restore progress from ${new Date(dateStr+"T00:00:00").toLocaleDateString()}? Current progress will be overwritten.`))return;
+  try{
+    // 添加5秒超时
+    const timeoutPromise=new Promise((resolve,reject)=>
+      setTimeout(()=>reject(new Error("timeout")),5000)
+    );
+    const docPromise=db.collection("users").doc(S.uid)
+      .collection("backups").doc(dateStr).get();
+    const doc=await Promise.race([docPromise,timeoutPromise]);
+    
+    if(doc.exists){
+      const d=doc.data();
+      S.np=d.np||S.np;
+      if(d.wp)S.wp=d.wp;
+      S.xp=d.xp!=null?d.xp:S.xp;
+      S.str=d.str!=null?d.str:S.str;
+      S.gems=d.gems!=null?d.gems:S.gems;
+      S.ld=d.ld||S.ld;
+      S.txp=d.txp!=null?d.txp:S.txp;
+      migrateState();
+      saveLocal();
+      // 异步上传到云端
+      saveCloud().catch(e=>console.log("Background save failed"));
+      alert("✅ Backup restored successfully!");
+      screen="path";
+      render();
+    }else{
+      alert("❌ Backup not found");
+    }
+  }catch(e){
+    alert("❌ Failed to restore backup: "+e.message);
+    console.log("Restore backup error",e);
+  }
+};
 
 // ══════════ BACKUP ══════════
 const BK_SK="sat-backup-date";
