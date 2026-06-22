@@ -32,8 +32,8 @@ function genUUID(){try{return crypto.randomUUID();}catch(e){return 'xxxx-xxxx-xx
 
 // Data
 const UNITS=[
-  {name:"Basics 1",words:[["abase","v.","to humiliate, degrade","The leader was abased before his conqueror."],["abate","v.","to reduce, lessen","The storm raged, then slowly abated."],["abdicate","v.","to give up a position of leadership","The king abdicated his throne."],["aberration","n.","something that differs from the norm","The warm day was an aberration."],["abet","v.","to aid, help, encourage","A friend on the inside abetted the spy."]]},
-  {name:"Basics 2",words:[["abhor","v.","to hate, detest","She began to abhor the sport."],["abject","adj.","wretched, pitiful","After losing everything, she was abject."],["abjure","v.","to reject, renounce","He abjured the evil policies."],["abridge","v.","to cut down, shorten","The publisher abridged the dictionary."],["abrogate","v.","to abolish, usually by authority","They cannot abrogate our rights."]]},
+  {name:"Basics 1",words:[["abase","v.","to humiliate, degrade","The leader was abased before his conqueror."],["abate","v.","to reduce, lessen","The storm raged, then slowly abated."],["abdicate","v.","to give up a position of leadership","The king abdicated his throne."],["aberration","n.","something that differs from the norm","The warm day was an aberration."],["abet","v.",["to aid, help, encourage","to assist in wrongdoing"],"A friend on the inside abetted the spy."]]},
+  {name:"Basics 2",words:[["abhor","v.","to hate, detest","She began to abhor the sport."],["abject","adj.","wretched, pitiful","After losing everything, she was abject."],["abjure","v.","to reject, renounce","He abjured the evil policies."],["abridge","v.",["to cut down, shorten","shortened (as a book)"],"The publisher abridged the dictionary."],["abrogate","v.","to abolish, usually by authority","They cannot abrogate our rights."]]},
   {name:"Intermediate",words:[["abscond","v.","to sneak away and hide","The spy absconded into the night."],["abstain","v.","to choose not to do something","He abstained from voting."],["abstruse","adj.","hard to comprehend","John found geometry abstruse."],["accede","v.","to agree","The teacher acceded to their request."],["accentuate","v.","to stress, highlight","Happy people accentuate the positive."]]},
   {name:"Advanced",words:[["acclaim","n.","high praise","Her poem won widespread acclaim."],["accolade","n.","high praise, special distinction","He received accolades for his work."],["acerbic","adj.","biting, bitter in tone","Her acerbic remarks hurt everyone."],["acquiesce","v.","to agree without protesting","He acquiesced to her demands."],["acrimony","n.","bitterness, discord","Acrimony overwhelmed their friendship."]]},
 ];
@@ -51,13 +51,16 @@ function recallP(h,d){return h>0?Math.pow(2,-d/h):0;}
 function todayNum(){return Math.floor(Date.now()/86400000);}
 function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=0|Math.random()*(i+1);[b[i],b[j]]=[b[j],b[i]];}return b;}
 function makeOpts(gi){const d=[];const u=new Set([gi]);while(d.length<3){const r=0|Math.random()*ALL.length;if(!u.has(r)){u.add(r);d.push(r);}}return shuffle([gi,...d]);}
+function isMulti(gi){return Array.isArray(ALL[gi][2]);}
+function defText(gi){const d=ALL[gi][2];return Array.isArray(d)?d.join(" / "):d;}
+function makeMultiOpts(gi){const correctDefs=ALL[gi][2];const wrongDefs=[];const u=new Set([gi]);while(wrongDefs.length<2){const r=0|Math.random()*ALL.length;if(!u.has(r)&&!isMulti(r)){u.add(r);wrongDefs.push(ALL[r][2]);}}const opts=[...correctDefs.map(d=>({text:d,correct:true})),...wrongDefs.map(d=>({text:d,correct:false}))];return shuffle(opts);}
 function rclr(v){return v>0.8?"#58CC02":v>0.5?"#ffd54f":"#FF4B4B";}
 
 // State
 const SK="sat-vocab-pwa-v2";
 function defaultState(){return{uid:"",name:"",np:[1,0,0,0,0,0,0],ws:ALL.map((_,i)=>({i,nc:0,nw:0,h:0,lp:0,seen:false})),xp:0,str:0,gems:50,ld:0,txp:0};}
 let S=defaultState();
-let screen="path",curNode=0,exs=[],exi=0,hearts=5,picked=null,isOk=null,lc=0,lw=0,missed=[],leaderboard=[],editingName=false,recoverUsers=[];
+let screen="path",curNode=0,exs=[],exi=0,hearts=5,picked=null,isOk=null,lc=0,lw=0,missed=[],leaderboard=[],editingName=false,recoverUsers=[],multiSel=[];
 const dailyGoal=50,today=todayNum();
 const G="#58CC02",R="#FF4B4B",CB="#1B2B31",BC="#2a4a52",BL="#1CB0F6";
 
@@ -104,8 +107,8 @@ function saveAll(){saveLocal();saveCloud();}
 // Helpers
 function getWeakWords(u){const mx=(u+1)*5;return S.ws.filter((w,i)=>i<mx&&w.seen&&(w.nw>0||recallP(w.h,today-w.lp)<0.8));}
 function reviewHasWords(ni){return getWeakWords(Math.floor(ni/2)).length>0;}
-function buildLearn(ui){const b=ui*5,e=[];for(let i=0;i<5;i++)e.push({type:"intro",gi:b+i});for(const i of shuffle([0,1,2,3,4]))e.push({type:"pickDef",gi:b+i,opts:makeOpts(b+i)});for(const i of shuffle([0,1,2,3,4]))e.push({type:"pickWord",gi:b+i,opts:makeOpts(b+i)});return e;}
-function buildReview(ni){const w=getWeakWords(Math.floor(ni/2));if(!w.length)return[];const b=shuffle(w).slice(0,10),e=[];for(const x of shuffle(b))e.push({type:"pickDef",gi:x.i,opts:makeOpts(x.i)});for(const x of shuffle(b))e.push({type:"pickWord",gi:x.i,opts:makeOpts(x.i)});return e;}
+function buildLearn(ui){const b=ui*5,e=[];for(let i=0;i<5;i++)e.push({type:"intro",gi:b+i});for(const i of shuffle([0,1,2,3,4])){const gi=b+i;if(isMulti(gi))e.push({type:"pickMulti",gi,mopts:makeMultiOpts(gi)});else e.push({type:"pickDef",gi,opts:makeOpts(gi)});}for(const i of shuffle([0,1,2,3,4]))e.push({type:"pickWord",gi:b+i,opts:makeOpts(b+i)});return e;}
+function buildReview(ni){const w=getWeakWords(Math.floor(ni/2));if(!w.length)return[];const b=shuffle(w).slice(0,10),e=[];for(const x of shuffle(b)){if(isMulti(x.i))e.push({type:"pickMulti",gi:x.i,mopts:makeMultiOpts(x.i)});else e.push({type:"pickDef",gi:x.i,opts:makeOpts(x.i)});}for(const x of shuffle(b))e.push({type:"pickWord",gi:x.i,opts:makeOpts(x.i)});return e;}
 function completeNode(ni){S.np[ni]=2;if(ni+1<S.np.length&&S.np[ni+1]===0)S.np[ni+1]=1;}
 
 // ══════════ RENDER ══════════
@@ -344,7 +347,7 @@ function render(){
         <div style="background:${CB};border:2px solid ${BC};border-radius:16px;padding:22px 18px;margin-bottom:14px">
           <div style="font-size:32px;font-weight:900;margin-bottom:2px">${word[0]}</div>
           <div style="font-size:12px;color:${G};font-weight:700;margin-bottom:12px">${word[1]}</div>
-          <div style="font-size:16px;color:#c8e0e8;line-height:1.5;padding-top:12px;border-top:1px solid ${BC}">${word[2]}</div>
+          <div style="font-size:16px;color:#c8e0e8;line-height:1.5;padding-top:12px;border-top:1px solid ${BC}">${defText(ex.gi)}</div>
           <div style="margin-top:12px;padding:8px 12px;background:#162228;border-radius:8px;border-left:3px solid ${G}">
             <div style="font-size:8px;color:${G};font-weight:700;margin-bottom:2px">EXAMPLE</div>
             <div style="font-size:12px;color:#9ab8c4;font-style:italic">${word[3]}</div></div>
@@ -354,19 +357,49 @@ function render(){
       const isDef=ex.type==="pickDef";
       h+=`<div style="width:100%;text-align:center"><div style="font-size:13px;color:#8BA4AE;font-weight:700;margin-bottom:10px">${isDef?"What does this word mean?":"Which word matches?"}</div>
         <div style="background:${CB};border:2px solid ${BC};border-radius:16px;padding:20px 16px;margin-bottom:14px">
-          ${isDef?`<div style="font-size:28px;font-weight:900">${word[0]}</div><div style="font-size:11px;color:${G};font-weight:700">${word[1]}</div>`:`<div style="font-size:15px;color:#c8e0e8;line-height:1.5">${word[2]}</div>`}
+          ${isDef?`<div style="font-size:28px;font-weight:900">${word[0]}</div><div style="font-size:11px;color:${G};font-weight:700">${word[1]}</div>`:`<div style="font-size:15px;color:#c8e0e8;line-height:1.5">${defText(ex.gi)}</div>`}
         </div><div style="display:flex;flex-direction:column;gap:7px">`;
       ex.opts.forEach(oi=>{
         let s=`padding:12px 14px;border:2px solid ${BC};border-radius:12px;background:${CB};color:#c8e0e8;font-size:${isDef?"13":"16"}px;font-weight:${isDef?"600":"800"};text-align:left;width:100%;opacity:1`;
         if(picked!==null){if(oi===ex.gi)s=s.replace(BC,G).replace(CB,"#1a3a1a").replace("#c8e0e8",G);else if(oi===picked)s=s.replace(BC,R).replace(CB,"#3a1a1a").replace("#c8e0e8",R);else s+=";opacity:0.3";}
-        h+=`<button style="${s}" onclick="handlePick(${oi})" ${picked!==null?"disabled":""}>${isDef?ALL[oi][2]:ALL[oi][0]}</button>`;
+        h+=`<button style="${s}" onclick="handlePick(${oi})" ${picked!==null?"disabled":""}>${isDef?defText(oi):ALL[oi][0]}</button>`;
       });
       h+=`</div>`;
       if(picked!==null){
         h+=`<div style="margin-top:12px;width:100%">
           <div style="padding:10px 14px;border-radius:10px;margin-bottom:10px;background:${isOk?"#1a3a1a":"#3a1a1a"};border:1px solid ${isOk?G:R}">
             <div style="font-size:14px;font-weight:800;color:${isOk?G:R}">${isOk?"\u2705 Correct!":"\u274C Wrong"}</div>
-            ${!isOk?`<div style="font-size:11px;color:#8BA4AE;margin-top:3px">${isDef?word[2]:word[0]+" \u2014 "+word[2]}</div>`:""}
+            ${!isOk?`<div style="font-size:11px;color:#8BA4AE;margin-top:3px">${isDef?defText(ex.gi):word[0]+" \u2014 "+defText(ex.gi)}</div>`:""}
+          </div><button class="btn" style="background:${isOk?G:R};box-shadow:0 4px 0 ${isOk?"#45A000":"#cc3030"}" onclick="handleNext()">Continue</button></div>`;
+      }
+      h+=`</div>`;
+    }
+    if(ex.type==="pickMulti"){
+      const mopts=ex.mopts;
+      h+=`<div style="width:100%;text-align:center"><div style="font-size:13px;color:#8BA4AE;font-weight:700;margin-bottom:10px">Select ALL correct meanings</div>
+        <div style="background:${CB};border:2px solid ${BC};border-radius:16px;padding:20px 16px;margin-bottom:14px">
+          <div style="font-size:28px;font-weight:900">${word[0]}</div><div style="font-size:11px;color:${G};font-weight:700">${word[1]}</div>
+          <div style="font-size:9px;color:#8BA4AE;margin-top:6px">(this word has ${ALL[ex.gi][2].length} meanings)</div>
+        </div><div style="display:flex;flex-direction:column;gap:7px">`;
+      mopts.forEach((opt,oi)=>{
+        let s=`padding:12px 14px;border:2px solid ${BC};border-radius:12px;background:${CB};color:#c8e0e8;font-size:13px;font-weight:600;text-align:left;width:100%;display:flex;align-items:center;gap:10px`;
+        const isSel=multiSel.includes(oi);
+        if(picked!==null){
+          if(opt.correct)s=s.replace(BC,G).replace(CB,"#1a3a1a").replace("#c8e0e8",G);
+          else if(isSel)s=s.replace(BC,R).replace(CB,"#3a1a1a").replace("#c8e0e8",R);
+          else s+=";opacity:0.3";
+        }else if(isSel){s=s.replace(BC,BL).replace(CB,"#0a2a3a");}
+        const box=picked!==null?(opt.correct?"\u2611":(isSel?"\u2612":"\u2610")):(isSel?"\u2611":"\u2610");
+        h+=`<button style="${s}" onclick="${picked!==null?"":"toggleMulti("+oi+")"}" ${picked!==null?"disabled":""}><span style="font-size:18px">${box}</span><span>${opt.text}</span></button>`;
+      });
+      h+=`</div>`;
+      if(picked===null){
+        h+=`<button class="btn" style="background:${multiSel.length>0?BL:"#2a3a42"};box-shadow:0 4px 0 ${multiSel.length>0?"#1590c6":"#1a2a32"};margin-top:12px" onclick="${multiSel.length>0?"submitMulti()":""}" ${multiSel.length>0?"":"disabled"}>Check Answer</button>`;
+      }else{
+        h+=`<div style="margin-top:12px;width:100%">
+          <div style="padding:10px 14px;border-radius:10px;margin-bottom:10px;background:${isOk?"#1a3a1a":"#3a1a1a"};border:1px solid ${isOk?G:R}">
+            <div style="font-size:14px;font-weight:800;color:${isOk?G:R}">${isOk?"\u2705 Correct!":"\u274C Not quite"}</div>
+            <div style="font-size:11px;color:#8BA4AE;margin-top:3px">All meanings: ${ALL[ex.gi][2].join("; ")}</div>
           </div><button class="btn" style="background:${isOk?G:R};box-shadow:0 4px 0 ${isOk?"#45A000":"#cc3030"}" onclick="handleNext()">Continue</button></div>`;
       }
       h+=`</div>`;
@@ -526,9 +559,11 @@ window.doMigrate=async function(){
   }else{document.getElementById("rm").innerHTML=`<span style="color:${R}">\u274C No internet connection</span>`;}
 };
 window.goPath=function(){screen="path";render();};
-window.startNode=function(ni){if(S.np[ni]===0)return;curNode=ni;if(PATH[ni].type==="learn")exs=buildLearn(PATH[ni].unit);else{exs=buildReview(ni);if(!exs.length){completeNode(ni);saveAll();screen="path";render();return;}}exi=0;hearts=5;picked=null;isOk=null;lc=0;lw=0;missed=[];screen="lesson";render();};
+window.startNode=function(ni){if(S.np[ni]===0)return;curNode=ni;if(PATH[ni].type==="learn")exs=buildLearn(PATH[ni].unit);else{exs=buildReview(ni);if(!exs.length){completeNode(ni);saveAll();screen="path";render();return;}}exi=0;hearts=5;picked=null;isOk=null;lc=0;lw=0;missed=[];multiSel=[];screen="lesson";render();};
 window.handlePick=function(o){if(picked!==null)return;const ex=exs[exi],ok=o===ex.gi;picked=o;isOk=ok;const w=S.ws[ex.gi];if(ok){w.nc++;lc++;S.xp+=10;}else{w.nw++;lw++;hearts--;missed.push(ex.gi);}w.h=calcHL(w.nc,w.nw,w.h);w.lp=today;w.seen=true;saveAll();render();};
-window.handleNext=function(){if(hearts<=0&&!isOk){screen="fail";render();return;}if(exi+1>=exs.length){const u=[...new Set(missed)];if(u.length>0){const r=[];for(const gi of shuffle(u))r.push({type:Math.random()>0.5?"pickDef":"pickWord",gi,opts:makeOpts(gi)});exs=exs.concat(r);missed=[];exi++;picked=null;isOk=null;render();return;}S.gems+=5;const e=lc*10;if(S.ld<today){S.str=S.ld===today-1?S.str+1:(S.ld===0?1:1);S.ld=today;S.txp=e;}else S.txp+=e;completeNode(curNode);saveAll();screen="complete";render();}else{exi++;picked=null;isOk=null;render();}};
+window.toggleMulti=function(oi){if(picked!==null)return;if(multiSel.includes(oi))multiSel=multiSel.filter(x=>x!==oi);else multiSel.push(oi);render();};
+window.submitMulti=function(){if(picked!==null||multiSel.length===0)return;const ex=exs[exi],mopts=ex.mopts;const correctIdx=mopts.map((o,i)=>o.correct?i:-1).filter(i=>i>=0);const allCorrect=correctIdx.every(i=>multiSel.includes(i));const noWrong=multiSel.every(i=>mopts[i].correct);const ok=allCorrect&&noWrong;picked=1;isOk=ok;const w=S.ws[ex.gi];if(ok){w.nc++;lc++;S.xp+=10;}else{w.nw++;lw++;hearts--;missed.push(ex.gi);}w.h=calcHL(w.nc,w.nw,w.h);w.lp=today;w.seen=true;saveAll();render();};
+window.handleNext=function(){if(hearts<=0&&!isOk){screen="fail";render();return;}multiSel=[];if(exi+1>=exs.length){const u=[...new Set(missed)];if(u.length>0){const r=[];for(const gi of shuffle(u)){if(isMulti(gi))r.push({type:"pickMulti",gi,mopts:makeMultiOpts(gi)});else r.push({type:Math.random()>0.5?"pickDef":"pickWord",gi,opts:makeOpts(gi)});}exs=exs.concat(r);missed=[];exi++;picked=null;isOk=null;render();return;}S.gems+=5;const e=lc*10;if(S.ld<today){S.str=S.ld===today-1?S.str+1:(S.ld===0?1:1);S.ld=today;S.txp=e;}else S.txp+=e;completeNode(curNode);saveAll();screen="complete";render();}else{exi++;picked=null;isOk=null;render();}};
 window.showLeaderboard=async function(){screen="leaderboard";render();await loadLeaderboard();render();};
 
 // ══════════ INIT ══════════
