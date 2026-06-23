@@ -23,6 +23,15 @@ input:focus{border-color:#58CC02}
 <body>
 <div id="app" style="display:flex;align-items:center;justify-content:center;height:100%;font-size:18px;font-weight:800;color:#58CC02">Loading...</div>
 <script>
+// 版本检查：自动清除旧缓存
+const APP_VERSION = "2.0";
+const STORED_VERSION = localStorage.getItem("app_version");
+if(STORED_VERSION !== APP_VERSION){
+  localStorage.clear();
+  sessionStorage.clear();
+  localStorage.setItem("app_version", APP_VERSION);
+}
+
 // Firebase
 let db=null;
 try{if(typeof firebase!=="undefined"&&!window._noFB){firebase.initializeApp({apiKey:"AIzaSyCLC23aASA2NFK1eUdrECWz0D9Qojgl_vg",authDomain:"sat-vocab-4bbe0.firebaseapp.com",projectId:"sat-vocab-4bbe0",storageBucket:"sat-vocab-4bbe0.firebasestorage.app",messagingSenderId:"1080222913619",appId:"1:1080222913619:web:af440bb9f134f7e46822a6"});db=firebase.firestore();}}catch(e){}
