@@ -58,10 +58,10 @@ function calcHL(nc,nw,ph){return Math.max(0.25,Math.pow(2,0.7+0.9*Math.sqrt(nc)-
 function recallP(h,d){return h>0?Math.pow(2,-d/h):0;}
 function todayNum(){return Math.floor(Date.now()/86400000);}
 function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=0|Math.random()*(i+1);[b[i],b[j]]=[b[j],b[i]];}return b;}
-function makeOpts(gi){const d=[];const u=new Set([gi]);while(d.length<3){const r=0|Math.random()*ALL.length;if(!u.has(r)){u.add(r);d.push(r);}}return shuffle([gi,...d]);}
+function makeOpts(gi){const unitStart=Math.floor(gi/5)*5;const d=[];const u=new Set([gi]);while(d.length<3){const r=unitStart+(0|Math.random()*5);if(!u.has(r)){u.add(r);d.push(r);}}return shuffle([gi,...d]);}
 function isMulti(gi){return Array.isArray(ALL[gi][2]);}
 function defText(gi){const d=ALL[gi][2];return Array.isArray(d)?d.join(" / "):d;}
-function makeMultiOpts(gi){const correctDefs=ALL[gi][2];const wrongDefs=[];const u=new Set([gi]);while(wrongDefs.length<2){const r=0|Math.random()*ALL.length;if(!u.has(r)&&!isMulti(r)){u.add(r);wrongDefs.push(ALL[r][2]);}}const opts=[...correctDefs.map(d=>({text:d,correct:true})),...wrongDefs.map(d=>({text:d,correct:false}))];return shuffle(opts);}
+function makeMultiOpts(gi){const correctDefs=ALL[gi][2];const unitStart=Math.floor(gi/5)*5;const wrongDefs=[];const u=new Set([gi]);while(wrongDefs.length<2){const r=unitStart+(0|Math.random()*5);if(!u.has(r)&&!isMulti(r)){u.add(r);wrongDefs.push(ALL[r][2]);}}const opts=[...correctDefs.map(d=>({text:d,correct:true})),...wrongDefs.map(d=>({text:d,correct:false}))];return shuffle(opts);}
 function rclr(v){return v>0.8?"#58CC02":v>0.5?"#ffd54f":"#FF4B4B";}
 
 // State
