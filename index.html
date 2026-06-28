@@ -255,16 +255,20 @@ async function loadCloud(uid){
 }
 
 async function loadLeaderboard(){
-  if(!db){leaderboard=[];return;}
+  window._lbError=null;
+  if(!db){window._lbError="No connection to server";leaderboard=[];return;}
   try{
     const timeoutPromise=new Promise((resolve,reject)=>
-      setTimeout(()=>reject(new Error("timeout")),5000)
+      setTimeout(()=>reject(new Error("timeout")),8000)
     );
     const queryPromise=db.collection("leaderboard").orderBy("xp","desc").limit(50).get();
     const snap=await Promise.race([queryPromise,timeoutPromise]);
     leaderboard=[];
     snap.forEach(doc=>{const data=doc.data();data._docId=doc.id;leaderboard.push(data);});
-  }catch(e){leaderboard=[];}
+  }catch(e){
+    window._lbError=e.message==="timeout"?"Connection timed out":"Failed to load: "+e.message;
+    leaderboard=[];
+  }
 }
 
 function saveAll(){
@@ -509,7 +513,18 @@ function render(){
         <span style="font-size:18px;font-weight:900">\uD83C\uDFC6 Rankings</span>
         <button onclick="showLeaderboard()" style="background:none;border:none;color:#8BA4AE;font-size:14px">\u21BB</button>
       </div><div style="flex:1;overflow-y:auto;padding:12px 18px">`;
-    if(!leaderboard.length)h+=`<div style="text-align:center;color:#5a7a84;padding:40px 0">Loading...</div>`;
+    if(!leaderboard.length){
+      if(window._lbError){
+        h+=`<div style="text-align:center;padding:40px 18px">
+          <div style="font-size:40px;margin-bottom:12px">\uD83D\uDCE1</div>
+          <div style="color:#e57373;font-size:14px;font-weight:700;margin-bottom:8px">${window._lbError}</div>
+          <div style="color:#5a7a84;font-size:12px;margin-bottom:20px">Check your internet connection</div>
+          <button onclick="showLeaderboard()" style="background:${G};border:none;border-radius:12px;padding:12px 24px;color:#fff;font-weight:800;font-size:14px;cursor:pointer">\uD83D\uDD04 Retry</button>
+        </div>`;
+      }else{
+        h+=`<div style="text-align:center;color:#5a7a84;padding:40px 0">Loading...</div>`;
+      }
+    }
     else leaderboard.forEach((p,i)=>{
       const me=(p._docId===S.uid),m=["\uD83E\uDD47","\uD83E\uDD48","\uD83E\uDD49"];
       h+=`<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:${me?"#1a3a2a":CB};border-radius:12px;margin-bottom:6px;border:${me?"2px solid "+G:"1px solid "+BC}">
