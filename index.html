@@ -23,7 +23,7 @@ input:focus{border-color:#58CC02}
 <body>
 <div id="app" style="display:flex;align-items:center;justify-content:center;height:100%;font-size:18px;font-weight:800;color:#58CC02">Loading...</div>
 <script>
-const APP_VERSION = "3.0";
+const APP_VERSION = "4.0";
 const STORED_VERSION = localStorage.getItem("app_version");
 if(STORED_VERSION !== APP_VERSION){
   localStorage.clear();
@@ -83,7 +83,7 @@ function rclr(v){return v>0.8?"#58CC02":v>0.5?"#ffd54f":"#FF4B4B";}
 
 // State
 const SK="sat-vocab-pwa-v2";
-function defaultState(){return{uid:"",name:"",np:PATH.map((_,i)=>i===0?1:0),wp:{},unitWords:{},xp:0,str:0,gems:50,ld:0,txp:0};}
+function defaultState(){return{uid:"",name:"",np:PATH.map((_,i)=>i===0?1:0),wp:{},unitWords:{},xp:0,str:0,gems:50,ld:0,txp:0,tnw:0};}
 let S=defaultState();
 // 运行时ws数组（按索引快速访问，从wp重建，不持久化）
 
@@ -185,7 +185,7 @@ const dailyGoal=50,today=todayNum();
 const G="#58CC02",R="#FF4B4B",CB="#1B2B31",BC="#2a4a52",BL="#1CB0F6";
 
 // Storage
-function saveLocal(){try{syncWp();localStorage.setItem(SK,JSON.stringify({uid:S.uid,name:S.name,np:S.np,wp:S.wp,xp:S.xp,str:S.str,gems:S.gems,ld:S.ld,txp:S.txp}));}catch(e){}}
+function saveLocal(){try{syncWp();localStorage.setItem(SK,JSON.stringify({uid:S.uid,name:S.name,np:S.np,wp:S.wp,xp:S.xp,str:S.str,gems:S.gems,ld:S.ld,txp:S.txp,tnw:S.tnw}));}catch(e){}}
 function loadLocal(){try{const d=localStorage.getItem(SK);if(d){const p=JSON.parse(d);if(p.uid){S=p;migrateState();return true;}}}catch(e){}return false;}
 function migrateState(){
   // 兼容旧格式：ws数组 → wp对象
@@ -245,7 +245,7 @@ async function loadCloud(uid){
       if(d.wp)S.wp=d.wp;else if(d.ws)S.ws=d.ws;
       if(d.xp!=null)S.xp=d.xp;
       if(d.str!=null)S.str=d.str;if(d.gems!=null)S.gems=d.gems;
-      if(d.ld)S.ld=d.ld;if(d.txp!=null)S.txp=d.txp;
+      if(d.ld)S.ld=d.ld;if(d.txp!=null)S.txp=d.txp;if(d.tnw!=null)S.tnw=d.tnw;
       if(d.name)S.name=d.name;S.uid=uid;
       migrateState();
       return true;
@@ -289,12 +289,16 @@ function completeNode(ni){
     if(!S.wp[wordName])S.wp[wordName]={nc:0,nw:0,h:0,lp:0,seen:false};
     S.wp[wordName].seen=true;
   });
+  // 如果是 learn node，今日新词数 += 完成的词数（重置由XP代码负责）
+  if(PATH[ni].type==="learn"){
+    S.tnw=(S.tnw||0)+curUnitWords.length;
+  }
   if(ni+1<S.np.length&&S.np[ni+1]===0)S.np[ni+1]=1;
 }
 
 // ══════════ RENDER ══════════
 function render(){
-  const isNew=S.ld<today,gp=Math.min(100,((isNew?0:S.txp)/dailyGoal)*100),gm=S.txp>=dailyGoal&&!isNew;
+  const isNew=S.ld<today,_tnw=isNew?0:(S.tnw||0),gp=Math.min(100,(_tnw/10)*100),gm=_tnw>=10&&!isNew;
   let h="";
 
   // ═══ RECOVER (restore existing account) ═══
@@ -396,7 +400,7 @@ function render(){
       </div>
       <div style="display:flex;justify-content:space-between;margin-bottom:2px">
         <span style="font-size:10px;font-weight:700;color:#8BA4AE">Daily Goal</span>
-        <span style="font-size:10px;font-weight:700;color:${gm?G:"#8BA4AE"}">${gm?"\u2705":(isNew?0:S.txp)+"/"+dailyGoal}</span>
+        <span style="font-size:10px;font-weight:700;color:${gm?G:"#8BA4AE"}">${gm?"\u2705":_tnw+"/10 new"}</span>
       </div>
       <div style="height:6px;background:#1e3040;border-radius:3px;overflow:hidden"><div style="height:100%;border-radius:3px;width:${gp}%;background:${gm?G:"#ffd54f"};transition:width 0.5s"></div></div>
       <div style="margin-top:4px;display:flex;justify-content:space-between;align-items:center">
@@ -816,11 +820,11 @@ window.doMigrate=async function(){
   }else{document.getElementById("rm").innerHTML=`<span style="color:${R}">\u274C No internet connection</span>`;}
 };
 window.goPath=function(){screen="path";render();};
-window.startNode=function(ni){if(S.np[ni]===0)return;curNode=ni;if(PATH[ni].type==="learn")exs=buildLearn(PATH[ni].unit);else{exs=buildReview(ni);if(!exs.length){completeNode(ni);saveAll();screen="path";render();return;}}exi=0;hearts=5;picked=null;isOk=null;lc=0;lw=0;missed=[];multiSel=[];screen="lesson";render();};
+window.startNode=function(ni){if(S.np[ni]===0)return;curNode=ni;if(PATH[ni].type==="learn"){const u=PATH[ni].unit;curUnitWords=Array.from({length:5},(_,i)=>ALL[u*5+i][0]);exs=buildLearn(u);}else{exs=buildReview(ni);if(!exs.length){completeNode(ni);saveAll();screen="path";render();return;}}exi=0;hearts=5;picked=null;isOk=null;lc=0;lw=0;missed=[];multiSel=[];screen="lesson";render();};
 window.handlePick=function(o){if(picked!==null)return;const ex=exs[exi],ok=o===ex.gi;picked=o;isOk=ok;const w=S.ws[ex.gi];if(ok){w.nc++;lc++;S.xp+=10;}else{w.nw++;lw++;hearts--;missed.push(ex.gi);}w.h=calcHL(w.nc,w.nw,w.h);w.lp=today;w.seen=true;saveAll();render();};
 window.toggleMulti=function(oi){if(picked!==null)return;if(multiSel.includes(oi))multiSel=multiSel.filter(x=>x!==oi);else multiSel.push(oi);render();};
 window.submitMulti=function(){if(picked!==null||multiSel.length===0)return;const ex=exs[exi],mopts=ex.mopts;const correctIdx=mopts.map((o,i)=>o.correct?i:-1).filter(i=>i>=0);const allCorrect=correctIdx.every(i=>multiSel.includes(i));const noWrong=multiSel.every(i=>mopts[i].correct);const ok=allCorrect&&noWrong;picked=1;isOk=ok;const w=S.ws[ex.gi];if(ok){w.nc++;lc++;S.xp+=10;}else{w.nw++;lw++;hearts--;missed.push(ex.gi);}w.h=calcHL(w.nc,w.nw,w.h);w.lp=today;w.seen=true;saveAll();render();};
-window.handleNext=function(){if(hearts<=0&&!isOk){screen="fail";render();return;}multiSel=[];if(exi+1>=exs.length){const u=[...new Set(missed)];if(u.length>0){const r=[];for(const gi of shuffle(u)){if(isMulti(gi))r.push({type:"pickMulti",gi,mopts:makeMultiOpts(gi)});else r.push({type:Math.random()>0.5?"pickDef":"pickWord",gi,opts:makeOpts(gi)});}exs=exs.concat(r);missed=[];exi++;picked=null;isOk=null;render();return;}S.gems+=5;const e=lc*10;if(S.ld<today){S.str=S.ld===today-1?S.str+1:(S.ld===0?1:1);S.ld=today;S.txp=e;}else S.txp+=e;completeNode(curNode);saveAll();screen="complete";render();}else{exi++;picked=null;isOk=null;render();}};
+window.handleNext=function(){if(hearts<=0&&!isOk){screen="fail";render();return;}multiSel=[];if(exi+1>=exs.length){const u=[...new Set(missed)];if(u.length>0){const r=[];for(const gi of shuffle(u)){if(isMulti(gi))r.push({type:"pickMulti",gi,mopts:makeMultiOpts(gi)});else r.push({type:Math.random()>0.5?"pickDef":"pickWord",gi,opts:makeOpts(gi)});}exs=exs.concat(r);missed=[];exi++;picked=null;isOk=null;render();return;}S.gems+=5;const e=lc*10;if(S.ld<today){S.str=S.ld===today-1?S.str+1:(S.ld===0?1:1);S.ld=today;S.txp=e;S.tnw=0;}else S.txp+=e;completeNode(curNode);saveAll();screen="complete";render();}else{exi++;picked=null;isOk=null;render();}};
 window.showLeaderboard=async function(){screen="leaderboard";render();await loadLeaderboard();render();const s=document.getElementById("lbScroll");if(s)s.scrollTop=0;window.scrollTo(0,0);};
 window.showBackups=async function(){screen="backups";render();await loadBackups();};
 window.loadBackups=async function(){
@@ -952,6 +956,8 @@ async function saveBackup(){
       await saveBackup();
     }
   }
+  // 断连胜检查：昨天活跃但未达成每日目标（10新词）→ 断连胜
+  if(S.ld===today-1&&(S.tnw||0)<10&&S.str>0){S.str=0;}
   if(S.ld>0&&S.ld<today-1)S.str=0;
   if(S.ld<today)S.txp=0;
   if(!S.uid){
@@ -985,7 +991,9 @@ async function saveBackup(){
     try{const d=await db.collection("users").doc(S.uid).get();
       if(d.exists){const c=d.data();if(c.xp!=null&&c.xp>S.xp){S.np=c.np||S.np;if(c.wp)S.wp=c.wp;else if(c.ws)S.ws=c.ws;S.xp=c.xp;S.str=c.str!=null?c.str:S.str;S.gems=c.gems!=null?c.gems:S.gems;S.ld=c.ld||S.ld;S.txp=c.txp!=null?c.txp:S.txp;if(c.name)S.name=c.name;migrateState();}}
     }catch(e){}
-    if(S.ld>0&&S.ld<today-1)S.str=0;
+    // 断连胜检查：昨天活跃但未达成每日目标（10新词）→ 断连胜
+  if(S.ld===today-1&&(S.tnw||0)<10&&S.str>0){S.str=0;}
+  if(S.ld>0&&S.ld<today-1)S.str=0;
     if(S.ld<today)S.txp=0;
   }
   saveLocal();render();
