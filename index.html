@@ -23,7 +23,7 @@ input:focus{border-color:#58CC02}
 <body>
 <div id="app" style="display:flex;align-items:center;justify-content:center;height:100%;font-size:18px;font-weight:800;color:#58CC02">Loading...</div>
 <script>
-const APP_VERSION = "4.1";
+const APP_VERSION = "4.2";
 const STORED_VERSION = localStorage.getItem("app_version");
 if(STORED_VERSION !== APP_VERSION){
   localStorage.clear();
@@ -49,6 +49,35 @@ const UNITS=[
   {name:"Level 6",words:[["accessible","adj.","əkˈsesəbl","obtainable, reachable","After studying with SparkNotes and getting a great score on the SAT, Marlena happily realized that her goal of getting into an Ivy-League college was accessible."],["accommodating","adj.","əˈkɒmədeɪtɪŋ","helpful, obliging, polite","Though the apartment was not big enough for three people, Arnold, Mark, and Zebulon were all friends and were accommodating to each other."],["accord","n.","əˈkɔːrd","an agreement","After much negotiating, England and Iceland finally came to a mutually beneficial accord about fishing rights off the cost of Greenland."],["accost","v.","əˈkɒst","to confront verbally","Though Antoinette was normally quite calm, when the waiter spilled soup on her for the fourth time in 15 minutes she stood up and accosted the man."],["accretion","n.","əˈkriːʃən","slow growth in size or amount","Stalactites are formed by the accretion of minerals from the roofs of caves."]]},
   {name:"Level 7",words:[["acumen","n.","ˈækjʊmən","keen insight","Because of his mathematical acumen, Larry was able to figure out in minutes problems that took other students hours."],["acute","adj.","əˈkjuːt",["sharp, severe","having keen insight"],"Arnold could not walk because the pain in his foot was so acute."],["adamant","adj.","ˈædəmənt","impervious, immovable, unyielding","Though public pressure was intense, the President remained adamant about his proposal."],["adept","adj.","əˈdept","extremely skilled","Tarzan was adept at jumping from tree to tree like a monkey."],["adhere","n.","ədˈhɪr",["to stick to something","to follow devoutly"],"We adhered the poster to the wall with tape."]]},
   {name:"Level 8",words:[["admonish","v.","ədˈmɒnɪʃ","to caution, criticize, reprove","Joe's mother admonished him not to ruin his appetite by eating cookies before dinner."],["adorn","v.","əˈdɔːrn","to decorate","We adorned the tree with ornaments."],["adroit","adj.","əˈdrɔɪt","skillful, dexterous","The adroit thief could pick someone's pocket without attracting notice."],["adulation","n.","ˌædjʊˈleɪʃən","extreme praise","Though the book was pretty good, Marcy did not believe it deserved the adulation it received."],["adumbrate","v.","ˈæd əmbreɪt","to sketch out in a vague way","The coach adumbrated a game plan, but none of the players knew precisely what to do."]]},
+{name:"Advanced 1",words:[
+  ["permeate","v.","ˈpɜːrmiˌeɪt","To spread out or pass through something","The smell of fresh bread permeated the entire house."],
+  ["temerity","n.","təˈmerɪti","Boldness","She had the temerity to challenge the professor's decades-old theory."],
+  ["vicarious","adj.","vɪˈkɛriəs","Experienced through another person","He lived vicariously through his daughter's travels abroad."],
+  ["prosaic","adj.","proʊˈzeɪɪk","Lacking imagination","The poet's early work was prosaic, but his later poems were breathtaking."],
+  ["banal","adj.","bəˈnɑːl","Commonplace","The movie's banal plot failed to impress any critics."]
+]},
+{name:"Advanced 2",words:[
+  ["gregarious","adj.","ɡrɪˈɡɛriəs","Social and outgoing","The gregarious host made every guest feel welcome at the party."],
+  ["rapacious","adj.","rəˈpeɪʃəs","Greedy and predatory","The rapacious corporation bought out every small business in town."],
+  ["nefarious","adj.","nɪˈfɛriəs","Villainous or sinful","The nefarious scheme was uncovered by an investigative journalist."],
+  ["enigma","n.","ɪˈnɪɡmə","Someone or something that is difficult to comprehend or understand; a riddle","Einstein's personal life remains an enigma to many historians."],
+  ["accolade","n.","ˈækəleɪd","A gift of praise or honor","The young scientist received many accolades for her groundbreaking research."]
+]},
+{name:"Advanced 3",words:[
+  ["benevolent","adj.","bɪˈnevələnt","Kindhearted and well-intentioned","The benevolent donor gave millions to the local hospital."],
+  ["diverge","v.","daɪˈvɜːrdʒ","To separate from the main path","Their opinions began to diverge sharply as the debate continued."],
+  ["peculiar","adj.","pɪˈkjuːliər","Bizarre or out of the ordinary","There was a peculiar smell coming from the old laboratory."],
+  ["merit","n.","ˈmerɪt","A standard of excellence and worthiness","Her proposal was judged on its own merit, not on her reputation."],
+  ["elicit","v.","ɪˈlɪsɪt","To educe or extract gradually","The lawyer tried to elicit a confession from the reluctant witness."]
+]},
+{name:"Advanced 4",words:[
+  ["hypocrisy","n.","hɪˈpɒkrɪsi","Behaving in a way contrary to one's stated values or beliefs","It was sheer hypocrisy for him to preach honesty while lying constantly."],
+  ["keen","adj.","kiːn","Sharp and discerning","She has a keen eye for detecting forgeries in artwork."],
+  ["affirmation","n.","ˌæfərˈmeɪʃən","Agreement and emotional encouragement","Daily affirmations helped her build confidence over time."],
+  ["quantitative","adj.","ˈkwɒntɪteɪtɪv","Related to or measured by the amount of something","The study relied on quantitative data gathered from thousands of surveys."],
+  ["complacent","adj.","kəmˈpleɪsənt","Self-satisfied or smug; disinclined to exert effort or change","After years of success, the company grew complacent and failed to innovate."]
+]}
+
 ];
 const ALL=UNITS.flatMap(u=>u.words);
 const PATH=(function(){
