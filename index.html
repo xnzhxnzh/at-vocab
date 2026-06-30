@@ -8,7 +8,8 @@
 <meta name="apple-mobile-web-app-title" content="SAT Vocab">
 <meta name="theme-color" content="#131F24">
 <title>SAT Vocab</title>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" onerror="window._noFB=true"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" onerror="window._noFB=true">
+</script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js" onerror="window._noFB=true"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -23,7 +24,7 @@ input:focus{border-color:#58CC02}
 <body>
 <div id="app" style="display:flex;align-items:center;justify-content:center;height:100%;font-size:18px;font-weight:800;color:#58CC02">Loading...</div>
 <script>
-const APP_VERSION = "4.2";
+const APP_VERSION = "4.3";
 const STORED_VERSION = localStorage.getItem("app_version");
 if(STORED_VERSION !== APP_VERSION){
   localStorage.clear();
@@ -433,7 +434,7 @@ function render(){
       </div>
       <div style="height:6px;background:#1e3040;border-radius:3px;overflow:hidden"><div style="height:100%;border-radius:3px;width:${gp}%;background:${gm?G:"#ffd54f"};transition:width 0.5s"></div></div>
       <div style="margin-top:4px;display:flex;justify-content:space-between;align-items:center">
-        <span style="font-size:10px;color:#5a7a84">${seenN}/${ALL.length} words</span>
+        <span style="font-size:10px;color:#5a7a84">${seenN}/${ALL.length} words <span style="color:#3a5a64">v${APP_VERSION}</span></span>
         <button onclick="screen='rename';render()" style="font-size:10px;color:${BL};background:none;border:none;font-weight:700">${S.name} \u270F\uFE0F</button>
       </div>
     </div>`;
@@ -1027,6 +1028,30 @@ async function saveBackup(){
   }
   saveLocal();render();
 })();
+
+// ── 自动更新检测 ──
+async function checkForUpdates(){
+  try{
+    const resp=await fetch(location.href+'?bust='+Date.now(),{cache:'no-store'});
+    const text=await resp.text();
+    const m=text.match(/APP_VERSION\s*=\s*"([^"]+)"/);
+    if(m&&m[1]!==APP_VERSION) showUpdateBanner(m[1]);
+  }catch(e){}
+}
+function showUpdateBanner(newVer){
+  if(document.getElementById('updateBanner'))return;
+  const b=document.createElement('div');
+  b.id='updateBanner';
+  b.style.cssText='position:fixed;top:0;left:0;right:0;background:#58CC02;color:#fff;'+
+    'padding:14px 16px;text-align:center;z-index:9999;font-size:14px;font-weight:700;'+
+    'display:flex;align-items:center;justify-content:center;gap:12px;box-shadow:0 2px 8px rgba(0,0,0,.3);';
+  b.innerHTML='🆕 新版本 v'+newVer+' 已上线！'+
+    '<button onclick="location.reload(true)" style="background:#fff;color:#1a1a1a;border:none;'+
+    'padding:6px 14px;border-radius:6px;font-weight:700;font-size:13px;cursor:pointer;">立即更新</button>';
+  document.body.prepend(b);
+}
+window.addEventListener('load',()=>setTimeout(checkForUpdates,1500));
+
 </script>
 </body>
 </html>
