@@ -24,7 +24,7 @@ input:focus{border-color:#58CC02}
 <body>
 <div id="app" style="display:flex;align-items:center;justify-content:center;height:100%;font-size:18px;font-weight:800;color:#58CC02">Loading...</div>
 <script>
-const APP_VERSION = "4.3";
+const APP_VERSION = "4.4";
 const STORED_VERSION = localStorage.getItem("app_version");
 if(STORED_VERSION !== APP_VERSION){
   localStorage.clear();
@@ -1051,6 +1051,7 @@ function showUpdateBanner(newVer){
   document.body.prepend(b);
 }
 window.addEventListener('load',()=>setTimeout(checkForUpdates,1500));
+
 
 </script>
 </body>
