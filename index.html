@@ -24,7 +24,7 @@ input:focus{border-color:#58CC02}
 <body>
 <div id="app" style="display:flex;align-items:center;justify-content:center;height:100%;font-size:18px;font-weight:800;color:#58CC02">Loading...</div>
 <script>
-const APP_VERSION = "4.5";
+const APP_VERSION = "4.6";
 const STORED_VERSION = localStorage.getItem("app_version");
 if(STORED_VERSION !== APP_VERSION){
   localStorage.clear();
@@ -235,28 +235,37 @@ function migrateState(){
   for(let i=0;i<S.np.length-1;i++){if(S.np[i]===2&&S.np[i+1]===0)S.np[i+1]=1;}
 }
 
-async function saveCloud(){
+async function saveCloud(retries){
+  if(retries==null)retries=2;
   if(!db||!S.uid||S.uid==="undefined"||S.uid.length<10)return;
   syncWp();
-  try{
-    // 添加10秒超时
-    const timeoutPromise=new Promise((resolve,reject)=>
-      setTimeout(()=>reject(new Error("timeout")),10000)
-    );
-    
-    const savePromise=Promise.all([
-      db.collection("users").doc(S.uid).set({
-        uid:S.uid,name:S.name,np:S.np,wp:S.wp,xp:S.xp,str:S.str,gems:S.gems,ld:S.ld,txp:S.txp
-      }),
-      db.collection("leaderboard").doc(S.uid).set({
-        uid:S.uid,name:S.name,xp:S.xp,streak:S.str,
-        words:S.ws.filter(w=>w.seen).length,gems:S.gems,updated:Date.now()
-      })
-    ]);
-    
-    await Promise.race([savePromise,timeoutPromise]);
-  }catch(e){
-    console.log("Cloud save failed (timeout or error), data saved locally");
+  for(let attempt=0;attempt<=retries;attempt++){
+    try{
+      // 添加10秒超时
+      const timeoutPromise=new Promise((resolve,reject)=>
+        setTimeout(()=>reject(new Error("timeout")),10000)
+      );
+      
+      const savePromise=Promise.all([
+        db.collection("users").doc(S.uid).set({
+          uid:S.uid,name:S.name,np:S.np,wp:S.wp,xp:S.xp,str:S.str,gems:S.gems,ld:S.ld,txp:S.txp
+        }),
+        db.collection("leaderboard").doc(S.uid).set({
+          uid:S.uid,name:S.name,xp:S.xp,streak:S.str,
+          words:S.ws.filter(w=>w.seen).length,gems:S.gems,updated:Date.now()
+        })
+      ]);
+      
+      await Promise.race([savePromise,timeoutPromise]);
+      return;  // 成功，直接返回
+    }catch(e){
+      if(attempt<retries){
+        // 失败后退避重试：1秒、2秒
+        await new Promise(r=>setTimeout(r,1000*(attempt+1)));
+      }else{
+        console.log("Cloud save failed after "+(retries+1)+" attempts:",e.message);
+      }
+    }
   }
 }
 
@@ -1029,6 +1038,8 @@ async function saveBackup(){
     if(S.ld<today)S.txp=0;
   }
   saveLocal();render();
+  // 兜底：每20秒自动尝试同步一次，防止某次云端写入彻底失败后再也没被重试
+  setInterval(()=>{if(S.uid)saveAll();},20000);
 })();
 
 // ── 自动更新检测 ──
