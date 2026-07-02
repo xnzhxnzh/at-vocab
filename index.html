@@ -24,7 +24,7 @@ input:focus{border-color:#58CC02}
 <body>
 <div id="app" style="display:flex;align-items:center;justify-content:center;height:100%;font-size:18px;font-weight:800;color:#58CC02">Loading...</div>
 <script>
-const APP_VERSION = "4.4";
+const APP_VERSION = "4.5";
 const STORED_VERSION = localStorage.getItem("app_version");
 if(STORED_VERSION !== APP_VERSION){
   localStorage.clear();
@@ -301,10 +301,12 @@ async function loadLeaderboard(){
   }
 }
 
+let _cloudQueue=Promise.resolve();  // 云端保存队列，防止并发写入导致XP倒退
 function saveAll(){
   saveLocal();
-  // 异步保存到云端，不等待（防止UI阻塞）
-  saveCloud().catch(e=>console.log("Cloud save failed"));
+  // 排队执行云端保存：等前一个写入完成后，才用最新的S.xp发起下一个写入
+  // 防止网络乱序导致旧数据覆盖新数据（XP倒退bug）
+  _cloudQueue=_cloudQueue.then(()=>saveCloud().catch(e=>console.log("Cloud save failed")));
 }
 
 // Helpers
