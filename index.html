@@ -24,13 +24,10 @@ input:focus{border-color:#58CC02}
 <body>
 <div id="app" style="display:flex;align-items:center;justify-content:center;height:100%;font-size:18px;font-weight:800;color:#58CC02">Loading...</div>
 <script>
-const APP_VERSION = "4.6";
-const STORED_VERSION = localStorage.getItem("app_version");
-if(STORED_VERSION !== APP_VERSION){
-  localStorage.clear();
-  sessionStorage.clear();
-  localStorage.setItem("app_version", APP_VERSION);
-}
+const APP_VERSION = "4.8";
+// 注意：不再于版本变化时清空localStorage！
+// 账号进度(S.uid/S.wp等)必须跨版本保留，结构变化交给migrateState()处理
+localStorage.setItem("app_version", APP_VERSION);
 
 // Firebase
 let db=null;
@@ -1042,28 +1039,30 @@ async function saveBackup(){
   setInterval(()=>{if(S.uid)saveAll();},20000);
 })();
 
-// ── 自动更新检测 ──
+// ── 自动更新检测（无需用户点击，检测到新版本直接自动刷新）──
 async function checkForUpdates(){
   try{
     const resp=await fetch(location.href+'?bust='+Date.now(),{cache:'no-store'});
     const text=await resp.text();
     const m=text.match(/APP_VERSION\s*=\s*"([^"]+)"/);
-    if(m&&m[1]!==APP_VERSION) showUpdateBanner(m[1]);
+    if(m&&m[1]!==APP_VERSION){
+      showUpdatingToast(m[1]);
+      setTimeout(()=>location.reload(true),900);  // 短暂提示后自动刷新
+    }
   }catch(e){}
 }
-function showUpdateBanner(newVer){
+function showUpdatingToast(newVer){
   if(document.getElementById('updateBanner'))return;
   const b=document.createElement('div');
   b.id='updateBanner';
   b.style.cssText='position:fixed;top:0;left:0;right:0;background:#58CC02;color:#fff;'+
     'padding:14px 16px;text-align:center;z-index:9999;font-size:14px;font-weight:700;'+
-    'display:flex;align-items:center;justify-content:center;gap:12px;box-shadow:0 2px 8px rgba(0,0,0,.3);';
-  b.innerHTML='🆕 新版本 v'+newVer+' 已上线！'+
-    '<button onclick="location.reload(true)" style="background:#fff;color:#1a1a1a;border:none;'+
-    'padding:6px 14px;border-radius:6px;font-weight:700;font-size:13px;cursor:pointer;">立即更新</button>';
+    'box-shadow:0 2px 8px rgba(0,0,0,.3);';
+  b.textContent='🆕 正在更新到 v'+newVer+' ...';
   document.body.prepend(b);
 }
 window.addEventListener('load',()=>setTimeout(checkForUpdates,1500));
+setInterval(checkForUpdates,60000);  // 每60秒也检查一次，长时间开着也能自动更新
 
 
 </script>
