@@ -24,7 +24,7 @@ input:focus{border-color:#58CC02}
 <body>
 <div id="app" style="height:100%;display:flex;flex-direction:column"><div style="flex:1;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#58CC02">Loading...</div></div>
 <script>
-const APP_VERSION = "5.0";
+const APP_VERSION = "5.1";
 // 注意：不再于版本变化时清空localStorage！
 // 账号进度(S.uid/S.wp等)必须跨版本保留，结构变化交给migrateState()处理
 localStorage.setItem("app_version", APP_VERSION);
@@ -234,7 +234,7 @@ function migrateState(){
 
 async function saveCloud(retries){
   if(retries==null)retries=2;
-  if(!db||!S.uid||S.uid==="undefined"||S.uid.length<10)return;
+  if(!db||!S.uid||S.uid==="undefined"||S.uid==="")return;
   syncWp();
   for(let attempt=0;attempt<=retries;attempt++){
     try{
