@@ -19,12 +19,16 @@ button{font-family:inherit;cursor:pointer;-webkit-appearance:none}
 .btn:active{transform:translateY(2px);box-shadow:none}
 input{font-family:inherit;background:#1B2B31;color:#fff;border:2px solid #2a4a52;border-radius:12px;padding:12px 16px;font-size:16px;width:100%;outline:none}
 input:focus{border-color:#58CC02}
+@keyframes owlBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes owlShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.owl-bounce{animation:owlBounce 0.6s ease-in-out}
+.owl-shake{animation:owlShake 0.4s ease-in-out}
 </style>
 </head>
 <body>
 <div id="app" style="height:100%;display:flex;flex-direction:column"><div style="flex:1;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#58CC02">Loading...</div></div>
 <script>
-const APP_VERSION = "5.1";
+const APP_VERSION = "5.2";
 // 注意：不再于版本变化时清空localStorage！
 // 账号进度(S.uid/S.wp等)必须跨版本保留，结构变化交给migrateState()处理
 localStorage.setItem("app_version", APP_VERSION);
@@ -97,6 +101,39 @@ function makeOpts(gi){const unitStart=Math.floor(gi/5)*5;const d=[];const u=new 
 function isMulti(gi){return Array.isArray(ALL[gi][3]);}
 function defText(gi){const d=ALL[gi][3];return Array.isArray(d)?d.join(" / "):d;}
 function getPronunciation(gi){const p=ALL[gi][2];return p?p:"";}
+
+// ── 原创吉祥物：小猫头鹰 Ollie（纯SVG手绘，非任何版权角色）──
+function owlMascot(mood){
+  const body="#F4D9A0",belly="#FFF3D6",wing="#E0B97A",beak="#FF9F45",brow="#8B6B3D";
+  let eyes="",brows="",beakShape="",extra="",cls="";
+  if(mood==="happy"){
+    cls="owl-bounce";
+    eyes=`<path d="M30 50 Q38 40 46 50" stroke="#2b2b2b" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M54 50 Q62 40 70 50" stroke="#2b2b2b" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+    beakShape=`<path d="M42 60 Q50 70 58 60 Q50 65 42 60Z" fill="${beak}"/>`;
+    extra=`<text x="12" y="26" font-size="16">✨</text><text x="76" y="30" font-size="13">✨</text>`;
+  }else if(mood==="sad"){
+    cls="owl-shake";
+    eyes=`<circle cx="38" cy="53" r="5" fill="#2b2b2b"/><circle cx="62" cy="53" r="5" fill="#2b2b2b"/>`;
+    brows=`<path d="M28 42 L44 48" stroke="${brow}" stroke-width="3" stroke-linecap="round"/><path d="M72 42 L56 48" stroke="${brow}" stroke-width="3" stroke-linecap="round"/>`;
+    beakShape=`<path d="M42 63 Q50 58 58 63 Q50 64 42 63Z" fill="${beak}"/>`;
+    extra=`<ellipse cx="74" cy="44" rx="3" ry="5" fill="#6EC3F4" opacity="0.85"/>`;
+  }else{
+    eyes=`<circle cx="38" cy="50" r="10" fill="#fff"/><circle cx="62" cy="50" r="10" fill="#fff"/><circle cx="38" cy="50" r="5" fill="#2b2b2b"/><circle cx="62" cy="50" r="5" fill="#2b2b2b"/>`;
+    beakShape=`<path d="M46 60 L54 60 L50 68Z" fill="${beak}"/>`;
+  }
+  return `<svg class="${cls}" width="64" height="64" viewBox="0 0 100 100" style="display:block;margin:0 auto 6px">
+    <ellipse cx="32" cy="60" rx="8" ry="14" fill="${wing}"/>
+    <ellipse cx="68" cy="60" rx="8" ry="14" fill="${wing}"/>
+    <ellipse cx="50" cy="55" rx="34" ry="32" fill="${body}"/>
+    <path d="M22 32 L30 18 L36 30Z" fill="${body}"/>
+    <path d="M78 32 L70 18 L64 30Z" fill="${body}"/>
+    <ellipse cx="50" cy="66" rx="16" ry="14" fill="${belly}"/>
+    ${brows}${eyes}${beakShape}
+    <ellipse cx="42" cy="86" rx="5" ry="3" fill="${beak}"/>
+    <ellipse cx="58" cy="86" rx="5" ry="3" fill="${beak}"/>
+    ${extra}
+  </svg>`;
+}
 function speak(word){
   if(!window.speechSynthesis)return;
   window.speechSynthesis.cancel();
@@ -608,7 +645,8 @@ function render(){
     }
     if(ex.type==="pickDef"||ex.type==="pickWord"){
       const isDef=ex.type==="pickDef";
-      h+=`<div style="width:100%;text-align:center"><div style="font-size:13px;color:#8BA4AE;font-weight:700;margin-bottom:10px">${isDef?"What does this word mean?":"Which word matches?"}</div>
+      const mood1=picked===null?"idle":(isOk?"happy":"sad");
+      h+=`<div style="width:100%;text-align:center">${owlMascot(mood1)}<div style="font-size:13px;color:#8BA4AE;font-weight:700;margin-bottom:10px">${isDef?"What does this word mean?":"Which word matches?"}</div>
         <div style="background:${CB};border:2px solid ${BC};border-radius:16px;padding:20px 16px;margin-bottom:14px">
           ${isDef?`<div style="display:flex;align-items:center;justify-content:center;gap:8px"><div style="font-size:28px;font-weight:900">${word[0]}</div><button onclick="speak('${word[0]}')" style="background:#1e3040;border:none;border-radius:50%;width:32px;height:32px;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0">🔊</button></div><div style="font-size:11px;color:${G};font-weight:700">${word[1]}</div><div style="font-size:11px;color:#8BA4AE;font-style:italic">${word[2]}</div>`:`<div style="font-size:15px;color:#c8e0e8;line-height:1.5">${defText(ex.gi)}</div>`}
         </div><div style="display:flex;flex-direction:column;gap:7px">`;
@@ -629,7 +667,8 @@ function render(){
     }
     if(ex.type==="pickMulti"){
       const mopts=ex.mopts;
-      h+=`<div style="width:100%;text-align:center"><div style="font-size:13px;color:#8BA4AE;font-weight:700;margin-bottom:10px">Select ALL correct meanings</div>
+      const mood2=picked===null?"idle":(isOk?"happy":"sad");
+      h+=`<div style="width:100%;text-align:center">${owlMascot(mood2)}<div style="font-size:13px;color:#8BA4AE;font-weight:700;margin-bottom:10px">Select ALL correct meanings</div>
         <div style="background:${CB};border:2px solid ${BC};border-radius:16px;padding:20px 16px;margin-bottom:14px">
           <div style="display:flex;align-items:center;justify-content:center;gap:8px"><div style="font-size:28px;font-weight:900">${word[0]}</div><button onclick="speak('${word[0]}')" style="background:#1e3040;border:none;border-radius:50%;width:32px;height:32px;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0">🔊</button></div><div style="font-size:11px;color:${G};font-weight:700">${word[1]}</div><div style="font-size:11px;color:#8BA4AE;font-style:italic">${word[2]}</div>
           <div style="font-size:9px;color:#8BA4AE;margin-top:6px">(this word has ${ALL[ex.gi][3].length} meanings)</div>
