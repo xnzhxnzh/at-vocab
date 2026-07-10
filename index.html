@@ -28,7 +28,7 @@ input:focus{border-color:#58CC02}
 <body>
 <div id="app" style="height:100%;display:flex;flex-direction:column"><div style="flex:1;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#58CC02">Loading...</div></div>
 <script>
-const APP_VERSION = "6.4";
+const APP_VERSION = "6.5";
 // 注意：不再于版本变化时清空localStorage！
 // 账号进度(S.uid/S.wp等)必须跨版本保留，结构变化交给migrateState()处理
 localStorage.setItem("app_version", APP_VERSION);
@@ -215,6 +215,82 @@ const abstractWordMap={
   quantitative:"measure",accretion:"measure",modicum:"measure",nominal:"measure",accentuate:"measure",
   provenance:"origin",
   omnipotent:"power"
+};
+// ══════ 专属单词图标（每个词根据词意/例句单独手绘，非模板复用）══════
+const wordIcons={
+  hypocrisy:`<svg width="72" height="72" viewBox="0 0 100 100" style="display:block;margin:0 auto 10px">
+    <path d="M50 15 Q22 15 22 50 Q22 82 50 88 Z" fill="#58CC02"/>
+    <path d="M50 15 Q78 15 78 50 Q78 82 50 88 Z" fill="#e74c3c"/>
+    <circle cx="36" cy="45" r="4" fill="#0d1a20"/><circle cx="64" cy="45" r="4" fill="#0d1a20"/>
+    <path d="M28 62 Q36 68 44 62" stroke="#0d1a20" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M56 66 Q64 60 72 66" stroke="#0d1a20" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M20 25 L35 20 L38 28 L23 33Z" fill="#fff" opacity="0.9"/>
+  </svg>`,
+  keen:`<svg width="72" height="72" viewBox="0 0 100 100" style="display:block;margin:0 auto 10px">
+    <ellipse cx="45" cy="50" rx="30" ry="18" fill="#fff"/>
+    <circle cx="45" cy="50" r="11" fill="#1CB0F6"/><circle cx="45" cy="50" r="5" fill="#0d1a20"/>
+    <path d="M62 65 L80 83" stroke="#8BA4AE" stroke-width="7" stroke-linecap="round"/>
+    <circle cx="82" cy="85" r="6" fill="none" stroke="#8BA4AE" stroke-width="4"/>
+    <path d="M45 24 L45 15M45 76 L45 85M14 50 L5 50" stroke="#FFD54F" stroke-width="3" stroke-linecap="round"/>
+  </svg>`,
+  affirmation:`<svg width="72" height="72" viewBox="0 0 100 100" style="display:block;margin:0 auto 10px">
+    <path d="M50 20 Q20 20 20 42 Q20 60 40 62 L36 76 L55 62 Q80 60 80 42 Q80 20 50 20Z" fill="#1CB0F6"/>
+    <path d="M40 45 L47 53 L62 35" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>`,
+  quantitative:`<svg width="72" height="72" viewBox="0 0 100 100" style="display:block;margin:0 auto 10px">
+    <rect x="18" y="60" width="14" height="25" fill="#1CB0F6"/>
+    <rect x="38" y="45" width="14" height="40" fill="#58CC02"/>
+    <rect x="58" y="55" width="14" height="30" fill="#1CB0F6"/>
+    <rect x="78" y="30" width="14" height="55" fill="#FFD54F"/>
+    <path d="M15 88 L92 88" stroke="#5a7a84" stroke-width="2"/>
+  </svg>`,
+  complacent:`<svg width="72" height="72" viewBox="0 0 100 100" style="display:block;margin:0 auto 10px">
+    <ellipse cx="50" cy="85" rx="26" ry="5" fill="#0d1a20" opacity="0.4"/>
+    <rect x="30" y="55" width="40" height="8" rx="3" fill="#8B6B3D"/>
+    <rect x="26" y="60" width="10" height="25" rx="2" fill="#8B6B3D"/>
+    <rect x="64" y="60" width="10" height="25" rx="2" fill="#8B6B3D"/>
+    <circle cx="50" cy="38" r="16" fill="#FFD54F"/>
+    <path d="M42 35 Q50 30 58 35" stroke="#0d1a20" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <circle cx="44" cy="38" r="2" fill="#0d1a20"/><circle cx="56" cy="38" r="2" fill="#0d1a20"/>
+    <ellipse cx="30" cy="55" rx="6" ry="3" fill="#c8d4d8" opacity="0.6"/>
+    <ellipse cx="66" cy="52" rx="5" ry="3" fill="#c8d4d8" opacity="0.6"/>
+  </svg>`,
+  opine:`<svg width="72" height="72" viewBox="0 0 100 100" style="display:block;margin:0 auto 10px">
+    <circle cx="50" cy="55" r="26" fill="#FFD54F"/>
+    <circle cx="42" cy="50" r="3" fill="#0d1a20"/><circle cx="58" cy="50" r="3" fill="#0d1a20"/>
+    <path d="M38 62 Q50 70 62 62" stroke="#0d1a20" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M55 18 Q75 12 80 25 Q83 33 74 33 Q66 33 62 26Z" fill="#1CB0F6"/>
+    <text x="66" y="26" font-size="16" font-weight="900" fill="#fff">!</text>
+  </svg>`,
+  disparage:`<svg width="72" height="72" viewBox="0 0 100 100" style="display:block;margin:0 auto 10px">
+    <circle cx="35" cy="35" r="18" fill="#e74c3c"/>
+    <circle cx="30" cy="32" r="2.5" fill="#fff"/><circle cx="40" cy="32" r="2.5" fill="#fff"/>
+    <path d="M27 42 Q35 38 43 42" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M32 50 L20 75" stroke="#e74c3c" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="72" cy="72" r="9" fill="#8BA4AE"/>
+    <path d="M68 70 Q72 74 76 70" stroke="#0d1a20" stroke-width="2" fill="none" stroke-linecap="round"/>
+  </svg>`,
+  nominal:`<svg width="72" height="72" viewBox="0 0 100 100" style="display:block;margin:0 auto 10px">
+    <rect x="55" y="35" width="35" height="45" rx="4" fill="#8B6B3D"/>
+    <rect x="58" y="38" width="29" height="12" fill="#FFD54F"/>
+    <path d="M62 55 L82 55 M62 62 L82 62 M62 69 L74 69" stroke="#5a4020" stroke-width="2" stroke-linecap="round"/>
+    <path d="M15 55 L38 55 L45 62 L38 69 L15 69Z" fill="#e74c3c"/>
+    <text x="20" y="66" font-size="14" font-weight="900" fill="#fff">$</text>
+    <path d="M28 40 L28 30 M24 33 L32 33" stroke="#FFD54F" stroke-width="2.5" stroke-linecap="round"/>
+  </svg>`,
+  eschew:`<svg width="72" height="72" viewBox="0 0 100 100" style="display:block;margin:0 auto 10px">
+    <circle cx="30" cy="50" r="18" fill="#FFD54F"/>
+    <path d="M20 44 L40 56M40 44 L20 56" stroke="#8B6B3D" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+    <path d="M60 30 L60 70 M45 50 L60 50" stroke="#e74c3c" stroke-width="7" stroke-linecap="round"/>
+    <circle cx="75" cy="50" r="13" fill="none" stroke="#e74c3c" stroke-width="6"/>
+  </svg>`,
+  rancorous:`<svg width="72" height="72" viewBox="0 0 100 100" style="display:block;margin:0 auto 10px">
+    <circle cx="28" cy="50" r="17" fill="#FFD54F"/>
+    <path d="M20 46 Q28 42 36 46" stroke="#0d1a20" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <circle cx="72" cy="50" r="17" fill="#1CB0F6"/>
+    <path d="M64 46 Q72 42 80 46" stroke="#0d1a20" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M45 30 L50 40 L42 42 L52 50 L44 50 L50 62" stroke="#e74c3c" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>`
 };
 // ── 记忆辅助配图：用Pixabay为每个新词查一张示意图 ──
 const PIXABAY_KEY="56644070-e4e64957235c10b03842fb3c9";
@@ -741,10 +817,14 @@ function render(){
     h+=`<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;overflow-y:auto">`;
 
     if(ex.type==="intro"){
+      const specificIcon=wordIcons[word[0]];
       const absTheme=abstractWordMap[word[0]];
       let visualHtml="";
-      if(absTheme){
-        // 抽象词：直接用手绘符号图标，同步渲染，不用等网络
+      if(specificIcon){
+        // 优先级最高：这个词有专属手绘图标（根据词意/例句单独设计）
+        visualHtml=specificIcon;
+      }else if(absTheme){
+        // 次优先：抽象词共用符号图标，同步渲染，不用等网络
         visualHtml=abstractIcon(absTheme);
       }else{
         // 具体词/未分类新词：先立即显示通用图标兜底，Pixabay查到照片后自动升级替换
