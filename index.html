@@ -28,7 +28,7 @@ input:focus{border-color:#58CC02}
 <body>
 <div id="app" style="height:100%;display:flex;flex-direction:column"><div style="flex:1;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#58CC02">Loading...</div></div>
 <script>
-const APP_VERSION = "5.2";
+const APP_VERSION = "5.4";
 // 注意：不再于版本变化时清空localStorage！
 // 账号进度(S.uid/S.wp等)必须跨版本保留，结构变化交给migrateState()处理
 localStorage.setItem("app_version", APP_VERSION);
@@ -78,10 +78,45 @@ const UNITS=[
   ["affirmation","n.","ˌæfərˈmeɪʃən","Agreement and emotional encouragement","Daily affirmations helped her build confidence over time."],
   ["quantitative","adj.","ˈkwɒntɪteɪtɪv","Related to or measured by the amount of something","The study relied on quantitative data gathered from thousands of surveys."],
   ["complacent","adj.","kəmˈpleɪsənt","Self-satisfied or smug; disinclined to exert effort or change","After years of success, the company grew complacent and failed to innovate."]
+]},
+{name:"Advanced 5",words:[
+  ["opine","v.","oʊˈpaɪn","To give an opinion","She opined that the new policy would fail within a year."],
+  ["disparage","v.","dɪˈspærɪdʒ","To treat someone as less than; to belittle","He disparaged his opponent's ideas in front of the entire committee."],
+  ["nominal","adj.","ˈnɒmɪnəl","Insignificant; ostensible","The fee was nominal compared to the actual value of the service."],
+  ["eschew","v.","ɛsˈtʃuː","To intentionally avoid or abstain from","The monk chose to eschew all worldly possessions."],
+  ["rancorous","adj.","ˈræŋkərəs","Bitter or holding resentment","The rancorous debate left both sides refusing to speak to each other."],
+  ["indignation","n.","ˌɪndɪɡˈneɪʃən","Anger caused by an unjust or unfair situation","The unfair verdict filled the crowd with indignation."]
+]},
+{name:"Advanced 6",words:[
+  ["erratic","adj.","ɪˈrætɪk","Irregular or spontaneous in action and behavior; unpredictable","His erratic driving worried everyone in the car."],
+  ["pernicious","adj.","pərˈnɪʃəs","Damaging","The rumor had a pernicious effect on her reputation."],
+  ["controversial","adj.","ˌkɒntrəˈvɜːrʃəl","Likely to be a topic of dispute","The controversial ruling sparked debate across the entire country."],
+  ["ornate","adj.","ɔːrˈneɪt","Elaborate or embellished","The cathedral's ornate ceiling was covered in gold leaf and intricate carvings."],
+  ["denounce","v.","dɪˈnaʊns","To publicly condemn or criticize an individual","The senator denounced the corrupt official in a televised speech."],
+  ["jubilant","adj.","ˈdʒuːbɪlənt","Overjoyed","The jubilant fans stormed the field after the championship win."]
+]},
+{name:"Advanced 7",words:[
+  ["surmise","v.","sərˈmaɪz","To make a guess","From the muddy footprints, the detective surmised that two people had entered the room."],
+  ["fervent","adj.","ˈfɜːrvənt","With passion","She gave a fervent speech urging the crowd to take action."],
+  ["depravity","n.","dɪˈprævɪti","Corruption or deviance","The novel explores the depravity hidden beneath the town's respectable surface."],
+  ["foment","v.","foʊˈmɛnt","To provoke or incite action or violence","The propaganda was designed to foment unrest among the citizens."],
+  ["complicit","adj.","kəmˈplɪsɪt","Associated with or involved in any sort of illegal or ill-advised activity","By staying silent, he became complicit in the scheme."],
+  ["vociferous","adj.","voʊˈsɪfərəs","To express noisily and insistently","The vociferous protesters could be heard blocks away."]
+]},
+{name:"Advanced 8",words:[
+  ["scathing","adj.","ˈskeɪðɪŋ","Blistering and devastating; sometimes passionately critical","The critic wrote a scathing review that closed the play within a week."],
+  ["insipid","adj.","ɪnˈsɪpɪd","Bland; flavorless","The insipid soup needed far more seasoning."],
+  ["omnipotent","adj.","ɒmˈnɪpətənt","Almighty or invincible","In the myth, the omnipotent ruler could reshape the world with a single word."],
+  ["renounce","v.","rɪˈnaʊns","To relinquish or disown someone or something","The prince renounced his claim to the throne."],
+  ["modicum","n.","ˈmɒdɪkəm","A fragment of an object","Even a modicum of effort would have improved his grade."],
+  ["provenance","n.","ˈprɒvɪnəns","Something's birthplace or beginning","The museum verified the painting's provenance before purchasing it."]
 ]}
 
 ];
 const ALL=UNITS.flatMap(u=>u.words);
+// UNIT_START[i] = 第i个unit第一个词在ALL中的全局索引（支持每个unit不同词数）
+const UNIT_START=(function(){let acc=0;return UNITS.map(u=>{const s=acc;acc+=u.words.length;return s;});})();
+function unitIndexOf(gi){for(let i=UNITS.length-1;i>=0;i--){if(gi>=UNIT_START[i])return i;}return 0;}
 const PATH=(function(){
   const p=[];
   const learnIcons=["\u2B50","\uD83D\uDCDA","\uD83D\uDD25","\uD83D\uDC8E","\uD83C\uDF1F","\uD83D\uDE80","\u26A1","\uD83C\uDFAF"];
@@ -97,7 +132,7 @@ function calcHL(nc,nw,ph){return Math.max(0.25,Math.pow(2,0.7+0.9*Math.sqrt(nc)-
 function recallP(h,d){return h>0?Math.pow(2,-d/h):0;}
 function todayNum(){return Math.floor(Date.now()/86400000);}
 function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=0|Math.random()*(i+1);[b[i],b[j]]=[b[j],b[i]];}return b;}
-function makeOpts(gi){const unitStart=Math.floor(gi/5)*5;const d=[];const u=new Set([gi]);while(d.length<3){const r=unitStart+(0|Math.random()*5);if(!u.has(r)){u.add(r);d.push(r);}}return shuffle([gi,...d]);}
+function makeOpts(gi){const ui=unitIndexOf(gi);const unitStart=UNIT_START[ui];const unitLen=UNITS[ui].words.length;const d=[];const u=new Set([gi]);let guard=0;while(d.length<3&&guard<50){guard++;const r=unitStart+(0|Math.random()*unitLen);if(!u.has(r)){u.add(r);d.push(r);}}while(d.length<3){const r=0|Math.random()*ALL.length;if(!u.has(r)){u.add(r);d.push(r);}}return shuffle([gi,...d]);}
 function isMulti(gi){return Array.isArray(ALL[gi][3]);}
 function defText(gi){const d=ALL[gi][3];return Array.isArray(d)?d.join(" / "):d;}
 function getPronunciation(gi){const p=ALL[gi][2];return p?p:"";}
@@ -142,7 +177,7 @@ function speak(word){
   u.rate=0.85;
   window.speechSynthesis.speak(u);
 }
-function makeMultiOpts(gi){const correctDefs=ALL[gi][3];const unitStart=Math.floor(gi/5)*5;const wrongDefs=[];const u=new Set([gi]);while(wrongDefs.length<2){const r=unitStart+(0|Math.random()*5);if(!u.has(r)&&!isMulti(r)){u.add(r);wrongDefs.push(ALL[r][3]);}}const opts=[...correctDefs.map(d=>({text:d,correct:true})),...wrongDefs.map(d=>({text:d,correct:false}))];return shuffle(opts);}
+function makeMultiOpts(gi){const correctDefs=ALL[gi][3];const ui2=unitIndexOf(gi);const unitStart=UNIT_START[ui2];const unitLen2=UNITS[ui2].words.length;const wrongDefs=[];const u=new Set([gi]);let guard2=0;while(wrongDefs.length<2&&guard2<50){guard2++;const r=unitStart+(0|Math.random()*unitLen2);if(!u.has(r)&&!isMulti(r)){u.add(r);wrongDefs.push(ALL[r][3]);}}while(wrongDefs.length<2){const r=0|Math.random()*ALL.length;if(!u.has(r)&&!isMulti(r)){u.add(r);wrongDefs.push(ALL[r][3]);}}const opts=[...correctDefs.map(d=>({text:d,correct:true})),...wrongDefs.map(d=>({text:d,correct:false}))];return shuffle(opts);}
 function rclr(v){return v>0.8?"#58CC02":v>0.5?"#ffd54f":"#FF4B4B";}
 
 // State
@@ -353,9 +388,9 @@ function saveAll(){
 }
 
 // Helpers
-function getWeakWords(u){const mx=(u+1)*5;return S.ws.filter((w,i)=>i<mx&&w.seen&&(w.nw>0||recallP(w.h,today-w.lp)<0.8));}
+function getWeakWords(u){const mx=UNIT_START[u]+UNITS[u].words.length;return S.ws.filter((w,i)=>i<mx&&w.seen&&(w.nw>0||recallP(w.h,today-w.lp)<0.8));}
 function reviewHasWords(ni){return getWeakWords(Math.floor(ni/2)).length>0;}
-function buildLearn(ui){const b=ui*5,e=[];for(let i=0;i<5;i++)e.push({type:"intro",gi:b+i});for(const i of shuffle([0,1,2,3,4])){const gi=b+i;if(isMulti(gi))e.push({type:"pickMulti",gi,mopts:makeMultiOpts(gi)});else e.push({type:"pickDef",gi,opts:makeOpts(gi)});}for(const i of shuffle([0,1,2,3,4]))e.push({type:"pickWord",gi:b+i,opts:makeOpts(b+i)});return e;}
+function buildLearn(ui){const b=UNIT_START[ui];const n=UNITS[ui].words.length;const idx=Array.from({length:n},(_,i)=>i);const e=[];for(let i=0;i<n;i++)e.push({type:"intro",gi:b+i});for(const i of shuffle(idx)){const gi=b+i;if(isMulti(gi))e.push({type:"pickMulti",gi,mopts:makeMultiOpts(gi)});else e.push({type:"pickDef",gi,opts:makeOpts(gi)});}for(const i of shuffle(idx))e.push({type:"pickWord",gi:b+i,opts:makeOpts(b+i)});return e;}
 function buildReview(ni){const w=getWeakWords(Math.floor(ni/2));if(!w.length)return[];const b=shuffle(w).slice(0,10),e=[];for(const x of shuffle(b)){if(isMulti(x.i))e.push({type:"pickMulti",gi:x.i,mopts:makeMultiOpts(x.i)});else e.push({type:"pickDef",gi:x.i,opts:makeOpts(x.i)});}for(const x of shuffle(b))e.push({type:"pickWord",gi:x.i,opts:makeOpts(x.i)});return e;}
 function completeNode(ni){
   S.np[ni]=2;
@@ -505,7 +540,7 @@ function render(){
         ${avail&&!noWork?`<div style="position:absolute;bottom:-7px;left:50%;transform:translateX(-50%);background:${isRev?BL:G};color:#fff;font-size:7px;font-weight:800;padding:2px 7px;border-radius:7px">${isRev?"REVIEW":"START"}</div>`:""}
       </button>`;
       h+=`<div style="margin-top:6px;text-align:center;margin-bottom:4px"><div style="font-size:11px;font-weight:800;color:${locked?"#5a6a72":"#fff"}">${node.name}</div>`;
-      if(node.type==="learn"&&done){const b=node.unit*5;h+=`<div style="display:flex;gap:3px;justify-content:center;margin-top:2px">`;S.ws.slice(b,b+5).forEach(w=>{h+=`<div style="width:6px;height:6px;border-radius:3px;background:${rclr(recallP(w.h,today-w.lp))}"></div>`;});h+=`</div>`;}
+      if(node.type==="learn"&&done){const b=UNIT_START[node.unit];const uLen=UNITS[node.unit].words.length;h+=`<div style="display:flex;gap:3px;justify-content:center;margin-top:2px">`;S.ws.slice(b,b+uLen).forEach(w=>{h+=`<div style="width:6px;height:6px;border-radius:3px;background:${rclr(recallP(w.h,today-w.lp))}"></div>`;});h+=`</div>`;}
       if(isRev&&hasWork)h+=`<div style="font-size:9px;color:${BL};font-weight:700">${getWeakWords(Math.floor(ni/2)).length} weak</div>`;
       if(isRev&&(done||noWork))h+=`<div style="font-size:9px;color:${G};font-weight:700">All strong</div>`;
       if(locked)h+=`<div style="font-size:9px;color:#5a6a72">\uD83D\uDD12</div>`;
@@ -897,7 +932,7 @@ window.doMigrate=async function(){
   }else{document.getElementById("rm").innerHTML=`<span style="color:${R}">\u274C No internet connection</span>`;}
 };
 window.goPath=function(){screen="path";render();};
-window.startNode=function(ni){if(S.np[ni]===0)return;curNode=ni;if(PATH[ni].type==="learn"){const u=PATH[ni].unit;curUnitWords=Array.from({length:5},(_,i)=>ALL[u*5+i][0]);exs=buildLearn(u);}else{exs=buildReview(ni);if(!exs.length){completeNode(ni);saveAll();screen="path";render();return;}}exi=0;hearts=5;picked=null;isOk=null;lc=0;lw=0;missed=[];multiSel=[];screen="lesson";render();};
+window.startNode=function(ni){if(S.np[ni]===0)return;curNode=ni;if(PATH[ni].type==="learn"){const u=PATH[ni].unit;const n=UNITS[u].words.length;curUnitWords=Array.from({length:n},(_,i)=>ALL[UNIT_START[u]+i][0]);exs=buildLearn(u);}else{exs=buildReview(ni);if(!exs.length){completeNode(ni);saveAll();screen="path";render();return;}}exi=0;hearts=5;picked=null;isOk=null;lc=0;lw=0;missed=[];multiSel=[];screen="lesson";render();};
 window.handlePick=function(o){if(picked!==null)return;const ex=exs[exi],ok=o===ex.gi;picked=o;isOk=ok;const w=S.ws[ex.gi];if(ok){w.nc++;lc++;S.xp+=10;}else{w.nw++;lw++;hearts--;missed.push(ex.gi);}w.h=calcHL(w.nc,w.nw,w.h);w.lp=today;w.seen=true;saveAll();render();};
 window.toggleMulti=function(oi){if(picked!==null)return;if(multiSel.includes(oi))multiSel=multiSel.filter(x=>x!==oi);else multiSel.push(oi);render();};
 window.submitMulti=function(){if(picked!==null||multiSel.length===0)return;const ex=exs[exi],mopts=ex.mopts;const correctIdx=mopts.map((o,i)=>o.correct?i:-1).filter(i=>i>=0);const allCorrect=correctIdx.every(i=>multiSel.includes(i));const noWrong=multiSel.every(i=>mopts[i].correct);const ok=allCorrect&&noWrong;picked=1;isOk=ok;const w=S.ws[ex.gi];if(ok){w.nc++;lc++;S.xp+=10;}else{w.nw++;lw++;hearts--;missed.push(ex.gi);}w.h=calcHL(w.nc,w.nw,w.h);w.lp=today;w.seen=true;saveAll();render();};
