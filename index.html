@@ -28,7 +28,7 @@ input:focus{border-color:#58CC02}
 <body>
 <div id="app" style="height:100%;display:flex;flex-direction:column"><div style="flex:1;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#58CC02">Loading...</div></div>
 <script>
-const APP_VERSION = "5.8";
+const APP_VERSION = "6.0";
 // 注意：不再于版本变化时清空localStorage！
 // 账号进度(S.uid/S.wp等)必须跨版本保留，结构变化交给migrateState()处理
 localStorage.setItem("app_version", APP_VERSION);
@@ -280,6 +280,7 @@ function buildWs(){S.ws=ALL.map((w,i)=>{const p=S.wp[w[0]];return p?{i,nc:p.nc||
 // 从ws更新wp（只存有进度的词，保持wp紧凑）
 function syncWp(){S.wp={};S.ws.forEach((w,i)=>{if(w.seen||w.nc>0||w.nw>0)S.wp[ALL[i][0]]={nc:w.nc,nw:w.nw,h:w.h,lp:w.lp,seen:w.seen};});}
 let screen="path",curNode=0,exs=[],exi=0,hearts=5,picked=null,isOk=null,lc=0,lw=0,missed=[],leaderboard=[],editingName=false,recoverUsers=[],multiSel=[];
+let studySessionStart=null,restReminder=false;  // 学习计时：15分钟提醒休息
 const dailyGoal=50,today=todayNum();
 const G="#58CC02",R="#FF4B4B",CB="#1B2B31",BC="#2a4a52",BL="#1CB0F6";
 
@@ -528,7 +529,7 @@ function render(){
         <span style="font-size:20px">\u26A0\uFE0F</span>
         <div style="flex:1">
           <div style="font-size:13px;font-weight:800;color:#FFB74D">${totalWeak} word${totalWeak>1?"s":""} need review</div>
-          <div style="font-size:10px;color:#c8a068">不用一次都清零，今天之内清零就可以</div>
+          <div style="font-size:10px;color:#c8a068">No need to clear it all at once — anytime today works</div>
         </div>
       </div>`;
     })()}`;
@@ -762,7 +763,12 @@ function render(){
       <div style="text-align:center"><div style="font-size:24px;font-weight:900;color:${G}">${lc}</div><div style="font-size:9px;color:#8BA4AE">CORRECT</div></div>
       <div style="text-align:center"><div style="font-size:24px;font-weight:900;color:${R}">${lw}</div><div style="font-size:9px;color:#8BA4AE">WRONG</div></div>
     </div>
-    <button class="btn" style="background:${G};box-shadow:0 4px 0 #45A000" onclick="goPath()">Continue</button></div>`;
+    ${restReminder?`<div style="width:100%;padding:14px 16px;background:linear-gradient(135deg,#1a2a3a,#0d1a20);border:1.5px solid ${BL};border-radius:14px;margin-bottom:14px">
+      <div style="font-size:28px;margin-bottom:4px">\uD83C\uDF19</div>
+      <div style="font-size:14px;font-weight:800;color:${BL};margin-bottom:4px">You've studied 15+ minutes!</div>
+      <div style="font-size:11px;color:#8BA4AE;line-height:1.4">Your brain needs rest to lock in what you learned<br>Take a short break, then come back</div>
+    </div>`:""}
+    <button class="btn" style="background:${restReminder?BL:G};box-shadow:0 4px 0 ${restReminder?"#1390C8":"#45A000"}" onclick="restReminder=false;goPath()">${restReminder?"Got it, I\u2019ll rest":"Continue"}</button></div>`;
   }
 
   // ═══ FAIL ═══
@@ -949,11 +955,14 @@ window.doMigrate=async function(){
   }else{document.getElementById("rm").innerHTML=`<span style="color:${R}">\u274C No internet connection</span>`;}
 };
 window.goPath=function(){screen="path";render();};
-window.startNode=function(ni){if(S.np[ni]===0)return;curNode=ni;if(PATH[ni].type==="learn"){const u=PATH[ni].unit;const n=UNITS[u].words.length;curUnitWords=Array.from({length:n},(_,i)=>ALL[UNIT_START[u]+i][0]);exs=buildLearn(u);}else{exs=buildReview(ni);if(!exs.length){completeNode(ni);saveAll();screen="path";render();return;}}exi=0;hearts=5;picked=null;isOk=null;lc=0;lw=0;missed=[];multiSel=[];screen="lesson";render();};
+window.startNode=function(ni){if(S.np[ni]===0)return;if(studySessionStart===null)studySessionStart=Date.now();curNode=ni;if(PATH[ni].type==="learn"){const u=PATH[ni].unit;const n=UNITS[u].words.length;curUnitWords=Array.from({length:n},(_,i)=>ALL[UNIT_START[u]+i][0]);exs=buildLearn(u);}else{exs=buildReview(ni);if(!exs.length){completeNode(ni);saveAll();screen="path";render();return;}}exi=0;hearts=5;picked=null;isOk=null;lc=0;lw=0;missed=[];multiSel=[];screen="lesson";render();};
 window.handlePick=function(o){if(picked!==null)return;const ex=exs[exi],ok=o===ex.gi;picked=o;isOk=ok;const w=S.ws[ex.gi];if(ok){w.nc++;lc++;S.xp+=10;}else{w.nw++;lw++;hearts--;missed.push(ex.gi);}w.h=calcHL(w.nc,w.nw,w.h);w.lp=today;w.seen=true;saveAll();render();};
 window.toggleMulti=function(oi){if(picked!==null)return;if(multiSel.includes(oi))multiSel=multiSel.filter(x=>x!==oi);else multiSel.push(oi);render();};
 window.submitMulti=function(){if(picked!==null||multiSel.length===0)return;const ex=exs[exi],mopts=ex.mopts;const correctIdx=mopts.map((o,i)=>o.correct?i:-1).filter(i=>i>=0);const allCorrect=correctIdx.every(i=>multiSel.includes(i));const noWrong=multiSel.every(i=>mopts[i].correct);const ok=allCorrect&&noWrong;picked=1;isOk=ok;const w=S.ws[ex.gi];if(ok){w.nc++;lc++;S.xp+=10;}else{w.nw++;lw++;hearts--;missed.push(ex.gi);}w.h=calcHL(w.nc,w.nw,w.h);w.lp=today;w.seen=true;saveAll();render();};
-window.handleNext=function(){if(hearts<=0&&!isOk){screen="fail";render();return;}multiSel=[];if(exi+1>=exs.length){const u=[...new Set(missed)];if(u.length>0){const r=[];for(const gi of shuffle(u)){if(isMulti(gi))r.push({type:"pickMulti",gi,mopts:makeMultiOpts(gi)});else r.push({type:Math.random()>0.5?"pickDef":"pickWord",gi,opts:makeOpts(gi)});}exs=exs.concat(r);missed=[];exi++;picked=null;isOk=null;render();return;}S.gems+=5;const e=lc*10;if(S.ld<today){S.str=S.ld===today-1?S.str+1:(S.ld===0?1:1);S.ld=today;S.txp=e;S.tnw=0;}else S.txp+=e;completeNode(curNode);saveAll();screen="complete";render();}else{exi++;picked=null;isOk=null;render();}};
+window.handleNext=function(){if(hearts<=0&&!isOk){screen="fail";render();return;}multiSel=[];if(exi+1>=exs.length){const u=[...new Set(missed)];if(u.length>0){const r=[];for(const gi of shuffle(u)){if(isMulti(gi))r.push({type:"pickMulti",gi,mopts:makeMultiOpts(gi)});else r.push({type:Math.random()>0.5?"pickDef":"pickWord",gi,opts:makeOpts(gi)});}exs=exs.concat(r);missed=[];exi++;picked=null;isOk=null;render();return;}S.gems+=5;const e=lc*10;if(S.ld<today){S.str=S.ld===today-1?S.str+1:(S.ld===0?1:1);S.ld=today;S.txp=e;S.tnw=0;}else S.txp+=e;completeNode(curNode);
+    // 检查学习时长：超过15分钟则提醒休息，并重置计时（避免立刻又弹一次）
+    if(studySessionStart!==null&&(Date.now()-studySessionStart)>=15*60*1000){restReminder=true;studySessionStart=Date.now();}else{restReminder=false;}
+    saveAll();screen="complete";render();}else{exi++;picked=null;isOk=null;render();}};
 window.showLeaderboard=async function(){screen="leaderboard";render();await loadLeaderboard();render();const s=document.getElementById("lbScroll");if(s)s.scrollTop=0;window.scrollTo(0,0);};
 window.showBackups=async function(){screen="backups";render();await loadBackups();};
 window.loadBackups=async function(){
