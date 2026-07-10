@@ -28,7 +28,7 @@ input:focus{border-color:#58CC02}
 <body>
 <div id="app" style="height:100%;display:flex;flex-direction:column"><div style="flex:1;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#58CC02">Loading...</div></div>
 <script>
-const APP_VERSION = "5.4";
+const APP_VERSION = "5.7";
 // 注意：不再于版本变化时清空localStorage！
 // 账号进度(S.uid/S.wp等)必须跨版本保留，结构变化交给migrateState()处理
 localStorage.setItem("app_version", APP_VERSION);
@@ -391,7 +391,10 @@ function saveAll(){
 function getWeakWords(u){const mx=UNIT_START[u]+UNITS[u].words.length;return S.ws.filter((w,i)=>i<mx&&w.seen&&(w.nw>0||recallP(w.h,today-w.lp)<0.8));}
 function reviewHasWords(ni){return getWeakWords(Math.floor(ni/2)).length>0;}
 function buildLearn(ui){const b=UNIT_START[ui];const n=UNITS[ui].words.length;const idx=Array.from({length:n},(_,i)=>i);const e=[];for(let i=0;i<n;i++)e.push({type:"intro",gi:b+i});for(const i of shuffle(idx)){const gi=b+i;if(isMulti(gi))e.push({type:"pickMulti",gi,mopts:makeMultiOpts(gi)});else e.push({type:"pickDef",gi,opts:makeOpts(gi)});}for(const i of shuffle(idx))e.push({type:"pickWord",gi:b+i,opts:makeOpts(b+i)});return e;}
-function buildReview(ni){const w=getWeakWords(Math.floor(ni/2));if(!w.length)return[];const b=shuffle(w).slice(0,10),e=[];for(const x of shuffle(b)){if(isMulti(x.i))e.push({type:"pickMulti",gi:x.i,mopts:makeMultiOpts(x.i)});else e.push({type:"pickDef",gi:x.i,opts:makeOpts(x.i)});}for(const x of shuffle(b))e.push({type:"pickWord",gi:x.i,opts:makeOpts(x.i)});return e;}
+function buildReview(ni){const w=getWeakWords(Math.floor(ni/2));if(!w.length)return[];
+  // 按记忆强度从低到高排序：最容易被遗忘的词优先安排复习（而非随机抽取）
+  const sorted=[...w].sort((x,y)=>recallP(x.h,today-x.lp)-recallP(y.h,today-y.lp));
+  const b=sorted.slice(0,10),e=[];for(const x of shuffle(b)){if(isMulti(x.i))e.push({type:"pickMulti",gi:x.i,mopts:makeMultiOpts(x.i)});else e.push({type:"pickDef",gi:x.i,opts:makeOpts(x.i)});}for(const x of shuffle(b))e.push({type:"pickWord",gi:x.i,opts:makeOpts(x.i)});return e;}
 function completeNode(ni){
   S.np[ni]=2;
   // 标记这个unit的词为已学过
@@ -517,7 +520,18 @@ function render(){
         <span style="font-size:10px;color:#5a7a84">${seenN}/${ALL.length} words <span style="color:#3a5a64">v${APP_VERSION}</span></span>
         <button onclick="screen='rename';render()" style="font-size:10px;color:${BL};background:none;border:none;font-weight:700">${S.name} \u270F\uFE0F</button>
       </div>
-    </div>`;
+    </div>
+    ${(function(){
+      const totalWeak=S.ws.filter(w=>w.seen&&(w.nw>0||recallP(w.h,today-w.lp)<0.8)).length;
+      if(totalWeak===0)return"";
+      return `<div style="margin:0 16px 10px;padding:10px 14px;background:linear-gradient(135deg,#3a1f00,#2a1600);border:1.5px solid #FF9800;border-radius:12px;display:flex;align-items:center;gap:10px">
+        <span style="font-size:20px">\u26A0\uFE0F</span>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:800;color:#FFB74D">${totalWeak} word${totalWeak>1?"s":""} need review</div>
+          <div style="font-size:10px;color:#c8a068">Keep tapping Review until this reaches 0</div>
+        </div>
+      </div>`;
+    })()}`;
 
     // Scrollable
     h+=`<div style="flex:1;min-height:0;overflow-y:auto;padding:16px 18px;-webkit-overflow-scrolling:touch">`;
@@ -528,13 +542,15 @@ function render(){
     PATH.forEach((node,ni)=>{
       const st=S.np[ni],locked=st===0,done=st===2,avail=st===1;
       const isRev=node.type==="review",hasWork=isRev&&avail&&reviewHasWords(ni),noWork=isRev&&avail&&!reviewHasWords(ni);
+      const curWeakN=isRev?getWeakWords(Math.floor(ni/2)).length:0;  // 实时剩余弱词数，即使已完成过也照算
+      const stillHasBacklog=isRev&&done&&curWeakN>0;  // 已完成过一轮，但池子里还有没清完的弱词
       if(locked){if(shownLocked>0)return;shownLocked++;}
       const sz=avail?72:done?56:48;
       if(ni>0)h+=`<div style="width:3px;height:${isRev?10:16}px;background:${done||avail?"${G}":"#2a3a42"};border-radius:2px;margin-bottom:3px"></div>`;
       const borderC=(avail&&(!isRev||hasWork))?(isRev?BL:G):done||noWork?G:"#2a3a42";
       const bg=done||noWork?G:avail?CB:"#1a2530";
       const shadow=avail&&(!isRev||hasWork)?"0 5px 0 "+(isRev?"#1390C8":"#45A000"):done||noWork?"0 3px 0 #45A000":"none";
-      const icon=done||noWork?"\u2705":isRev&&hasWork?"\uD83D\uDD04":node.icon;
+      const icon=stillHasBacklog?"\uD83D\uDD04":done||noWork?"\u2705":isRev&&hasWork?"\uD83D\uDD04":node.icon;
       h+=`<button onclick="startNode(${ni})" ${locked?"disabled":""} style="width:${sz}px;height:${sz}px;border-radius:50%;border:4px solid ${borderC};background:${bg};box-shadow:${shadow};opacity:${locked?0.3:1};display:flex;align-items:center;justify-content:center;position:relative">
         <span style="font-size:${avail?24:done?18:16}px">${icon}</span>
         ${avail&&!noWork?`<div style="position:absolute;bottom:-7px;left:50%;transform:translateX(-50%);background:${isRev?BL:G};color:#fff;font-size:7px;font-weight:800;padding:2px 7px;border-radius:7px">${isRev?"REVIEW":"START"}</div>`:""}
@@ -542,7 +558,8 @@ function render(){
       h+=`<div style="margin-top:6px;text-align:center;margin-bottom:4px"><div style="font-size:11px;font-weight:800;color:${locked?"#5a6a72":"#fff"}">${node.name}</div>`;
       if(node.type==="learn"&&done){const b=UNIT_START[node.unit];const uLen=UNITS[node.unit].words.length;h+=`<div style="display:flex;gap:3px;justify-content:center;margin-top:2px">`;S.ws.slice(b,b+uLen).forEach(w=>{h+=`<div style="width:6px;height:6px;border-radius:3px;background:${rclr(recallP(w.h,today-w.lp))}"></div>`;});h+=`</div>`;}
       if(isRev&&hasWork)h+=`<div style="font-size:9px;color:${BL};font-weight:700">${getWeakWords(Math.floor(ni/2)).length} weak</div>`;
-      if(isRev&&(done||noWork))h+=`<div style="font-size:9px;color:${G};font-weight:700">All strong</div>`;
+      if(isRev&&stillHasBacklog)h+=`<div style="font-size:9px;color:${BL};font-weight:700">${curWeakN} more weak</div>`;
+      else if(isRev&&(done||noWork))h+=`<div style="font-size:9px;color:${G};font-weight:700">All strong</div>`;
       if(locked)h+=`<div style="font-size:9px;color:#5a6a72">\uD83D\uDD12</div>`;
       h+=`</div>`;
     });
