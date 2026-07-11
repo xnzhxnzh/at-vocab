@@ -28,7 +28,7 @@ input:focus{border-color:#58CC02}
 <body>
 <div id="app" style="height:100%;display:flex;flex-direction:column"><div style="flex:1;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#58CC02">Loading...</div></div>
 <script>
-const APP_VERSION = "6.5";
+const APP_VERSION = "6.6";
 // 注意：不再于版本变化时清空localStorage！
 // 账号进度(S.uid/S.wp等)必须跨版本保留，结构变化交给migrateState()处理
 localStorage.setItem("app_version", APP_VERSION);
@@ -520,7 +520,7 @@ function saveAll(){
 }
 
 // Helpers
-function getWeakWords(u){const mx=UNIT_START[u]+UNITS[u].words.length;return S.ws.filter((w,i)=>i<mx&&w.seen&&(w.nw>0||recallP(w.h,today-w.lp)<0.8));}
+function getWeakWords(u){const mx=UNIT_START[u]+UNITS[u].words.length;return S.ws.filter((w,i)=>i<mx&&w.seen&&recallP(w.h,today-w.lp)<0.8);}
 function reviewHasWords(ni){return getWeakWords(Math.floor(ni/2)).length>0;}
 function buildLearn(ui){const b=UNIT_START[ui];const n=UNITS[ui].words.length;const idx=Array.from({length:n},(_,i)=>i);const e=[];for(let i=0;i<n;i++)e.push({type:"intro",gi:b+i});for(const i of shuffle(idx)){const gi=b+i;if(isMulti(gi))e.push({type:"pickMulti",gi,mopts:makeMultiOpts(gi)});else e.push({type:"pickDef",gi,opts:makeOpts(gi)});}for(const i of shuffle(idx))e.push({type:"pickWord",gi:b+i,opts:makeOpts(b+i)});return e;}
 function buildReview(ni){const w=getWeakWords(Math.floor(ni/2));if(!w.length)return[];
