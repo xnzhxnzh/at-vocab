@@ -28,7 +28,7 @@ input:focus{border-color:#58CC02}
 <body>
 <div id="app" style="height:100%;display:flex;flex-direction:column"><div style="flex:1;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#58CC02">Loading...</div></div>
 <script>
-const APP_VERSION = "6.6";
+const APP_VERSION = "6.7";
 // 注意：不再于版本变化时清空localStorage！
 // 账号进度(S.uid/S.wp等)必须跨版本保留，结构变化交给migrateState()处理
 localStorage.setItem("app_version", APP_VERSION);
@@ -110,6 +110,37 @@ const UNITS=[
   ["renounce","v.","rɪˈnaʊns","To relinquish or disown someone or something","The prince renounced his claim to the throne."],
   ["modicum","n.","ˈmɒdɪkəm","A fragment of an object","Even a modicum of effort would have improved his grade."],
   ["provenance","n.","ˈprɒvɪnəns","Something's birthplace or beginning","The museum verified the painting's provenance before purchasing it."]
+]},
+{name:"Advanced 9",words:[
+  ["quaint","adj.","kweɪnt","Charming in an unusual manner; vintage","The quaint little cottage looked like it belonged in a storybook."],
+  ["onerous","adj.","ˈoʊnərəs","Extremely inconvenient or burdensome","Filing the paperwork every quarter became an onerous task for the small staff."],
+  ["superfluous","adj.","suːˈpɜːrfluəs","Excessive and redundant","The report was full of superfluous details that added nothing to the argument."],
+  ["deficient","adj.","dɪˈfɪʃənt","Insufficient in desired qualities","The soil was deficient in nitrogen, so the crops grew poorly."],
+  ["forbearance","n.","fɔːrˈbɛrəns","The act of being reserved or tolerant","Her forbearance during the heated meeting kept the discussion from turning into a shouting match."],
+  ["boon","n.","buːn","Something which acts as a blessing or is beneficial in a situation","The unexpected rainfall was a boon for the drought-stricken farmers."]
+]},
+{name:"Advanced 10",words:[
+  ["ramify","v.","ˈræməfaɪ","To branch out into smaller parts","The new policy began to ramify into dozens of smaller regulations across departments."],
+  ["convey","v.","kənˈveɪ","To explain something in a way that is understood; to transfer","Her painting conveyed a sense of loneliness that words could not capture."],
+  ["impetuous","adj.","ɪmˈpɛtʃuəs","Impulsive","His impetuous decision to quit his job surprised everyone at the office."],
+  ["allay","v.","əˈleɪ","To alleviate concerns or to calm down","The doctor's calm explanation helped allay the patient's fears about the surgery."],
+  ["umbrage","n.","ˈʌmbrɪdʒ","Resentment or offense","She took umbrage at his careless remark about her cooking."],
+  ["affinity","n.","əˈfɪnɪti","An admiration or sympathy directed toward an individual or object","He felt an immediate affinity for the old bookshop and its creaky wooden floors."]
+]},
+{name:"Advanced 11",words:[
+  ["intrepid","adj.","ɪnˈtrɛpɪd","Unafraid; unalarmed","The intrepid explorer pressed on into the cave despite the darkness ahead."],
+  ["remedial","adj.","rɪˈmiːdiəl","Designed to correct or remedy something","The school offered remedial classes to help students catch up in math."],
+  ["goad","v.","ɡoʊd","To provoke someone for a reaction","His younger brother kept goading him into a race down the hill."],
+  ["opulent","adj.","ˈɒpjʊlənt","Excessively deluxe or lavish","The hotel lobby was opulent, with gold trim and crystal chandeliers everywhere."],
+  ["cacophony","n.","kəˈkɒfəni","A harsh, disharmonious combination of sounds","The cacophony of car horns and construction noise made it hard to concentrate."],
+  ["tremulous","adj.","ˈtrɛmjʊləs","Trembling with nervousness","Her tremulous voice betrayed how nervous she was before the interview."]
+]},
+{name:"Advanced 12",words:[
+  ["paragon","n.","ˈpærəɡɒn","A model or epitome of a certain quality","The old teacher was considered a paragon of patience by everyone at the school."],
+  ["arbitrary","adj.","ˈɑːrbɪtrɛri","Random or unpredictable; based solely on personal inclination","The judge's arbitrary ruling seemed to ignore the evidence presented in court."],
+  ["fastidious","adj.","fæˈstɪdiəs","Very careful and attentive to detail","The fastidious editor caught every small typo in the manuscript."],
+  ["refute","v.","rɪˈfjuːt","To verify something's credibility and prove it wrong based on that verification process","The scientist refuted the claim with data collected over three years."],
+  ["orthodox","adj.","ˈɔːrθədɒks","Traditional or conforming to an established set of beliefs","The committee preferred an orthodox approach rather than experimenting with new methods."]
 ]}
 
 ];
@@ -196,7 +227,12 @@ function abstractIcon(theme){
     measure:`<svg ${box}><rect x="15" y="45" width="70" height="12" rx="3" fill="#FFD54F"/><rect x="15" y="45" width="14" height="12" fill="#e74c3c"/><rect x="43" y="45" width="14" height="12" fill="#58CC02"/><rect x="15" y="45" width="70" height="12" rx="3" fill="none" stroke="#0d1a20" stroke-width="2"/><line x1="22" y1="45" x2="22" y2="35" stroke="#0d1a20" stroke-width="2"/><line x1="50" y1="45" x2="50" y2="30" stroke="#0d1a20" stroke-width="2"/><line x1="78" y1="45" x2="78" y2="35" stroke="#0d1a20" stroke-width="2"/></svg>`,
     origin:`<svg ${box}><path d="M28 15 L72 15 L72 75 Q50 85 28 75Z" fill="#E8D5A8"/><circle cx="50" cy="35" r="10" fill="#FFD54F" stroke="#B8860B" stroke-width="2"/><path d="M35 55 L65 55M35 63 L65 63M35 71 L55 71" stroke="#8B6B3D" stroke-width="2" stroke-linecap="round"/></svg>`,
     power:`<svg ${box}><path d="M50 12 L62 32 L84 32 L67 47 L74 70 L50 57 L26 70 L33 47 L16 32 L38 32Z" fill="#FFD54F" stroke="#B8860B" stroke-width="2"/></svg>`,
-    generic:`<svg ${box}><circle cx="42" cy="45" r="20" fill="#1CB0F6" opacity="0.85"/><circle cx="62" cy="55" r="15" fill="#58CC02" opacity="0.85"/><circle cx="42" cy="45" r="4" fill="#fff"/><circle cx="62" cy="55" r="3" fill="#fff"/></svg>`
+    generic:`<svg ${box}><circle cx="42" cy="45" r="20" fill="#1CB0F6" opacity="0.85"/><circle cx="62" cy="55" r="15" fill="#58CC02" opacity="0.85"/><circle cx="42" cy="45" r="4" fill="#fff"/><circle cx="62" cy="55" r="3" fill="#fff"/></svg>`,
+    burden:`<svg ${box}><circle cx="42" cy="25" r="10" fill="#FFD54F"/><path d="M42 35 L42 60 M30 45 L54 45" stroke="#8B6B3D" stroke-width="5" stroke-linecap="round"/><ellipse cx="60" cy="45" rx="22" ry="20" fill="#8B6B3D"/><path d="M42 60 L36 85 M42 60 L48 85" stroke="#5a4020" stroke-width="5" stroke-linecap="round"/></svg>`,
+    excess:`<svg ${box}><path d="M25 45 L75 45 L68 85 L32 85Z" fill="#1CB0F6"/><ellipse cx="50" cy="45" rx="25" ry="8" fill="#5cc8f7"/><path d="M30 35 Q35 15 45 30 Q50 10 55 30 Q65 15 70 35" fill="#8BE0FF" opacity="0.85"/></svg>`,
+    gift:`<svg ${box}><rect x="25" y="42" width="50" height="42" rx="4" fill="#e74c3c"/><rect x="25" y="42" width="50" height="12" fill="#c0392b"/><rect x="46" y="20" width="8" height="64" fill="#FFD54F"/><path d="M35 20 Q30 8 42 12 Q50 15 46 26Z" fill="#FFD54F"/><path d="M65 20 Q70 8 58 12 Q50 15 54 26Z" fill="#FFD54F"/><text x="14" y="30" font-size="16">\u2728</text></svg>`,
+    provoke:`<svg ${box}><circle cx="35" cy="55" r="20" fill="#8B6B3D"/><circle cx="28" cy="50" r="2.5" fill="#2b2b2b"/><circle cx="42" cy="50" r="2.5" fill="#2b2b2b"/><path d="M27 62 Q35 58 43 62" stroke="#2b2b2b" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M58 45 L82 30" stroke="#8BA4AE" stroke-width="5" stroke-linecap="round"/><circle cx="84" cy="27" r="4" fill="#e74c3c"/></svg>`,
+    shake:`<svg ${box}><path d="M35 20 Q45 15 40 25 Q50 30 42 35 Q52 38 45 48 L40 80" stroke="#1CB0F6" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="40" cy="18" r="10" fill="#FFD54F"/><path d="M20 30 L28 34M60 30 L52 34M18 55 L27 55M56 60 L64 62" stroke="#8BA4AE" stroke-width="2.5" stroke-linecap="round" opacity="0.7"/></svg>`
   };
   return icons[theme]||"";
 }
@@ -214,7 +250,21 @@ const abstractWordMap={
   benevolent:"kind",accommodating:"kind",gregarious:"kind",absolution:"kind",accessible:"kind",
   quantitative:"measure",accretion:"measure",modicum:"measure",nominal:"measure",accentuate:"measure",
   provenance:"origin",
-  omnipotent:"power"
+  omnipotent:"power",
+  paragon:"praise",
+  umbrage:"criticize",refute:"criticize",
+  intrepid:"bold",impetuous:"bold",
+  arbitrary:"foggy",
+  deficient:"decline",
+  fastidious:"sharp",
+  affinity:"kind",forbearance:"kind",allay:"kind",remedial:"kind",
+  orthodox:"origin",
+  opulent:"power",
+  onerous:"burden",
+  superfluous:"excess",
+  boon:"gift",
+  goad:"provoke",
+  tremulous:"shake"
 };
 // ══════ 专属单词图标（每个词根据词意/例句单独手绘，非模板复用）══════
 const wordIcons={
