@@ -28,7 +28,7 @@ input:focus{border-color:#58CC02}
 <body>
 <div id="app" style="height:100%;display:flex;flex-direction:column"><div style="flex:1;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#58CC02">Loading...</div></div>
 <script>
-const APP_VERSION = "6.9";
+const APP_VERSION = "7.0";
 // 注意：不再于版本变化时清空localStorage！
 // 账号进度(S.uid/S.wp等)必须跨版本保留，结构变化交给migrateState()处理
 localStorage.setItem("app_version", APP_VERSION);
@@ -141,6 +141,36 @@ const UNITS=[
   ["fastidious","adj.","fæˈstɪdiəs","Very careful and attentive to detail","The fastidious editor caught every small typo in the manuscript."],
   ["refute","v.","rɪˈfjuːt","To verify something's credibility and prove it wrong based on that verification process","The scientist refuted the claim with data collected over three years."],
   ["orthodox","adj.","ˈɔːrθədɒks","Traditional or conforming to an established set of beliefs","The committee preferred an orthodox approach rather than experimenting with new methods."]
+]},
+{name:"Advanced 13",words:[
+  ["compunction","n.","kəmˈpʌŋkʃən","A sensation of uneasiness or guilt that arises before or after doing something unfavorable","A wave of compunction hit him after he realized he had lied to his best friend."],
+  ["warrant","n.","ˈwɔːrənt","A government permit to search an area or perform other lawful activities","The detective could not enter the house without a warrant signed by a judge."],
+  ["dubious","adj.","ˈduːbiəs","Uncertain or doubtful","She gave a dubious look when he explained why he was three hours late."],
+  ["fickle","adj.","ˈfɪkəl","Inconsistent or changing frequently","The weather this spring has been fickle, sunny one hour and pouring the next."],
+  ["melodramatic","adj.","ˌmɛlədrəˈmætɪk","Overdramatic and exaggerated","His melodramatic reaction to losing the board game made everyone laugh."],
+  ["quandary","n.","ˈkwɒndəri","A dilemma or predicament","She found herself in a quandary, unsure whether to take the job or stay in school."]
+]},
+{name:"Advanced 14",words:[
+  ["ambivalent","adj.","æmˈbɪvələnt","Not having distinct feelings towards something or someone","He felt ambivalent about the move, excited for a new city but sad to leave his friends."],
+  ["candor","n.","ˈkændər","Openness and honesty","Her candor about her own mistakes made her advice easy to trust."],
+  ["exhort","v.","ɪɡˈzɔːrt","To urge or call someone to participate","The coach exhorted the team to give their best effort in the final quarter."],
+  ["elegy","n.","ˈɛlədʒi","A poem or song that expresses mourning","The poet wrote an elegy for his grandfather shortly after the funeral."],
+  ["paradox","n.","ˈpærədɒks","An extreme contradiction","It seemed like a paradox that the busiest employee had the most free time."],
+  ["latent","adj.","ˈleɪtənt","Inactive or devoid of something","His latent talent for painting didn't emerge until he took a class in college."]
+]},
+{name:"Advanced 15",words:[
+  ["bereft","adj.","bɪˈrɛft","Lacking or devoid of something","The old house stood bereft of furniture, its rooms completely empty."],
+  ["sagacity","n.","səˈɡæsɪti","Great wisdom","The old judge was known throughout the town for her sagacity and fair rulings."],
+  ["transient","adj.","ˈtrænʒiənt","Temporary or passing quickly","The joy of winning the lottery proved transient once the money ran out."],
+  ["ruminate","v.","ˈruːmɪneɪt","To reflect and think deeply about something","She liked to ruminate on old memories while walking along the beach."],
+  ["obstinate","adj.","ˈɒbstɪnət","Headstrong and unchanging in opinions or actions","The obstinate toddler refused to put on his shoes no matter what anyone said."]
+]},
+{name:"Advanced 16",words:[
+  ["clout","n.","klaʊt","An aggressive hit; leverage and influence","As the company's largest investor, she had enough clout to change the board's decision."],
+  ["raze","v.","reɪz","To completely demolish","The old stadium was razed to make room for a new shopping center."],
+  ["prudent","adj.","ˈpruːdənt","Careful or cautious","It was prudent of him to save part of every paycheck for emergencies."],
+  ["malicious","adj.","məˈlɪʃəs","Spiteful, with ill intent","Someone had spread malicious rumors about her just before the election."],
+  ["precipice","n.","ˈprɛsɪpɪs","A cliff of great heights","The hikers stopped to admire the view from the edge of the precipice."]
 ]}
 
 ];
@@ -232,7 +262,12 @@ function abstractIcon(theme){
     excess:`<svg ${box}><path d="M25 45 L75 45 L68 85 L32 85Z" fill="#1CB0F6"/><ellipse cx="50" cy="45" rx="25" ry="8" fill="#5cc8f7"/><path d="M30 35 Q35 15 45 30 Q50 10 55 30 Q65 15 70 35" fill="#8BE0FF" opacity="0.85"/></svg>`,
     gift:`<svg ${box}><rect x="25" y="42" width="50" height="42" rx="4" fill="#e74c3c"/><rect x="25" y="42" width="50" height="12" fill="#c0392b"/><rect x="46" y="20" width="8" height="64" fill="#FFD54F"/><path d="M35 20 Q30 8 42 12 Q50 15 46 26Z" fill="#FFD54F"/><path d="M65 20 Q70 8 58 12 Q50 15 54 26Z" fill="#FFD54F"/><text x="14" y="30" font-size="16">\u2728</text></svg>`,
     provoke:`<svg ${box}><circle cx="35" cy="55" r="20" fill="#8B6B3D"/><circle cx="28" cy="50" r="2.5" fill="#2b2b2b"/><circle cx="42" cy="50" r="2.5" fill="#2b2b2b"/><path d="M27 62 Q35 58 43 62" stroke="#2b2b2b" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M58 45 L82 30" stroke="#8BA4AE" stroke-width="5" stroke-linecap="round"/><circle cx="84" cy="27" r="4" fill="#e74c3c"/></svg>`,
-    shake:`<svg ${box}><path d="M35 20 Q45 15 40 25 Q50 30 42 35 Q52 38 45 48 L40 80" stroke="#1CB0F6" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="40" cy="18" r="10" fill="#FFD54F"/><path d="M20 30 L28 34M60 30 L52 34M18 55 L27 55M56 60 L64 62" stroke="#8BA4AE" stroke-width="2.5" stroke-linecap="round" opacity="0.7"/></svg>`
+    shake:`<svg ${box}><path d="M35 20 Q45 15 40 25 Q50 30 42 35 Q52 38 45 48 L40 80" stroke="#1CB0F6" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="40" cy="18" r="10" fill="#FFD54F"/><path d="M20 30 L28 34M60 30 L52 34M18 55 L27 55M56 60 L64 62" stroke="#8BA4AE" stroke-width="2.5" stroke-linecap="round" opacity="0.7"/></svg>`,
+    guilt:`<svg ${box}><circle cx="50" cy="45" r="22" fill="#FFD54F"/><path d="M40 42 Q45 46 50 42" stroke="#8B6B3D" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M52 42 Q57 46 62 42" stroke="#8B6B3D" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M40 58 Q50 52 60 58" stroke="#8B6B3D" stroke-width="2.5" fill="none" stroke-linecap="round"/><ellipse cx="50" cy="20" rx="20" ry="10" fill="#8BA4AE" opacity="0.6"/><path d="M45 25 L43 32M55 25 L57 32" stroke="#6EC3F4" stroke-width="2" stroke-linecap="round"/></svg>`,
+    stubborn:`<svg ${box}><ellipse cx="50" cy="85" rx="26" ry="5" fill="#0d1a20" opacity="0.4"/><rect x="30" y="45" width="40" height="35" rx="8" fill="#1CB0F6"/><circle cx="50" cy="28" r="16" fill="#FFD54F"/><path d="M42 26 Q46 22 50 26M50 26 Q54 22 58 26" stroke="#0d1a20" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M18 58 L30 55M82 58 L70 55" stroke="#1CB0F6" stroke-width="8" stroke-linecap="round"/><path d="M35 80 L32 60M65 80 L68 60" stroke="#1590c6" stroke-width="7" stroke-linecap="round"/></svg>`,
+    destroy:`<svg ${box}><rect x="35" y="35" width="30" height="45" fill="#8B6B3D"/><rect x="38" y="40" width="8" height="8" fill="#5a4020"/><rect x="54" y="40" width="8" height="8" fill="#5a4020"/><rect x="38" y="55" width="8" height="8" fill="#5a4020"/><path d="M40 35 L30 20 L45 28 L55 15 L62 28 L72 18 L60 35Z" fill="#e74c3c" opacity="0.85"/><circle cx="20" cy="70" r="4" fill="#8BA4AE" opacity="0.7"/><circle cx="78" cy="65" r="5" fill="#8BA4AE" opacity="0.6"/><circle cx="70" cy="80" r="3" fill="#8BA4AE" opacity="0.7"/></svg>`,
+    mourn:`<svg ${box}><path d="M50 25 Q30 45 40 65 Q45 78 50 82 Q55 78 60 65 Q70 45 50 25Z" fill="#8BA4AE" opacity="0.5"/><path d="M50 30 L50 82" stroke="#5a7a84" stroke-width="2"/><ellipse cx="35" cy="20" rx="4" ry="7" fill="#6EC3F4" opacity="0.8"/></svg>`,
+    honest:`<svg ${box}><path d="M20 30 Q20 20 32 20 L68 20 Q80 20 80 30 L80 55 Q80 65 68 65 L45 65 L32 78 L35 65 Q20 65 20 55Z" fill="#fff" opacity="0.95"/><path d="M35 42 L45 52 L65 32" stroke="#58CC02" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`
   };
   return icons[theme]||"";
 }
@@ -253,6 +288,19 @@ const abstractWordMap={
   omnipotent:"power",
   paragon:"praise",
   umbrage:"criticize",refute:"criticize",
+  compunction:"guilt",
+  obstinate:"stubborn",
+  raze:"destroy",
+  elegy:"mourn",
+  candor:"honest",
+  warrant:"origin",
+  dubious:"foggy",fickle:"foggy",quandary:"foggy",ambivalent:"foggy",paradox:"foggy",latent:"foggy",transient:"foggy",
+  sagacity:"sharp",ruminate:"sharp",prudent:"sharp",
+  malicious:"twoFaced",
+  clout:"power",
+  bereft:"decline",
+  exhort:"praise",
+  melodramatic:"excess",
   intrepid:"bold",impetuous:"bold",
   arbitrary:"foggy",
   deficient:"decline",
