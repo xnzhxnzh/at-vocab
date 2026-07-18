@@ -28,7 +28,7 @@ input:focus{border-color:#58CC02}
 <body>
 <div id="app" style="height:100%;display:flex;flex-direction:column"><div style="flex:1;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#58CC02">Loading...</div></div>
 <script>
-const APP_VERSION = "7.0";
+const APP_VERSION = "7.1";
 // 注意：不再于版本变化时清空localStorage！
 // 账号进度(S.uid/S.wp等)必须跨版本保留，结构变化交给migrateState()处理
 localStorage.setItem("app_version", APP_VERSION);
@@ -171,6 +171,33 @@ const UNITS=[
   ["prudent","adj.","ˈpruːdənt","Careful or cautious","It was prudent of him to save part of every paycheck for emergencies."],
   ["malicious","adj.","məˈlɪʃəs","Spiteful, with ill intent","Someone had spread malicious rumors about her just before the election."],
   ["precipice","n.","ˈprɛsɪpɪs","A cliff of great heights","The hikers stopped to admire the view from the edge of the precipice."]
+]},
+{name:"Advanced 17",words:[
+  ["disseminate","v.","dɪˈsɛmɪneɪt","To broadly disperse or distribute something","The university disseminated the research findings to news outlets across the country."],
+  ["empirical","adj.","ɛmˈpɪrɪkəl","Based on observed outcomes and results","The scientist relied on empirical evidence rather than assumptions to support her theory."],
+  ["impel","v.","ɪmˈpɛl","To demand or compel someone to perform a certain task","A sense of duty impelled him to volunteer at the shelter every weekend."],
+  ["pensive","adj.","ˈpɛnsɪv","Thoughtful and contemplative","She sat by the window with a pensive look, lost in her own thoughts."],
+  ["obdurate","adj.","ˈɒbdʊrət","Stubborn or unwilling to change one's mind","Despite hours of debate, the obdurate committee member refused to reconsider his vote."]
+]},
+{name:"Advanced 18",words:[
+  ["affliction","n.","əˈflɪkʃən","Pain or dread caused by a sort of stimulus","Chronic back pain was an affliction he had lived with since his accident."],
+  ["torpid","adj.","ˈtɔːrpɪd","Sluggish and lethargic","The torpid cat barely lifted its head when the doorbell rang."],
+  ["harrowing","adj.","ˈhærəʊɪŋ","Causing torment or great distress","The survivors described a harrowing night trapped by the flood waters."],
+  ["provocative","adj.","prəˈvɒkətɪv","Evoking a strong response, usually in a controversial or seductive manner","Her provocative essay sparked debate across the entire campus."],
+  ["malevolent","adj.","məˈlɛvələnt","Malicious or evil","The story's malevolent villain seemed to enjoy causing others pain."]
+]},
+{name:"Advanced 19",words:[
+  ["treacherous","adj.","ˈtrɛtʃərəs","Of a betraying nature","His treacherous business partner secretly sold company secrets to a rival firm."],
+  ["empathy","n.","ˈɛmpəθi","Identifying with another's feelings","Her empathy for the grieving family showed in the way she quietly sat with them."],
+  ["scrupulous","adj.","ˈskruːpjʊləs","Excessively careful and thoroughly aware of details","The scrupulous accountant double-checked every number before submitting the report."],
+  ["obfuscate","v.","ˈɒbfʌskeɪt","To confuse someone or something; to intentionally make something challenging to understand","The politician's answer seemed designed to obfuscate rather than clarify his position."],
+  ["propagate","v.","ˈprɒpəɡeɪt","To cultivate and spread","Rumors about the merger began to propagate quickly through the office."]
+]},
+{name:"Advanced 20",words:[
+  ["pariah","n.","pəˈraɪə","A person cast out by society","After the scandal broke, he became a pariah among his former colleagues."],
+  ["travail","n.","ˈtræveɪl","An ordeal","Years of travail finally paid off when she opened her own restaurant."],
+  ["diligent","adj.","ˈdɪlɪdʒənt","Persistent with particular attention","The diligent student reviewed her notes every night before the exam."],
+  ["quagmire","n.","ˈkwæɡmaɪər","A complex or unpleasant situation","The company found itself in a legal quagmire after the contract dispute."]
 ]}
 
 ];
@@ -267,7 +294,9 @@ function abstractIcon(theme){
     stubborn:`<svg ${box}><ellipse cx="50" cy="85" rx="26" ry="5" fill="#0d1a20" opacity="0.4"/><rect x="30" y="45" width="40" height="35" rx="8" fill="#1CB0F6"/><circle cx="50" cy="28" r="16" fill="#FFD54F"/><path d="M42 26 Q46 22 50 26M50 26 Q54 22 58 26" stroke="#0d1a20" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M18 58 L30 55M82 58 L70 55" stroke="#1CB0F6" stroke-width="8" stroke-linecap="round"/><path d="M35 80 L32 60M65 80 L68 60" stroke="#1590c6" stroke-width="7" stroke-linecap="round"/></svg>`,
     destroy:`<svg ${box}><rect x="35" y="35" width="30" height="45" fill="#8B6B3D"/><rect x="38" y="40" width="8" height="8" fill="#5a4020"/><rect x="54" y="40" width="8" height="8" fill="#5a4020"/><rect x="38" y="55" width="8" height="8" fill="#5a4020"/><path d="M40 35 L30 20 L45 28 L55 15 L62 28 L72 18 L60 35Z" fill="#e74c3c" opacity="0.85"/><circle cx="20" cy="70" r="4" fill="#8BA4AE" opacity="0.7"/><circle cx="78" cy="65" r="5" fill="#8BA4AE" opacity="0.6"/><circle cx="70" cy="80" r="3" fill="#8BA4AE" opacity="0.7"/></svg>`,
     mourn:`<svg ${box}><path d="M50 25 Q30 45 40 65 Q45 78 50 82 Q55 78 60 65 Q70 45 50 25Z" fill="#8BA4AE" opacity="0.5"/><path d="M50 30 L50 82" stroke="#5a7a84" stroke-width="2"/><ellipse cx="35" cy="20" rx="4" ry="7" fill="#6EC3F4" opacity="0.8"/></svg>`,
-    honest:`<svg ${box}><path d="M20 30 Q20 20 32 20 L68 20 Q80 20 80 30 L80 55 Q80 65 68 65 L45 65 L32 78 L35 65 Q20 65 20 55Z" fill="#fff" opacity="0.95"/><path d="M35 42 L45 52 L65 32" stroke="#58CC02" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+    honest:`<svg ${box}><path d="M20 30 Q20 20 32 20 L68 20 Q80 20 80 30 L80 55 Q80 65 68 65 L45 65 L32 78 L35 65 Q20 65 20 55Z" fill="#fff" opacity="0.95"/><path d="M35 42 L45 52 L65 32" stroke="#58CC02" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    pain:`<svg ${box}><circle cx="50" cy="45" r="22" fill="#FFD54F"/><path d="M38 38 L44 44M44 38 L38 44" stroke="#e74c3c" stroke-width="3" stroke-linecap="round"/><path d="M56 38 L62 44M62 38 L56 44" stroke="#e74c3c" stroke-width="3" stroke-linecap="round"/><path d="M38 58 Q50 50 62 58" stroke="#e74c3c" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M28 18 L32 26M72 18 L68 26M50 12 L50 20" stroke="#e74c3c" stroke-width="2.5" stroke-linecap="round"/></svg>`,
+    outcast:`<svg ${box}><circle cx="30" cy="50" r="14" fill="#8BA4AE"/><circle cx="60" cy="45" r="14" fill="#8BA4AE"/><circle cx="82" cy="52" r="14" fill="#8BA4AE"/><path d="M22 46 Q30 42 38 46M52 41 Q60 37 68 41M74 48 Q82 44 90 48" stroke="#0d1a20" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.6"/><circle cx="30" cy="82" r="15" fill="#e74c3c"/><path d="M22 78 Q30 74 38 78" stroke="#0d1a20" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M42 62 L50 70" stroke="#8BA4AE" stroke-width="3" stroke-dasharray="3,3"/></svg>`
   };
   return icons[theme]||"";
 }
@@ -301,6 +330,18 @@ const abstractWordMap={
   bereft:"decline",
   exhort:"praise",
   melodramatic:"excess",
+  disseminate:"release",propagate:"release",
+  empirical:"sharp",diligent:"sharp",
+  impel:"provoke",provocative:"provoke",
+  pensive:"sharp",
+  obdurate:"stubborn",
+  affliction:"pain",harrowing:"pain",travail:"pain",
+  torpid:"decline",
+  malevolent:"twoFaced",treacherous:"twoFaced",
+  empathy:"kind",
+  scrupulous:"sharp",
+  obfuscate:"foggy",quagmire:"foggy",
+  pariah:"outcast",
   intrepid:"bold",impetuous:"bold",
   arbitrary:"foggy",
   deficient:"decline",
