@@ -28,7 +28,7 @@ input:focus{border-color:#58CC02}
 <body>
 <div id="app" style="height:100%;display:flex;flex-direction:column"><div style="flex:1;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#58CC02">Loading...</div></div>
 <script>
-const APP_VERSION = "7.1";
+const APP_VERSION = "7.3";
 // 注意：不再于版本变化时清空localStorage！
 // 账号进度(S.uid/S.wp等)必须跨版本保留，结构变化交给migrateState()处理
 localStorage.setItem("app_version", APP_VERSION);
@@ -198,6 +198,67 @@ const UNITS=[
   ["travail","n.","ˈtræveɪl","An ordeal","Years of travail finally paid off when she opened her own restaurant."],
   ["diligent","adj.","ˈdɪlɪdʒənt","Persistent with particular attention","The diligent student reviewed her notes every night before the exam."],
   ["quagmire","n.","ˈkwæɡmaɪər","A complex or unpleasant situation","The company found itself in a legal quagmire after the contract dispute."]
+]},
+{name:"Advanced 21",words:[
+  ["ignominious","adj.","ˌɪɡnəˈmɪniəs","Worthy of embarrassment or shame","His ignominious exit from the company followed the discovery of the missing funds."],
+  ["amicable","adj.","ˈæmɪkəbəl","Showing a friendly disposition","The two neighbors settled their fence dispute in an amicable conversation over coffee."],
+  ["clairvoyant","n.","klɛərˈvɔɪənt","A psychic or fortune teller","The clairvoyant at the fair claimed she could see events before they happened."],
+  ["kudos","n.","ˈkuːdɒs","Recognition for accomplishing something","She received kudos from her manager for finishing the project ahead of schedule."],
+  ["innuendo","n.","ˌɪnjuˈɛndoʊ","A phrase that has an underlying connotation","His comment about her cooking was full of innuendo rather than direct criticism."],
+  ["truncate","v.","ˈtrʌŋkeɪt","To cut short or reduce by removing parts","The editor truncated the article to fit the space available on the front page."]
+]},
+{name:"Advanced 22",words:[
+  ["remiss","adj.","rɪˈmɪs","Careless and negligent","It would be remiss of me not to mention the risks before you sign the contract."],
+  ["anecdote","n.","ˈænɪkdoʊt","A short narrative that is usually meant to entertain or make a point","He opened his speech with a funny anecdote about his first day of teaching."],
+  ["veracity","n.","vəˈræsɪti","Truthfulness and exactness","The journalist double-checked every source to ensure the veracity of her report."],
+  ["antithesis","n.","ænˈtɪθəsɪs","The precise opposite of something or someone","Her calm, organized approach was the antithesis of her brother's chaotic style."],
+  ["tacit","adj.","ˈtæsɪt","Not directly stated but implicitly understood","There was a tacit agreement between the roommates that no one used the last of the milk."],
+  ["analogous","adj.","əˈnæləɡəs","Comparable","Learning to ride a bike is analogous to learning to balance in many other areas of life."]
+]},
+{name:"Advanced 23",words:[
+  ["antipathy","n.","ænˈtɪpəθi","A feeling of hostility or great opposition to something","Their mutual antipathy made it impossible for them to work on the same team."],
+  ["geriatric","adj.","ˌdʒɛriˈætrɪk","Elderly","The clinic added a geriatric wing to better serve its older patients."],
+  ["altercation","n.","ˌɔːltərˈkeɪʃən","An often public display of disagreement","An altercation broke out between two drivers after the minor fender bender."],
+  ["solicitous","adj.","səˈlɪsɪtəs","Considerate and invested in an issue","Her solicitous questions about his recovery showed how much she cared."],
+  ["avarice","n.","ˈævərɪs","A passion for getting and keeping riches; greed","The old miser's avarice kept him from ever giving a coin to charity."],
+  ["poignant","adj.","ˈpɔɪnjənt","Affecting one's emotions, often in a saddening or bittersweet manner","The film's final scene was so poignant that the whole theater fell silent."]
+]},
+{name:"Advanced 24",words:[
+  ["potent","adj.","ˈpoʊtənt","Strong and formidable","The medication was so potent that a single dose lasted an entire day."],
+  ["morose","adj.","məˈroʊs","Gloomy and ill-tempered","He had been morose all week after losing the championship game."],
+  ["pallid","adj.","ˈpælɪd","Pale or lacking in color","Her pallid complexion worried the nurse, who quickly checked her temperature."],
+  ["bemuse","v.","bɪˈmjuːz","To confuse someone or to be confused","The strange instructions on the form left most applicants completely bemused."],
+  ["abysmal","adj.","əˈbɪzməl","Dreadful or terrible","The team's abysmal performance in the first half led to a lopsided loss."]
+]},
+{name:"Advanced 25",words:[
+  ["phlegmatic","adj.","flɛɡˈmætɪk","Having a cool-headed approach to things","Even during the emergency, the phlegmatic pilot calmly guided the plane to safety."],
+  ["culmination","n.","ˌkʌlmɪˈneɪʃən","The building up of something at its peak; a high point","The championship game was the culmination of months of grueling practice."],
+  ["flout","v.","flaʊt","To disobey a law or convention, often in an ostentatious manner","The driver flouted the parking rules by leaving his car in front of the fire hydrant."],
+  ["linchpin","n.","ˈlɪntʃpɪn","The most important component that holds everything together","The point guard was the linchpin of the team's entire offense."],
+  ["equanimity","n.","ˌiːkwəˈnɪmɪti","Self-control; a calm disposition","She faced the stressful interview with remarkable equanimity."],
+  ["authenticity","n.","ˌɔːθɛnˈtɪsɪti","The measure of someone or something's genuineness","Experts examined the painting closely to confirm its authenticity."]
+]},
+{name:"Advanced 26",words:[
+  ["exasperate","v.","ɪɡˈzæspəreɪt","To annoy or frustrate someone","The constant interruptions during the meeting began to exasperate the presenter."],
+  ["condone","v.","kənˈdoʊn","To tolerate or overlook a certain undesirable behavior","The coach refused to condone any form of cheating during practice."],
+  ["burnish","v.","ˈbɜːrnɪʃ","To polish or shine","He spent the afternoon burnishing the old trophy until it gleamed."],
+  ["relevant","adj.","ˈrɛləvənt","On topic or pertinent to the subject at hand","Please keep your comments relevant to the topic of today's meeting."],
+  ["affront","n.","əˈfrʌnt","An insult or offensive act","She took his careless remark as a personal affront."],
+  ["grandiose","adj.","ˈɡrændioʊs","Impressive and magnificent in a pretentious or excessive fashion","His grandiose plans for the party included a live orchestra and fireworks."]
+]},
+{name:"Advanced 27",words:[
+  ["undulate","v.","ˈʌndʒəleɪt","To wave or ripple","The wheat fields undulated gently in the afternoon breeze."],
+  ["objectivity","n.","ˌɒbdʒɪkˈtɪvɪti","The quality of being impartial","Good journalism depends on the reporter's objectivity when covering a story."],
+  ["reproach","v.","rɪˈproʊtʃ","To rebuke or scold someone","Her mother gently reproached her for forgetting to call."],
+  ["incessant","adj.","ɪnˈsɛsənt","Continuous or unending","The incessant noise from the construction site kept him up all night."],
+  ["enmity","n.","ˈɛnmɪti","A feeling of hostility or animosity toward someone","Years of enmity between the two families finally ended with the wedding."],
+  ["precocious","adj.","prɪˈkoʊʃəs","Advanced skills or ability from a young age","The precocious child was reading novels by the age of six."]
+]},
+{name:"Advanced 28",words:[
+  ["esoteric","adj.","ˌɛsəˈtɛrɪk","Requiring specialized knowledge of a subject to be understood","The professor's esoteric lecture on quantum theory lost most of the class."],
+  ["placate","v.","ˈpleɪkeɪt","To make a situation or person peaceful","The manager offered a discount to placate the frustrated customer."],
+  ["exigent","adj.","ˈɛksɪdʒənt","Necessitating an urgent response","The hospital's exigent need for supplies led to an emergency donation drive."],
+  ["ubiquitous","adj.","juːˈbɪkwɪtəs","Being present everywhere","Smartphones have become ubiquitous in classrooms across the country."]
 ]}
 
 ];
@@ -220,7 +281,20 @@ function calcHL(nc,nw,ph){return Math.max(0.25,Math.pow(2,0.7+0.9*Math.sqrt(nc)-
 function recallP(h,d){return h>0?Math.pow(2,-d/h):0;}
 function todayNum(){return Math.floor(Date.now()/86400000);}
 function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=0|Math.random()*(i+1);[b[i],b[j]]=[b[j],b[i]];}return b;}
-function makeOpts(gi){const ui=unitIndexOf(gi);const unitStart=UNIT_START[ui];const unitLen=UNITS[ui].words.length;const d=[];const u=new Set([gi]);let guard=0;while(d.length<3&&guard<50){guard++;const r=unitStart+(0|Math.random()*unitLen);if(!u.has(r)){u.add(r);d.push(r);}}while(d.length<3){const r=0|Math.random()*ALL.length;if(!u.has(r)){u.add(r);d.push(r);}}return shuffle([gi,...d]);}
+function makeOpts(gi,pool){
+  const d=[];const u=new Set([gi]);
+  if(pool&&pool.length>1){
+    // Review场景：从"本次一起复习的弱词池"里选迷惑项，而不是从原单元挑（原单元的邻居可能早就记牢了，起不到混淆作用）
+    const candidates=shuffle(pool.filter(i=>i!==gi));
+    for(const c of candidates){if(d.length>=3)break;if(!u.has(c)){u.add(c);d.push(c);}}
+  }
+  if(d.length<3){
+    const ui=unitIndexOf(gi);const unitStart=UNIT_START[ui];const unitLen=UNITS[ui].words.length;
+    let guard=0;while(d.length<3&&guard<50){guard++;const r=unitStart+(0|Math.random()*unitLen);if(!u.has(r)){u.add(r);d.push(r);}}
+  }
+  while(d.length<3){const r=0|Math.random()*ALL.length;if(!u.has(r)){u.add(r);d.push(r);}}
+  return shuffle([gi,...d]);
+}
 function isMulti(gi){return Array.isArray(ALL[gi][3]);}
 function defText(gi){const d=ALL[gi][3];return Array.isArray(d)?d.join(" / "):d;}
 function getPronunciation(gi){const p=ALL[gi][2];return p?p:"";}
@@ -296,7 +370,8 @@ function abstractIcon(theme){
     mourn:`<svg ${box}><path d="M50 25 Q30 45 40 65 Q45 78 50 82 Q55 78 60 65 Q70 45 50 25Z" fill="#8BA4AE" opacity="0.5"/><path d="M50 30 L50 82" stroke="#5a7a84" stroke-width="2"/><ellipse cx="35" cy="20" rx="4" ry="7" fill="#6EC3F4" opacity="0.8"/></svg>`,
     honest:`<svg ${box}><path d="M20 30 Q20 20 32 20 L68 20 Q80 20 80 30 L80 55 Q80 65 68 65 L45 65 L32 78 L35 65 Q20 65 20 55Z" fill="#fff" opacity="0.95"/><path d="M35 42 L45 52 L65 32" stroke="#58CC02" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
     pain:`<svg ${box}><circle cx="50" cy="45" r="22" fill="#FFD54F"/><path d="M38 38 L44 44M44 38 L38 44" stroke="#e74c3c" stroke-width="3" stroke-linecap="round"/><path d="M56 38 L62 44M62 38 L56 44" stroke="#e74c3c" stroke-width="3" stroke-linecap="round"/><path d="M38 58 Q50 50 62 58" stroke="#e74c3c" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M28 18 L32 26M72 18 L68 26M50 12 L50 20" stroke="#e74c3c" stroke-width="2.5" stroke-linecap="round"/></svg>`,
-    outcast:`<svg ${box}><circle cx="30" cy="50" r="14" fill="#8BA4AE"/><circle cx="60" cy="45" r="14" fill="#8BA4AE"/><circle cx="82" cy="52" r="14" fill="#8BA4AE"/><path d="M22 46 Q30 42 38 46M52 41 Q60 37 68 41M74 48 Q82 44 90 48" stroke="#0d1a20" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.6"/><circle cx="30" cy="82" r="15" fill="#e74c3c"/><path d="M22 78 Q30 74 38 78" stroke="#0d1a20" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M42 62 L50 70" stroke="#8BA4AE" stroke-width="3" stroke-dasharray="3,3"/></svg>`
+    outcast:`<svg ${box}><circle cx="30" cy="50" r="14" fill="#8BA4AE"/><circle cx="60" cy="45" r="14" fill="#8BA4AE"/><circle cx="82" cy="52" r="14" fill="#8BA4AE"/><path d="M22 46 Q30 42 38 46M52 41 Q60 37 68 41M74 48 Q82 44 90 48" stroke="#0d1a20" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.6"/><circle cx="30" cy="82" r="15" fill="#e74c3c"/><path d="M22 78 Q30 74 38 78" stroke="#0d1a20" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M42 62 L50 70" stroke="#8BA4AE" stroke-width="3" stroke-dasharray="3,3"/></svg>`,
+    urgent:`<svg ${box}><circle cx="50" cy="50" r="34" fill="#e74c3c"/><rect x="46" y="28" width="8" height="24" rx="3" fill="#fff"/><circle cx="50" cy="62" r="5" fill="#fff"/></svg>`
   };
   return icons[theme]||"";
 }
@@ -342,6 +417,21 @@ const abstractWordMap={
   scrupulous:"sharp",
   obfuscate:"foggy",quagmire:"foggy",
   pariah:"outcast",
+  ignominious:"guilt",
+  amicable:"kind",solicitous:"kind",phlegmatic:"kind",equanimity:"kind",placate:"kind",
+  clairvoyant:"sharp",relevant:"sharp",precocious:"sharp",
+  kudos:"praise",culmination:"praise",burnish:"praise",
+  innuendo:"foggy",tacit:"foggy",analogous:"foggy",antithesis:"foggy",bemuse:"foggy",esoteric:"foggy",
+  truncate:"release",
+  remiss:"decline",morose:"decline",pallid:"decline",abysmal:"decline",
+  veracity:"honest",authenticity:"honest",objectivity:"honest",
+  antipathy:"criticize",altercation:"criticize",exasperate:"criticize",affront:"criticize",reproach:"criticize",enmity:"criticize",
+  avarice:"twoFaced",flout:"twoFaced",
+  poignant:"pain",
+  potent:"power",linchpin:"power",ubiquitous:"power",
+  grandiose:"excess",incessant:"excess",
+  condone:"agree",
+  exigent:"urgent",
   intrepid:"bold",impetuous:"bold",
   arbitrary:"foggy",
   deficient:"decline",
@@ -447,7 +537,20 @@ async function fetchWordImage(word){
     return null;
   }
 }
-function makeMultiOpts(gi){const correctDefs=ALL[gi][3];const ui2=unitIndexOf(gi);const unitStart=UNIT_START[ui2];const unitLen2=UNITS[ui2].words.length;const wrongDefs=[];const u=new Set([gi]);let guard2=0;while(wrongDefs.length<2&&guard2<50){guard2++;const r=unitStart+(0|Math.random()*unitLen2);if(!u.has(r)&&!isMulti(r)){u.add(r);wrongDefs.push(ALL[r][3]);}}while(wrongDefs.length<2){const r=0|Math.random()*ALL.length;if(!u.has(r)&&!isMulti(r)){u.add(r);wrongDefs.push(ALL[r][3]);}}const opts=[...correctDefs.map(d=>({text:d,correct:true})),...wrongDefs.map(d=>({text:d,correct:false}))];return shuffle(opts);}
+function makeMultiOpts(gi,pool){
+  const correctDefs=ALL[gi][3];const wrongDefs=[];const u=new Set([gi]);
+  if(pool&&pool.length>1){
+    const candidates=shuffle(pool.filter(i=>i!==gi));
+    for(const c of candidates){if(wrongDefs.length>=2)break;if(!u.has(c)&&!isMulti(c)){u.add(c);wrongDefs.push(ALL[c][3]);}}
+  }
+  if(wrongDefs.length<2){
+    const ui2=unitIndexOf(gi);const unitStart=UNIT_START[ui2];const unitLen2=UNITS[ui2].words.length;
+    let guard2=0;while(wrongDefs.length<2&&guard2<50){guard2++;const r=unitStart+(0|Math.random()*unitLen2);if(!u.has(r)&&!isMulti(r)){u.add(r);wrongDefs.push(ALL[r][3]);}}
+  }
+  while(wrongDefs.length<2){const r=0|Math.random()*ALL.length;if(!u.has(r)&&!isMulti(r)){u.add(r);wrongDefs.push(ALL[r][3]);}}
+  const opts=[...correctDefs.map(d=>({text:d,correct:true})),...wrongDefs.map(d=>({text:d,correct:false}))];
+  return shuffle(opts);
+}
 function rclr(v){return v>0.8?"#58CC02":v>0.5?"#ffd54f":"#FF4B4B";}
 
 // State
@@ -665,7 +768,9 @@ function buildLearn(ui){const b=UNIT_START[ui];const n=UNITS[ui].words.length;co
 function buildReview(ni){const w=getWeakWords(Math.floor(ni/2));if(!w.length)return[];
   // 按记忆强度从低到高排序：最容易被遗忘的词优先安排复习（而非随机抽取）
   const sorted=[...w].sort((x,y)=>recallP(x.h,today-x.lp)-recallP(y.h,today-y.lp));
-  const b=sorted.slice(0,10),e=[];for(const x of shuffle(b)){if(isMulti(x.i))e.push({type:"pickMulti",gi:x.i,mopts:makeMultiOpts(x.i)});else e.push({type:"pickDef",gi:x.i,opts:makeOpts(x.i)});}for(const x of shuffle(b))e.push({type:"pickWord",gi:x.i,opts:makeOpts(x.i)});return e;}
+  const b=sorted.slice(0,10);
+  const pool=b.map(x=>x.i);  // 本次复习池，作为迷惑项来源（不再用原unit的邻居，那些可能早就记牢了）
+  const e=[];for(const x of shuffle(b)){if(isMulti(x.i))e.push({type:"pickMulti",gi:x.i,mopts:makeMultiOpts(x.i,pool)});else e.push({type:"pickDef",gi:x.i,opts:makeOpts(x.i,pool)});}for(const x of shuffle(b))e.push({type:"pickWord",gi:x.i,opts:makeOpts(x.i,pool)});return e;}
 function completeNode(ni){
   S.np[ni]=2;
   // 标记这个unit的词为已学过
