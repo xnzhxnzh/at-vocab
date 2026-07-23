@@ -185,6 +185,13 @@
     display:none;
   }
   .explain.show{display:block;}
+  .pages-ref{
+    margin-top:10px;
+    font-family:'IBM Plex Mono','JetBrains Mono',monospace;
+    font-size:10px;
+    color:var(--muted);
+    letter-spacing:0.3px;
+  }
   .next-btn{
     margin-top:18px;
     width:100%;
@@ -289,7 +296,8 @@
         "Oxygen-18 has fewer protons than common oxygen."
       ],
       correctIndex: 1,
-      explanation: "Isotopes differ only in neutron number — the proton number (atomic number) stays the same. In a neutral atom, electron count equals proton count, so it's still 8 electrons. A, C, and D each mistake 'different neutron count' for 'different element/proton count.'"
+      explanation: "Isotopes differ only in neutron number — the proton number (atomic number) stays the same. In a neutral atom, electron count equals proton count, so it's still 8 electrons. A, C, and D each mistake 'different neutron count' for 'different element/proton count.'",
+      pages: "29–30"
     },
     {
       id: "ch2-2.2-001",
@@ -304,7 +312,8 @@
         "Both are missing electrons from their innermost shell."
       ],
       correctIndex: 1,
-      explanation: "Neon's shells hold 2 and 8 electrons (full); argon's hold 2, 8, and 8 (also full). A complete valence shell means the atom has no tendency to gain, lose, or share electrons, so it's unreactive. Neon and argon are different elements with different proton/neutron counts (A is false), neon has 2 shells while argon has 3 (C is false), and both have full — not missing — innermost shells (D is false)."
+      explanation: "Neon's shells hold 2 and 8 electrons (full); argon's hold 2, 8, and 8 (also full). A complete valence shell means the atom has no tendency to gain, lose, or share electrons, so it's unreactive. Neon and argon are different elements with different proton/neutron counts (A is false), neon has 2 shells while argon has 3 (C is false), and both have full — not missing — innermost shells (D is false).",
+      pages: "30–36"
     },
     {
       id: "ch2-2.2-002",
@@ -319,7 +328,8 @@
         "Mass number 6, atomic number 6"
       ],
       correctIndex: 0,
-      explanation: "The mass number is the sum of protons plus neutrons (6 + 6 = 12). The atomic number is just the number of protons (6). Mixing these up, or adding neutrons twice, gives the other three answers."
+      explanation: "The mass number is the sum of protons plus neutrons (6 + 6 = 12). The atomic number is just the number of protons (6). Mixing these up, or adding neutrons twice, gives the other three answers.",
+      pages: "30–36"
     },
     {
       id: "ch2-2.2-003",
@@ -334,7 +344,8 @@
         "Neutrons determine chemical behavior; electrons determine the isotope."
       ],
       correctIndex: 1,
-      explanation: "The number of protons defines which element an atom is. Neutron number can vary within the same element, and different neutron counts define different isotopes. Electrons determine chemical behavior. Only option B pairs protons with element and neutrons with isotope correctly — the others swap these roles."
+      explanation: "The number of protons defines which element an atom is. Neutron number can vary within the same element, and different neutron counts define different isotopes. Electrons determine chemical behavior. Only option B pairs protons with element and neutrons with isotope correctly — the others swap these roles.",
+      pages: "30–36"
     },
     {
       id: "ch2-2.2-004",
@@ -349,7 +360,8 @@
         "A single orbital can hold an unlimited number of electrons."
       ],
       correctIndex: 1,
-      explanation: "Orbitals are the three-dimensional spaces of specific shapes that make up an electron shell — a shell is built from one or more orbitals, so they aren't the same thing (A is false). Every shell, including inner ones, is made of orbitals (C is false), and each orbital holds at most two electrons (D is false)."
+      explanation: "Orbitals are the three-dimensional spaces of specific shapes that make up an electron shell — a shell is built from one or more orbitals, so they aren't the same thing (A is false). Every shell, including inner ones, is made of orbitals (C is false), and each orbital holds at most two electrons (D is false).",
+      pages: "30–36"
     }
   ];
 
@@ -432,7 +444,10 @@
       <div class="concept-tag">Ch ${current.chapter} · Concept ${current.concept} — ${current.conceptTitle}</div>
       <div class="question">${current.question}</div>
       <div class="options" id="options"></div>
-      <div class="explain" id="explain">${current.explanation}</div>
+      <div class="explain" id="explain">
+        ${current.explanation}
+        <div class="pages-ref">Campbell Biology, pp. ${current.pages}</div>
+      </div>
       <button class="next-btn" id="nextBtn">Next question</button>
     `;
     const optionsEl = document.getElementById("options");
