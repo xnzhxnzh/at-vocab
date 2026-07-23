@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Bio Review · Chapter Quiz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A0E;
+    --surface:#17171F;
+    --surface-2:#1E1E28;
+    --ink:#F1EFE8;
+    --muted:#8B8DA0;
+    --spine:#2B3672;
+    --spine-deep:#1B2350;
+    --petal:#7186D6;
+    --gold:#F2BB43;
+    --crimson:#C6435E;
+    --teal:#1FAAB6;
+    --line:#2B2B36;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    min-height:100vh;
+    background:var(--bg);
+    background-image: radial-gradient(ellipse at 50% 0%, rgba(43,54,114,0.35), transparent 60%);
+    color:var(--ink);
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:24px 16px 60px;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin-bottom:6px;
+  }
+  .atom{
+    width:44px;height:44px;position:relative;flex-shrink:0;
+  }
+  .atom .nucleus{
+    position:absolute;top:50%;left:50%;width:10px;height:10px;
+    background:var(--gold);border-radius:50%;
+    box-shadow:0 0 8px rgba(242,187,67,0.6);
+    transform:translate(-50%,-50%);
+  }
+  .atom .shell{
+    position:absolute;top:50%;left:50%;
+    border:1.5px solid var(--petal);border-radius:50%;
+    transform:translate(-50%,-50%);
+  }
+  .atom .shell.s1{width:26px;height:26px;}
+  .atom .shell.s2{width:42px;height:42px;border-color:var(--teal);}
+  .atom .e{
+    position:absolute;width:5px;height:5px;background:var(--gold);border-radius:50%;
+    top:50%;left:50%;
+    animation:orbit 4s linear infinite;
+  }
+  .atom .e.e2{animation-duration:6s;background:var(--crimson);}
+  @keyframes orbit{
+    from{transform:rotate(0deg) translateX(21px) rotate(0deg);}
+    to{transform:rotate(360deg) translateX(21px) rotate(-360deg);}
+  }
+  .eyebrow{
+    font-family:'Inter',sans-serif;
+    font-size:10px;
+    font-weight:500;
+    color:var(--muted);
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    margin-bottom:2px;
+  }
+  h1{
+    font-family:'Playfair Display',Georgia,serif;
+    font-size:24px;
+    font-weight:700;
+    letter-spacing:0.3px;
+    margin:0;
+    color:var(--ink);
+  }
+  .subtitle{
+    font-family:'IBM Plex Mono','JetBrains Mono',monospace;
+    font-size:11px;
+    color:var(--muted);
+    letter-spacing:0.5px;
+    text-transform:uppercase;
+    margin-bottom:28px;
+  }
+  .stats{
+    display:flex;
+    gap:10px;
+    font-family:'IBM Plex Mono','JetBrains Mono',monospace;
+    font-size:11px;
+    color:var(--muted);
+    margin-bottom:18px;
+  }
+  .stat-pill{
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:4px 12px;
+  }
+  .card{
+    width:100%;
+    max-width:520px;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:26px 22px 26px 34px;
+    box-shadow:0 8px 30px rgba(0,0,0,0.35);
+    position:relative;
+    overflow:hidden;
+  }
+  .card::before{
+    content:'';
+    position:absolute;
+    left:0;top:0;bottom:0;width:12px;
+    background:repeating-linear-gradient(
+      180deg,
+      var(--spine) 0px, var(--spine) 6px,
+      var(--spine-deep) 6px, var(--spine-deep) 8px
+    );
+  }
+  .concept-tag{
+    display:inline-block;
+    font-family:'IBM Plex Mono','JetBrains Mono',monospace;
+    font-size:11px;
+    font-weight:600;
+    color:var(--teal);
+    background:rgba(31,170,182,0.12);
+    border:1px solid rgba(31,170,182,0.3);
+    border-radius:6px;
+    padding:3px 9px;
+    margin-bottom:14px;
+    letter-spacing:0.3px;
+  }
+  .question{
+    font-size:17px;
+    line-height:1.55;
+    margin-bottom:22px;
+    color:var(--ink);
+  }
+  .options{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .option{
+    text-align:left;
+    border:1.5px solid var(--line);
+    background:var(--surface-2);
+    border-radius:10px;
+    padding:13px 16px;
+    font-size:15px;
+    font-family:inherit;
+    color:var(--ink);
+    cursor:pointer;
+    transition:border-color 0.15s, background 0.15s;
+  }
+  .option:hover:not(:disabled){border-color:var(--petal);}
+  .option:disabled{cursor:default;}
+  .option.correct{border-color:var(--gold);background:rgba(242,187,67,0.12);}
+  .option.wrong{border-color:var(--crimson);background:rgba(198,67,94,0.12);}
+  .option .letter{
+    font-family:'IBM Plex Mono',monospace;
+    font-weight:600;
+    color:var(--muted);
+    margin-right:8px;
+  }
+  .explain{
+    margin-top:18px;
+    padding-top:16px;
+    border-top:1px solid var(--line);
+    font-size:14px;
+    line-height:1.6;
+    color:#C9C7D8;
+    display:none;
+  }
+  .explain.show{display:block;}
+  .next-btn{
+    margin-top:18px;
+    width:100%;
+    padding:13px;
+    border:none;
+    border-radius:10px;
+    background:var(--spine);
+    color:#fff;
+    font-size:15px;
+    font-weight:600;
+    cursor:pointer;
+    transition:background 0.15s;
+    display:none;
+  }
+  .next-btn:hover{background:var(--spine-deep);}
+  .next-btn.show{display:block;}
+  .empty-state{
+    text-align:center;
+    color:var(--muted);
+    font-size:14px;
+    padding:40px 20px;
+  }
+  .sync-note{
+    margin-top:14px;
+    font-family:'IBM Plex Mono','JetBrains Mono',monospace;
+    font-size:10px;
+    color:#57596B;
+    text-align:center;
+  }
+</style>
+</head>
+<body>
+
+  <div class="brand">
+    <div class="atom">
+      <div class="shell s2"></div>
+      <div class="shell s1"></div>
+      <div class="nucleus"></div>
+      <div class="e"></div>
+      <div class="e e2"></div>
+    </div>
+    <div>
+      <div class="eyebrow">Campbell Biology</div>
+      <h1>Chapter Review</h1>
+    </div>
+  </div>
+  <div class="subtitle">Question Bank · Spaced Repetition</div>
+
+  <div class="stats">
+    <div class="stat-pill" id="statDue">due: —</div>
+    <div class="stat-pill" id="statTotal">total: —</div>
+  </div>
+
+  <div class="card" id="card">
+    <!-- filled by JS -->
+  </div>
+
+  <div class="sync-note" id="syncNote">local mode</div>
+
+<script type="module">
+  // ---------- Firebase (optional) ----------
+  // Fill in your project's config to sync progress across devices.
+  // Leave as-is to run in local-only (localStorage) mode.
+  const firebaseConfig = {
+    apiKey: "",
+    authDomain: "",
+    projectId: "",
+    // ...
+  };
+  const PROGRESS_COLLECTION = "bioreview-progress"; // separate collection, same project pattern as usabo-quiz
+
+  let db = null;
+  let firebaseReady = false;
+  if (firebaseConfig.apiKey && firebaseConfig.projectId) {
+    try {
+      const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js");
+      const { getFirestore, doc, getDoc, setDoc } =
+        await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+      const app = initializeApp(firebaseConfig);
+      db = { getFirestore, doc, getDoc, setDoc, instance: getFirestore(app) };
+      firebaseReady = true;
+      document.getElementById("syncNote").textContent = "synced";
+    } catch (e) {
+      console.warn("Firebase init failed, falling back to local mode:", e);
+    }
+  }
+
+  // ---------- Question bank ----------
+  // Structure mirrors sat-vocab's UNITS/ALL pattern: grouped by chapter/concept
+  // so new chapters can be appended as arrays without touching the engine below.
+  const QUESTIONS = [
+    {
+      id: "ch2-2.1-001",
+      chapter: 2,
+      concept: "2.1",
+      conceptTitle: "Elements & Compounds",
+      question: "An atom of oxygen has 8 protons. An isotope, oxygen-18, has 10 neutrons. Which statement is correct?",
+      options: [
+        "Oxygen-18 has a different atomic number than common oxygen.",
+        "Oxygen-18 has 8 electrons in its neutral state, same as common oxygen.",
+        "Oxygen-18 is a different element from common oxygen.",
+        "Oxygen-18 has fewer protons than common oxygen."
+      ],
+      correctIndex: 1,
+      explanation: "Isotopes differ only in neutron number — the proton number (atomic number) stays the same. In a neutral atom, electron count equals proton count, so it's still 8 electrons. A, C, and D each mistake 'different neutron count' for 'different element/proton count.'"
+    },
+    {
+      id: "ch2-2.2-001",
+      chapter: 2,
+      concept: "2.2",
+      conceptTitle: "Atomic Structure",
+      question: "Neon (atomic number 10) and argon (atomic number 18) are both chemically unreactive gases. What do their electron configurations have in common that explains this?",
+      options: [
+        "Both have exactly the same number of protons and neutrons.",
+        "Both have a completely filled valence shell.",
+        "Both have only one electron shell.",
+        "Both are missing electrons from their innermost shell."
+      ],
+      correctIndex: 1,
+      explanation: "Neon's shells hold 2 and 8 electrons (full); argon's hold 2, 8, and 8 (also full). A complete valence shell means the atom has no tendency to gain, lose, or share electrons, so it's unreactive. Neon and argon are different elements with different proton/neutron counts (A is false), neon has 2 shells while argon has 3 (C is false), and both have full — not missing — innermost shells (D is false)."
+    },
+    {
+      id: "ch2-2.2-002",
+      chapter: 2,
+      concept: "2.2",
+      conceptTitle: "Atomic Structure",
+      question: "An atom of carbon has 6 protons and 6 neutrons. What are its mass number and atomic number?",
+      options: [
+        "Mass number 12, atomic number 6",
+        "Mass number 6, atomic number 12",
+        "Mass number 12, atomic number 12",
+        "Mass number 6, atomic number 6"
+      ],
+      correctIndex: 0,
+      explanation: "The mass number is the sum of protons plus neutrons (6 + 6 = 12). The atomic number is just the number of protons (6). Mixing these up, or adding neutrons twice, gives the other three answers."
+    },
+    {
+      id: "ch2-2.2-003",
+      chapter: 2,
+      concept: "2.2",
+      conceptTitle: "Atomic Structure",
+      question: "In an atom, protons, neutrons, and electrons each determine something different about it. Which pairing is correct?",
+      options: [
+        "Protons determine the isotope; neutrons determine the element.",
+        "Protons determine the element; neutrons determine the isotope.",
+        "Electrons determine the element; protons determine chemical behavior.",
+        "Neutrons determine chemical behavior; electrons determine the isotope."
+      ],
+      correctIndex: 1,
+      explanation: "The number of protons defines which element an atom is. Neutron number can vary within the same element, and different neutron counts define different isotopes. Electrons determine chemical behavior. Only option B pairs protons with element and neutrons with isotope correctly — the others swap these roles."
+    },
+    {
+      id: "ch2-2.2-004",
+      chapter: 2,
+      concept: "2.2",
+      conceptTitle: "Atomic Structure",
+      question: "Which statement best describes the relationship between electron shells and orbitals?",
+      options: [
+        "Orbitals and electron shells are just two names for the same thing.",
+        "Each electron shell is made up of one or more orbitals — three-dimensional spaces with specific shapes where electrons are likely to be found.",
+        "Orbitals only exist in an atom's outermost (valence) shell.",
+        "A single orbital can hold an unlimited number of electrons."
+      ],
+      correctIndex: 1,
+      explanation: "Orbitals are the three-dimensional spaces of specific shapes that make up an electron shell — a shell is built from one or more orbitals, so they aren't the same thing (A is false). Every shell, including inner ones, is made of orbitals (C is false), and each orbital holds at most two electrons (D is false)."
+    }
+  ];
+
+  // ---------- HLR-based spaced repetition ----------
+  // Same half-life regression model as sat-vocab: recallP(h,d) = 2^(-d/h)
+  // h = half-life in days (learned per-question), d = days since last review.
+  // weak threshold: recall probability < 80%
+  const STORAGE_KEY = "bioreview_progress_v1";
+
+  function loadProgress() {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+    } catch { return {}; }
+  }
+  function saveProgress(progress) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+    if (firebaseReady) {
+      db.setDoc(db.doc(db.instance, PROGRESS_COLLECTION, "default-user"), progress)
+        .catch(e => console.warn("Firestore sync failed:", e));
+    }
+  }
+  async function loadRemoteIfAvailable(local) {
+    if (!firebaseReady) return local;
+    try {
+      const snap = await db.getDoc(db.doc(db.instance, PROGRESS_COLLECTION, "default-user"));
+      if (snap.exists()) return snap.data();
+    } catch (e) { console.warn("Firestore load failed:", e); }
+    return local;
+  }
+
+  function recallProb(halfLife, daysSince) {
+    return Math.pow(2, -daysSince / halfLife);
+  }
+  function daysSince(ts) {
+    return (Date.now() - ts) / (1000 * 60 * 60 * 24);
+  }
+
+  function getEntry(progress, id) {
+    return progress[id] || { halfLife: 1, lastSeen: 0, seen: 0 };
+  }
+  function updateEntry(progress, id, correct) {
+    const e = getEntry(progress, id);
+    e.seen += 1;
+    // correct answer -> half-life grows; wrong -> resets low
+    e.halfLife = correct ? e.halfLife * (1.6 + Math.random() * 0.4) : Math.max(0.5, e.halfLife * 0.5);
+    e.lastSeen = Date.now();
+    progress[id] = e;
+    return e;
+  }
+
+  function pickNextQuestion(progress) {
+    const scored = QUESTIONS.map(q => {
+      const e = getEntry(progress, q.id);
+      const d = e.lastSeen ? daysSince(e.lastSeen) : 999;
+      const p = e.seen ? recallProb(e.halfLife, d) : 0; // unseen = highest priority
+      return { q, p };
+    });
+    scored.sort((a, b) => a.p - b.p); // lowest recall probability first
+    return scored[0].q;
+  }
+
+  // ---------- UI ----------
+  let progress = loadProgress();
+  let current = null;
+
+  function renderStats() {
+    const due = QUESTIONS.filter(q => {
+      const e = getEntry(progress, q.id);
+      if (!e.seen) return true;
+      return recallProb(e.halfLife, daysSince(e.lastSeen)) < 0.8;
+    }).length;
+    document.getElementById("statDue").textContent = `due: ${due}`;
+    document.getElementById("statTotal").textContent = `total: ${QUESTIONS.length}`;
+  }
+
+  function renderQuestion() {
+    current = pickNextQuestion(progress);
+    const card = document.getElementById("card");
+    card.innerHTML = `
+      <div class="concept-tag">Ch ${current.chapter} · Concept ${current.concept} — ${current.conceptTitle}</div>
+      <div class="question">${current.question}</div>
+      <div class="options" id="options"></div>
+      <div class="explain" id="explain">${current.explanation}</div>
+      <button class="next-btn" id="nextBtn">Next question</button>
+    `;
+    const optionsEl = document.getElementById("options");
+    const letters = ["A", "B", "C", "D", "E"];
+    current.options.forEach((opt, i) => {
+      const btn = document.createElement("button");
+      btn.className = "option";
+      btn.innerHTML = `<span class="letter">${letters[i]}</span>${opt}`;
+      btn.addEventListener("click", () => handleAnswer(i));
+      optionsEl.appendChild(btn);
+    });
+    renderStats();
+  }
+
+  function handleAnswer(selectedIndex) {
+    const optionsEl = document.getElementById("options");
+    const buttons = optionsEl.querySelectorAll(".option");
+    const correct = selectedIndex === current.correctIndex;
+
+    buttons.forEach((btn, i) => {
+      btn.disabled = true;
+      if (i === current.correctIndex) btn.classList.add("correct");
+      else if (i === selectedIndex) btn.classList.add("wrong");
+    });
+
+    updateEntry(progress, current.id, correct);
+    saveProgress(progress);
+
+    document.getElementById("explain").classList.add("show");
+    document.getElementById("nextBtn").classList.add("show");
+    document.getElementById("nextBtn").addEventListener("click", renderQuestion);
+
+    renderStats();
+  }
+
+  // ---------- Boot ----------
+  progress = await loadRemoteIfAvailable(progress);
+  if (QUESTIONS.length === 0) {
+    document.getElementById("card").innerHTML =
+      `<div class="empty-state">No questions yet — add some to the QUESTIONS array.</div>`;
+  } else {
+    renderQuestion();
+  }
+</script>
+</body>
+</html>
