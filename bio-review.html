@@ -252,6 +252,25 @@
   <div class="sync-note" id="syncNote">local mode</div>
 
 <script type="module">
+  // ---------- Version / auto-update ----------
+  // Bump APP_VERSION with every content or logic change to this file.
+  // On load, if a previously-visited version differs from this one, the
+  // page reloads once with a cache-busting query param so the user always
+  // gets the latest file without manually clearing browser cache.
+  const APP_VERSION = "1.2";
+  const VERSION_KEY = "bioreview_app_version";
+  (function checkVersionAndReload() {
+    const stored = localStorage.getItem(VERSION_KEY);
+    if (stored !== APP_VERSION) {
+      localStorage.setItem(VERSION_KEY, APP_VERSION);
+      if (stored !== null && !window.location.search.includes("v=")) {
+        const url = new URL(window.location.href);
+        url.searchParams.set("v", APP_VERSION);
+        window.location.replace(url.toString());
+      }
+    }
+  })();
+
   // ---------- Firebase (optional) ----------
   // Fill in your project's config to sync progress across devices.
   // Leave as-is to run in local-only (localStorage) mode.
@@ -273,10 +292,12 @@
       const app = initializeApp(firebaseConfig);
       db = { getFirestore, doc, getDoc, setDoc, instance: getFirestore(app) };
       firebaseReady = true;
-      document.getElementById("syncNote").textContent = "synced";
+      document.getElementById("syncNote").textContent = `v${APP_VERSION} · synced`;
     } catch (e) {
       console.warn("Firebase init failed, falling back to local mode:", e);
     }
+  } else {
+    document.getElementById("syncNote").textContent = `v${APP_VERSION} · local mode`;
   }
 
   // ---------- Question bank ----------
@@ -288,6 +309,22 @@
       chapter: 2,
       concept: "2.1",
       conceptTitle: "Elements & Compounds",
+      question: "Table salt (NaCl) is made of sodium, a reactive metal, and chlorine, a poisonous gas — yet salt itself is harmless and edible. What best explains this, and what is a compound?",
+      options: [
+        "This is an example of emergent properties: a compound has characteristics different from the elements that make it up, and a compound is a substance of two or more different elements combined in a fixed ratio.",
+        "Salt is simply an element, and elements are always safer than the compounds they can form.",
+        "Sodium and chlorine cancel out each other's chemical reactivity, so any two reactive elements combined will always form a safe compound.",
+        "This only happens with salt; in general a compound's properties can always be predicted directly from its elements' individual properties."
+      ],
+      correctIndex: 0,
+      explanation: "A compound's properties emerge from how its elements combine — they aren't just a blend of the elements' individual properties. NaCl is a compound (two different elements, sodium and chlorine, in a fixed 1:1 ratio), not an element (B is false). This isn't a general rule that any two reactive elements are safe combined (C), and compound properties are often surprising rather than predictable from the elements alone (D) — that's exactly why this is called an emergent property.",
+      page: "29"
+    },
+    {
+      id: "ch2-2.2-005",
+      chapter: 2,
+      concept: "2.2",
+      conceptTitle: "Atomic Structure",
       question: "An atom of oxygen has 8 protons. An isotope, oxygen-18, has 10 neutrons. Which statement is correct?",
       options: [
         "Oxygen-18 has a different atomic number than common oxygen.",
@@ -297,7 +334,7 @@
       ],
       correctIndex: 1,
       explanation: "Isotopes differ only in neutron number — the proton number (atomic number) stays the same. In a neutral atom, electron count equals proton count, so it's still 8 electrons. A, C, and D each mistake 'different neutron count' for 'different element/proton count.'",
-      pages: "29–30"
+      page: "31"
     },
     {
       id: "ch2-2.2-001",
@@ -313,7 +350,7 @@
       ],
       correctIndex: 1,
       explanation: "Neon's shells hold 2 and 8 electrons (full); argon's hold 2, 8, and 8 (also full). A complete valence shell means the atom has no tendency to gain, lose, or share electrons, so it's unreactive. Neon and argon are different elements with different proton/neutron counts (A is false), neon has 2 shells while argon has 3 (C is false), and both have full — not missing — innermost shells (D is false).",
-      pages: "30–36"
+      page: "35"
     },
     {
       id: "ch2-2.2-002",
@@ -329,7 +366,7 @@
       ],
       correctIndex: 0,
       explanation: "The mass number is the sum of protons plus neutrons (6 + 6 = 12). The atomic number is just the number of protons (6). Mixing these up, or adding neutrons twice, gives the other three answers.",
-      pages: "30–36"
+      page: "31"
     },
     {
       id: "ch2-2.2-003",
@@ -345,7 +382,7 @@
       ],
       correctIndex: 1,
       explanation: "The number of protons defines which element an atom is. Neutron number can vary within the same element, and different neutron counts define different isotopes. Electrons determine chemical behavior. Only option B pairs protons with element and neutrons with isotope correctly — the others swap these roles.",
-      pages: "30–36"
+      page: "30"
     },
     {
       id: "ch2-2.2-004",
@@ -361,7 +398,103 @@
       ],
       correctIndex: 1,
       explanation: "Orbitals are the three-dimensional spaces of specific shapes that make up an electron shell — a shell is built from one or more orbitals, so they aren't the same thing (A is false). Every shell, including inner ones, is made of orbitals (C is false), and each orbital holds at most two electrons (D is false).",
-      pages: "30–36"
+      page: "35"
+    },
+    {
+      id: "ch2-2.3-001",
+      chapter: 2,
+      concept: "2.3",
+      conceptTitle: "Chemical Bonding",
+      question: "Two hydrogen atoms share one pair of valence electrons to form H2. Two oxygen atoms share two pairs of valence electrons to form O2. What are these two bonds called?",
+      options: [
+        "A single bond (H2) and a double bond (O2)",
+        "A double bond (H2) and a single bond (O2)",
+        "An ionic bond (H2) and a covalent bond (O2)",
+        "A hydrogen bond (H2) and a van der Waals interaction (O2)"
+      ],
+      correctIndex: 0,
+      explanation: "Sharing one pair of electrons is a single bond (H—H); sharing two pairs is a double bond (O=O). Ionic bonds involve transferring, not sharing, electrons (C is false), and hydrogen bonds/van der Waals interactions are weak interactions, not the covalent bonds being described here (D is false).",
+      page: "37"
+    },
+    {
+      id: "ch2-2.3-002",
+      chapter: 2,
+      concept: "2.3",
+      conceptTitle: "Chemical Bonding",
+      question: "Why are the O—H bonds in a water molecule polar, while the H—H bond in H2 is nonpolar?",
+      options: [
+        "Oxygen and hydrogen have very different electronegativities, so shared electrons sit closer to oxygen; in H2 both atoms are identical, so electrons are shared equally.",
+        "Water molecules are bigger than hydrogen molecules, and larger molecules are always polar.",
+        "The O—H bond is a double bond, while the H—H bond is a single bond.",
+        "Polarity only happens in ionic compounds, never in covalently bonded molecules."
+      ],
+      correctIndex: 0,
+      explanation: "A bond's polarity comes from a difference in electronegativity between the two atoms — oxygen pulls shared electrons toward itself more than hydrogen does, creating partial charges. When both atoms are identical (as in H2), there's no difference in pull, so the bond is nonpolar. Molecule size doesn't determine polarity (B is false), O—H is a single bond (C is false), and polar covalent bonds are a normal category of covalent bond, not exclusive to ionic compounds (D is false).",
+      page: "37"
+    },
+    {
+      id: "ch2-2.3-003",
+      chapter: 2,
+      concept: "2.3",
+      conceptTitle: "Chemical Bonding",
+      question: "What happens when a sodium atom and a chlorine atom react to form an ionic bond?",
+      options: [
+        "Sodium and chlorine share a pair of electrons equally between them.",
+        "Sodium transfers its one valence electron to chlorine; the resulting oppositely charged ions then attract each other.",
+        "Sodium and chlorine both gain an extra electron, so both end up negatively charged.",
+        "Chlorine transfers one of its electrons to sodium, making sodium the negatively charged ion."
+      ],
+      correctIndex: 1,
+      explanation: "Sodium's single valence electron transfers to chlorine. This gives sodium 11 protons but only 10 electrons (net charge 1+, a cation) and chlorine 17 protons but 18 electrons (net charge 1−, an anion); the ionic bond is the attraction between these two ions. Electrons are transferred, not shared (A is false, that's a covalent bond), only one atom gains the electron — not both (C is false), and the transfer runs from sodium to chlorine, not the reverse (D is false).",
+      page: "38"
+    },
+    {
+      id: "ch2-2.3-004",
+      chapter: 2,
+      concept: "2.3",
+      conceptTitle: "Chemical Bonding",
+      question: "Which statement correctly distinguishes a hydrogen bond from a van der Waals interaction?",
+      options: [
+        "A hydrogen bond is the attraction between a hydrogen atom's partial positive charge and a nearby electronegative atom's partial negative charge; van der Waals interactions come from ever-shifting, temporary charge regions in any nearby atoms or molecules.",
+        "A hydrogen bond is a type of covalent bond, while a van der Waals interaction is a type of ionic bond.",
+        "Van der Waals interactions only occur between charged ions, while hydrogen bonds only occur in neutral molecules.",
+        "A hydrogen bond and a van der Waals interaction are just two names for the same interaction."
+      ],
+      correctIndex: 0,
+      explanation: "A hydrogen bond needs a hydrogen atom already covalently bonded to an electronegative atom (like O or N), giving it a partial positive charge that's attracted to another electronegative atom's partial negative charge nearby. Van der Waals interactions are weaker and more general — they arise from momentary, shifting unevenness in electron distribution in any atoms or molecules, even nonpolar ones (this is what lets a gecko's foot stick to a wall). Neither is a form of covalent or ionic bond (B is false), the ion/neutral split in C is invented, and they are two distinct types of weak interaction, not the same thing (D is false).",
+      page: "39"
+    },
+    {
+      id: "ch2-2.3-005",
+      chapter: 2,
+      concept: "2.3",
+      conceptTitle: "Chemical Bonding",
+      question: "Water (H2O) is a bent, V-shaped molecule with a bond angle of about 104.5°, and methane (CH4) is a symmetric tetrahedron. What explains these characteristic molecular shapes?",
+      options: [
+        "The shapes come from the arrangement of hybrid orbitals in the valence shells of oxygen and carbon.",
+        "Water and methane actually have the same shape; only their overall size differs.",
+        "The shapes are determined by the number of neutrons in each molecule's nuclei.",
+        "Molecular shape is essentially random and has no effect on how molecules interact with each other."
+      ],
+      correctIndex: 0,
+      explanation: "When an atom forms covalent bonds, its valence-shell s and p orbitals rearrange into hybrid orbitals pointing toward the corners of a tetrahedron. Oxygen shares two of its four hybrid orbitals with hydrogens (the other two hold lone pairs), producing water's bent shape; carbon shares all four hybrid orbitals with hydrogens, producing methane's full tetrahedron. Neutrons in the nucleus don't determine bonding geometry (C is false), the two molecules have genuinely different shapes, not just different sizes of the same shape (B is false), and molecular shape is far from irrelevant — it's exactly what lets molecules like morphine mimic endorphins by fitting the same receptors (D is false).",
+      page: "40"
+    },
+    {
+      id: "ch2-2.4-001",
+      chapter: 2,
+      concept: "2.4",
+      conceptTitle: "Chemical Reactions",
+      question: "In the reversible reaction 3 H2 + N2 ⇌ 2 NH3, what does the double-headed arrow mean, and what defines chemical equilibrium here?",
+      options: [
+        "The reaction only runs forward, converting all the H2 and N2 completely into NH3.",
+        "The reaction is reversible; equilibrium is reached when the forward and reverse reaction rates become equal, so concentrations stop changing overall — though reactants and products need not be equal in amount.",
+        "The reaction stops permanently as soon as any NH3 is produced.",
+        "Equilibrium means the reactants and products always end up at exactly equal concentrations."
+      ],
+      correctIndex: 1,
+      explanation: "The double arrow shows the reaction runs both ways. As products build up, the reverse reaction speeds up until the forward and reverse rates match — that's chemical equilibrium, a dynamic state where both reactions keep happening but net concentrations no longer change. It doesn't mean the reaction goes only one way or stops (A and C are false), and equilibrium concentrations are usually not equal to each other — only stable at whatever ratio they settle into (D is false).",
+      page: "41"
     }
   ];
 
@@ -446,7 +579,7 @@
       <div class="options" id="options"></div>
       <div class="explain" id="explain">
         ${current.explanation}
-        <div class="pages-ref">Campbell Biology, pp. ${current.pages}</div>
+        <div class="pages-ref">Campbell Biology, p. ${current.page}</div>
       </div>
       <button class="next-btn" id="nextBtn">Next question</button>
     `;
