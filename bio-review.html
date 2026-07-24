@@ -442,7 +442,7 @@
   // On load, if a previously-visited version differs from this one, the
   // page reloads once with a cache-busting query param so the user always
   // gets the latest file without manually clearing browser cache.
-  const APP_VERSION = "1.7";
+  const APP_VERSION = "1.8";
   const VERSION_KEY = "bioreview_app_version";
   (function checkVersionAndReload() {
     const stored = localStorage.getItem(VERSION_KEY);
@@ -766,6 +766,8 @@
   }
   function saveBest(b) { localStorage.setItem(BEST_KEY, JSON.stringify(b)); }
 
+  let lastLeaderboardError = null;
+
   async function syncLeaderboard() {
     if (!firebaseReady) return;
     const nick = getNickname();
@@ -782,7 +784,11 @@
         totalCorrect: best.totalCorrect,
         updatedAt: Date.now()
       });
-    } catch (e) { console.warn("Leaderboard sync failed:", e); }
+      lastLeaderboardError = null;
+    } catch (e) {
+      lastLeaderboardError = `write failed: ${e.code || e.message || e}`;
+      console.warn("Leaderboard sync failed:", e);
+    }
   }
 
   async function fetchLeaderboard() {
@@ -796,8 +802,13 @@
       const snap = await db.getDocs(q);
       const rows = [];
       snap.forEach(d => rows.push({ id: d.id, ...d.data() }));
+      lastLeaderboardError = null;
       return rows;
-    } catch (e) { console.warn("Leaderboard fetch failed:", e); return []; }
+    } catch (e) {
+      lastLeaderboardError = `read failed: ${e.code || e.message || e}`;
+      console.warn("Leaderboard fetch failed:", e);
+      return [];
+    }
   }
 
   // ---------- Daily streak ----------
@@ -912,11 +923,14 @@
       return;
     }
 
+    await syncLeaderboard();
     const rows = await fetchLeaderboard();
     const uid = getUid();
     let html = `<div class="card"><div class="concept-tag">🏆 Leaderboard</div>`;
     if (rows.length === 0) {
-      html += `<div class="explain show" style="border-top:none;padding-top:0;">No scores yet — be the first!</div>`;
+      html += lastLeaderboardError
+        ? `<div class="explain show" style="border-top:none;padding-top:0;color:var(--crimson);">Sync error: ${lastLeaderboardError}</div>`
+        : `<div class="explain show" style="border-top:none;padding-top:0;">No scores yet — be the first!</div>`;
     } else {
       rows.forEach((r, i) => {
         const isMe = r.id === uid;
