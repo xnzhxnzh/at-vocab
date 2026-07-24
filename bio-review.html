@@ -3,12 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="color-scheme" content="dark">
 <title>Bio Review · Chapter Quiz</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
   :root{
+    color-scheme: dark;
     --bg:#0A0A0E;
     --surface:#17171F;
     --surface-2:#1E1E28;
@@ -26,10 +28,17 @@
     *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
   }
   *{box-sizing:border-box;}
+  .page-bg{
+    position:fixed;
+    inset:0;
+    background-color:var(--bg);
+    background-image: radial-gradient(ellipse at 50% 0%, rgba(43,54,114,0.35), transparent 60%);
+    z-index:-1;
+  }
   body{
     margin:0;
     min-height:100vh;
-    background:var(--bg);
+    background-color:var(--bg);
     background-image: radial-gradient(ellipse at 50% 0%, rgba(43,54,114,0.35), transparent 60%);
     color:var(--ink);
     font-family:'Inter',system-ui,-apple-system,sans-serif;
@@ -221,9 +230,188 @@
     color:#57596B;
     text-align:center;
   }
+
+  /* ---------- Duolingo-style additions ---------- */
+  .streak-badge{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-family:'IBM Plex Mono','JetBrains Mono',monospace;
+    font-size:12px;
+    font-weight:600;
+    color:var(--gold);
+    background:rgba(242,187,67,0.1);
+    border:1px solid rgba(242,187,67,0.3);
+    border-radius:20px;
+    padding:5px 14px;
+    margin-bottom:20px;
+  }
+  #app{ width:100%; max-width:520px; }
+  .practice-btn{
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:12px;
+    background:linear-gradient(135deg, var(--teal), #14848E);
+    color:#06262A;
+    font-size:15px;
+    font-weight:700;
+    font-family:inherit;
+    cursor:pointer;
+    box-shadow:0 4px 14px rgba(31,170,182,0.35);
+    margin-bottom:8px;
+  }
+  .practice-btn:disabled{opacity:0.4; cursor:default; box-shadow:none;}
+  .mastery-line{
+    text-align:center;
+    font-family:'IBM Plex Mono','JetBrains Mono',monospace;
+    font-size:11px;
+    color:var(--muted);
+    margin-bottom:30px;
+  }
+  .path{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:6px;
+    position:relative;
+    padding:10px 0 20px;
+  }
+  .path::before{
+    content:'';
+    position:absolute;
+    top:20px; bottom:40px; left:50%;
+    width:2px;
+    background:repeating-linear-gradient(180deg, var(--line) 0 6px, transparent 6px 12px);
+    transform:translateX(-50%);
+    z-index:0;
+  }
+  .path-node{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:4px;
+    position:relative;
+    z-index:1;
+    margin-bottom:14px;
+  }
+  .path-node.left{ align-self:flex-start; margin-left:14%; }
+  .path-node.right{ align-self:flex-end; margin-right:14%; }
+  .node-circle{
+    width:68px;height:68px;
+    border-radius:50%;
+    border:3px solid var(--line);
+    background:var(--surface);
+    color:var(--muted);
+    font-family:'IBM Plex Mono','JetBrains Mono',monospace;
+    font-size:16px;
+    font-weight:700;
+    cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    transition:transform 0.15s;
+  }
+  .node-circle:active{ transform:scale(0.94); }
+  .node-circle.progress{
+    border-color:var(--petal);
+    color:var(--petal);
+    background:rgba(113,134,214,0.1);
+  }
+  .node-circle.mastered{
+    border-color:var(--gold);
+    background:var(--gold);
+    color:#3A2A05;
+    box-shadow:0 0 0 4px rgba(242,187,67,0.15), 0 4px 14px rgba(242,187,67,0.3);
+  }
+  .node-title{
+    font-size:12px;
+    font-weight:600;
+    color:var(--ink);
+    text-align:center;
+  }
+  .node-sub{
+    font-family:'IBM Plex Mono','JetBrains Mono',monospace;
+    font-size:10px;
+    color:var(--muted);
+  }
+
+  .quiz-header{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:16px;
+  }
+  .exit-btn{
+    width:32px;height:32px;
+    border-radius:50%;
+    border:1px solid var(--line);
+    background:var(--surface);
+    color:var(--muted);
+    font-size:14px;
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .progress-track{
+    flex:1;
+    height:10px;
+    border-radius:6px;
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    border-radius:6px;
+    background:linear-gradient(90deg, var(--teal), var(--gold));
+    transition:width 0.35s ease;
+  }
+  .combo{
+    min-width:38px;
+    text-align:center;
+    font-family:'IBM Plex Mono','JetBrains Mono',monospace;
+    font-size:13px;
+    font-weight:700;
+    color:var(--gold);
+  }
+  @keyframes pop{
+    0%{transform:scale(1);}
+    40%{transform:scale(1.04);}
+    100%{transform:scale(1);}
+  }
+  @keyframes shake{
+    0%,100%{transform:translateX(0);}
+    25%{transform:translateX(-5px);}
+    75%{transform:translateX(5px);}
+  }
+  .option.correct{ animation:pop 0.3s ease; }
+  .option.wrong{ animation:shake 0.3s ease; }
+
+  .complete-card{
+    width:100%;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:40px 26px;
+    text-align:center;
+    box-shadow:0 8px 30px rgba(0,0,0,0.35);
+  }
+  .complete-icon{ font-size:46px; margin-bottom:10px; }
+  .complete-card h2{
+    font-family:'Playfair Display',Georgia,serif;
+    margin:0 0 18px;
+    font-size:20px;
+  }
+  .complete-stat{
+    font-family:'IBM Plex Mono','JetBrains Mono',monospace;
+    font-size:14px;
+    color:var(--muted);
+    margin-bottom:6px;
+  }
+  .complete-stat b{ color:var(--gold); }
 </style>
 </head>
 <body>
+
+  <div class="page-bg"></div>
 
   <div class="brand">
     <div class="atom">
@@ -240,13 +428,10 @@
   </div>
   <div class="subtitle">Question Bank · Spaced Repetition</div>
 
-  <div class="stats">
-    <div class="stat-pill" id="statDue">due: —</div>
-    <div class="stat-pill" id="statTotal">total: —</div>
-  </div>
+  <div class="streak-badge" id="streakBadge">🔥 0 day streak</div>
 
-  <div class="card" id="card">
-    <!-- filled by JS -->
+  <div id="app">
+    <!-- filled by JS: map / quiz / complete view -->
   </div>
 
   <div class="sync-note" id="syncNote">local mode</div>
@@ -257,7 +442,7 @@
   // On load, if a previously-visited version differs from this one, the
   // page reloads once with a cache-busting query param so the user always
   // gets the latest file without manually clearing browser cache.
-  const APP_VERSION = "1.2";
+  const APP_VERSION = "1.5";
   const VERSION_KEY = "bioreview_app_version";
   (function checkVersionAndReload() {
     const stored = localStorage.getItem(VERSION_KEY);
@@ -556,32 +741,140 @@
     return scored[0].q;
   }
 
-  // ---------- UI ----------
+  // ---------- UI state ----------
   let progress = loadProgress();
   let current = null;
 
-  function renderStats() {
-    const due = QUESTIONS.filter(q => {
-      const e = getEntry(progress, q.id);
-      if (!e.seen) return true;
-      return recallProb(e.halfLife, daysSince(e.lastSeen)) < 0.8;
-    }).length;
-    document.getElementById("statDue").textContent = `due: ${due}`;
-    document.getElementById("statTotal").textContent = `total: ${QUESTIONS.length}`;
+  // ---------- Daily streak ----------
+  const STREAK_KEY = "bioreview_daily_streak";
+  function loadStreak() {
+    try { return JSON.parse(localStorage.getItem(STREAK_KEY)) || { count: 0, lastDate: null }; }
+    catch { return { count: 0, lastDate: null }; }
+  }
+  function todayStr(d = new Date()) { return d.toISOString().slice(0, 10); }
+  function bumpStreakIfNeeded() {
+    const s = loadStreak();
+    const today = todayStr();
+    if (s.lastDate === today) return s;
+    const y = new Date(); y.setDate(y.getDate() - 1);
+    s.count = (s.lastDate === todayStr(y)) ? s.count + 1 : 1;
+    s.lastDate = today;
+    localStorage.setItem(STREAK_KEY, JSON.stringify(s));
+    return s;
   }
 
-  function renderQuestion() {
-    current = pickNextQuestion(progress);
-    const card = document.getElementById("card");
-    card.innerHTML = `
-      <div class="concept-tag">Ch ${current.chapter} · Concept ${current.concept} — ${current.conceptTitle}</div>
-      <div class="question">${current.question}</div>
-      <div class="options" id="options"></div>
-      <div class="explain" id="explain">
-        ${current.explanation}
-        <div class="pages-ref">Campbell Biology, p. ${current.page}</div>
+  // ---------- Concept map helpers ----------
+  function getConcepts() {
+    const order = [];
+    const byId = {};
+    QUESTIONS.forEach(q => {
+      if (!byId[q.concept]) { byId[q.concept] = { concept: q.concept, title: q.conceptTitle, questions: [] }; order.push(q.concept); }
+      byId[q.concept].questions.push(q);
+    });
+    return order.map(c => byId[c]);
+  }
+  function conceptStatus(qs) {
+    let seenCount = 0, masteredCount = 0;
+    qs.forEach(q => {
+      const e = getEntry(progress, q.id);
+      if (e.seen) {
+        seenCount++;
+        if (recallProb(e.halfLife, daysSince(e.lastSeen)) >= 0.8) masteredCount++;
+      }
+    });
+    const total = qs.length;
+    const state = (total > 0 && masteredCount === total) ? "mastered" : (seenCount > 0 ? "progress" : "new");
+    return { state, seenCount, masteredCount, total };
+  }
+
+  // ---------- Session state ----------
+  const SESSION = { queue: [], index: 0, correct: 0, streak: 0, bestStreak: 0 };
+
+  function buildQueue(conceptFilter) {
+    const pool = conceptFilter ? QUESTIONS.filter(q => q.concept === conceptFilter) : QUESTIONS;
+    const scored = pool.map(q => {
+      const e = getEntry(progress, q.id);
+      const d = e.lastSeen ? daysSince(e.lastSeen) : 999;
+      const p = e.seen ? recallProb(e.halfLife, d) : 0;
+      return { q, p };
+    });
+    scored.sort((a, b) => a.p - b.p);
+    const len = conceptFilter ? scored.length : Math.min(8, scored.length);
+    return scored.slice(0, len).map(s => s.q);
+  }
+
+  function startSession(conceptFilter) {
+    SESSION.queue = buildQueue(conceptFilter);
+    SESSION.index = 0;
+    SESSION.correct = 0;
+    SESSION.streak = 0;
+    SESSION.bestStreak = 0;
+    renderView("quiz");
+  }
+
+  // ---------- Views ----------
+  function renderView(view) {
+    if (view === "map") renderMap();
+    else if (view === "quiz") renderQuiz();
+    else renderComplete();
+  }
+
+  function renderMap() {
+    const streak = loadStreak();
+    document.getElementById("streakBadge").textContent = `🔥 ${streak.count} day streak`;
+
+    const concepts = getConcepts();
+    const totalMastered = concepts.reduce((sum, c) => sum + conceptStatus(c.questions).masteredCount, 0);
+
+    let html = `
+      <button class="practice-btn" id="practiceBtn">⚡ Practice weak spots</button>
+      <div class="mastery-line">${totalMastered} / ${QUESTIONS.length} mastered</div>
+      <div class="path">
+    `;
+    concepts.forEach((c, i) => {
+      const status = conceptStatus(c.questions);
+      const side = i % 2 === 0 ? "left" : "right";
+      const label = status.state === "mastered" ? "★" : c.concept;
+      html += `
+        <div class="path-node ${side}">
+          <button class="node-circle ${status.state}" data-concept="${c.concept}">${label}</button>
+          <div class="node-title">${c.title}</div>
+          <div class="node-sub">${status.masteredCount}/${status.total} mastered</div>
+        </div>
+      `;
+    });
+    html += `</div>`;
+
+    const app = document.getElementById("app");
+    app.innerHTML = html;
+    document.getElementById("practiceBtn").addEventListener("click", () => startSession(null));
+    app.querySelectorAll(".node-circle").forEach(btn => {
+      btn.addEventListener("click", () => startSession(btn.dataset.concept));
+    });
+  }
+
+  function renderQuiz() {
+    if (SESSION.index >= SESSION.queue.length) { renderView("complete"); return; }
+    current = SESSION.queue[SESSION.index];
+    const pct = Math.round((SESSION.index / SESSION.queue.length) * 100);
+
+    const app = document.getElementById("app");
+    app.innerHTML = `
+      <div class="quiz-header">
+        <button class="exit-btn" id="exitBtn">✕</button>
+        <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+        <div class="combo" id="combo">${SESSION.streak > 0 ? "🔥" + SESSION.streak : ""}</div>
       </div>
-      <button class="next-btn" id="nextBtn">Next question</button>
+      <div class="card">
+        <div class="concept-tag">Ch ${current.chapter} · Concept ${current.concept} — ${current.conceptTitle}</div>
+        <div class="question">${current.question}</div>
+        <div class="options" id="options"></div>
+        <div class="explain" id="explain">
+          ${current.explanation}
+          <div class="pages-ref">Campbell Biology, p. ${current.page}</div>
+        </div>
+        <button class="next-btn" id="nextBtn">Next</button>
+      </div>
     `;
     const optionsEl = document.getElementById("options");
     const letters = ["A", "B", "C", "D", "E"];
@@ -592,7 +885,22 @@
       btn.addEventListener("click", () => handleAnswer(i));
       optionsEl.appendChild(btn);
     });
-    renderStats();
+    document.getElementById("exitBtn").addEventListener("click", () => renderView("map"));
+  }
+
+  function renderComplete() {
+    const total = SESSION.queue.length;
+    const app = document.getElementById("app");
+    app.innerHTML = `
+      <div class="complete-card">
+        <div class="complete-icon">🏆</div>
+        <h2>Session complete!</h2>
+        <div class="complete-stat"><b>${SESSION.correct}</b> / ${total} correct</div>
+        <div class="complete-stat">Best combo: 🔥 <b>${SESSION.bestStreak}</b></div>
+        <button class="next-btn show" id="backBtn" style="margin-top:20px;">Back to map</button>
+      </div>
+    `;
+    document.getElementById("backBtn").addEventListener("click", () => renderView("map"));
   }
 
   function handleAnswer(selectedIndex) {
@@ -608,21 +916,28 @@
 
     updateEntry(progress, current.id, correct);
     saveProgress(progress);
+    bumpStreakIfNeeded();
+
+    SESSION.correct += correct ? 1 : 0;
+    SESSION.streak = correct ? SESSION.streak + 1 : 0;
+    SESSION.bestStreak = Math.max(SESSION.bestStreak, SESSION.streak);
+    document.getElementById("combo").textContent = SESSION.streak > 0 ? "🔥" + SESSION.streak : "";
 
     document.getElementById("explain").classList.add("show");
     document.getElementById("nextBtn").classList.add("show");
-    document.getElementById("nextBtn").addEventListener("click", renderQuestion);
-
-    renderStats();
+    document.getElementById("nextBtn").addEventListener("click", () => {
+      SESSION.index++;
+      renderView("quiz");
+    });
   }
 
   // ---------- Boot ----------
   progress = await loadRemoteIfAvailable(progress);
   if (QUESTIONS.length === 0) {
-    document.getElementById("card").innerHTML =
+    document.getElementById("app").innerHTML =
       `<div class="empty-state">No questions yet — add some to the QUESTIONS array.</div>`;
   } else {
-    renderQuestion();
+    renderView("map");
   }
 </script>
 </body>
