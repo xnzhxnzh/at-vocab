@@ -442,7 +442,7 @@
   // On load, if a previously-visited version differs from this one, the
   // page reloads once with a cache-busting query param so the user always
   // gets the latest file without manually clearing browser cache.
-  const APP_VERSION = "1.5";
+  const APP_VERSION = "1.7";
   const VERSION_KEY = "bioreview_app_version";
   (function checkVersionAndReload() {
     const stored = localStorage.getItem(VERSION_KEY);
@@ -460,22 +460,25 @@
   // Fill in your project's config to sync progress across devices.
   // Leave as-is to run in local-only (localStorage) mode.
   const firebaseConfig = {
-    apiKey: "",
-    authDomain: "",
-    projectId: "",
-    // ...
+    apiKey: "AIzaSyCLC23aASA2NFK1eUdrECWz0D9Qojgl_vg",
+    authDomain: "sat-vocab-4bbe0.firebaseapp.com",
+    projectId: "sat-vocab-4bbe0",
+    storageBucket: "sat-vocab-4bbe0.firebasestorage.app",
+    messagingSenderId: "1080222913619",
+    appId: "1:1080222913619:web:af440bb9f134f7e46822a6"
   };
   const PROGRESS_COLLECTION = "bioreview-progress"; // separate collection, same project pattern as usabo-quiz
+  const LEADERBOARD_COLLECTION = "bioreview-leaderboard";
 
   let db = null;
   let firebaseReady = false;
   if (firebaseConfig.apiKey && firebaseConfig.projectId) {
     try {
       const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js");
-      const { getFirestore, doc, getDoc, setDoc } =
+      const { getFirestore, doc, getDoc, setDoc, collection, getDocs, query, orderBy, limit } =
         await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
       const app = initializeApp(firebaseConfig);
-      db = { getFirestore, doc, getDoc, setDoc, instance: getFirestore(app) };
+      db = { doc, getDoc, setDoc, collection, getDocs, query, orderBy, limit, instance: getFirestore(app) };
       firebaseReady = true;
       document.getElementById("syncNote").textContent = `v${APP_VERSION} · synced`;
     } catch (e) {
@@ -745,6 +748,58 @@
   let progress = loadProgress();
   let current = null;
 
+  // ---------- Identity & leaderboard ----------
+  const UID_KEY = "bioreview_uid";
+  const NICK_KEY = "bioreview_nickname";
+  const BEST_KEY = "bioreview_best_ever";
+
+  function getUid() {
+    let uid = localStorage.getItem(UID_KEY);
+    if (!uid) { uid = "u_" + Math.random().toString(36).slice(2, 10); localStorage.setItem(UID_KEY, uid); }
+    return uid;
+  }
+  function getNickname() { return localStorage.getItem(NICK_KEY); }
+  function setNickname(name) { localStorage.setItem(NICK_KEY, name); }
+  function loadBest() {
+    try { return JSON.parse(localStorage.getItem(BEST_KEY)) || { bestStreak: 0, totalCorrect: 0 }; }
+    catch { return { bestStreak: 0, totalCorrect: 0 }; }
+  }
+  function saveBest(b) { localStorage.setItem(BEST_KEY, JSON.stringify(b)); }
+
+  async function syncLeaderboard() {
+    if (!firebaseReady) return;
+    const nick = getNickname();
+    if (!nick) return;
+    const concepts = getConcepts();
+    const masteredCount = concepts.reduce((sum, c) => sum + conceptStatus(c.questions).masteredCount, 0);
+    const best = loadBest();
+    try {
+      await db.setDoc(db.doc(db.instance, LEADERBOARD_COLLECTION, getUid()), {
+        name: nick,
+        masteredCount,
+        totalQuestions: QUESTIONS.length,
+        bestStreak: best.bestStreak,
+        totalCorrect: best.totalCorrect,
+        updatedAt: Date.now()
+      });
+    } catch (e) { console.warn("Leaderboard sync failed:", e); }
+  }
+
+  async function fetchLeaderboard() {
+    if (!firebaseReady) return [];
+    try {
+      const q = db.query(
+        db.collection(db.instance, LEADERBOARD_COLLECTION),
+        db.orderBy("masteredCount", "desc"),
+        db.limit(20)
+      );
+      const snap = await db.getDocs(q);
+      const rows = [];
+      snap.forEach(d => rows.push({ id: d.id, ...d.data() }));
+      return rows;
+    } catch (e) { console.warn("Leaderboard fetch failed:", e); return []; }
+  }
+
   // ---------- Daily streak ----------
   const STREAK_KEY = "bioreview_daily_streak";
   function loadStreak() {
@@ -816,7 +871,67 @@
   function renderView(view) {
     if (view === "map") renderMap();
     else if (view === "quiz") renderQuiz();
+    else if (view === "leaderboard") renderLeaderboard();
     else renderComplete();
+  }
+
+  function renderNamePrompt() {
+    const app = document.getElementById("app");
+    app.innerHTML = `
+      <div class="card" style="text-align:center;">
+        <div class="question">What should we call you on the leaderboard?</div>
+        <input id="nameInput" type="text" maxlength="20" placeholder="Your name"
+          style="width:100%;padding:12px;border-radius:10px;border:1.5px solid var(--line);
+          background:var(--surface-2);color:var(--ink);font-size:15px;margin:14px 0;box-sizing:border-box;">
+        <button class="next-btn show" id="nameSubmit">Let's go</button>
+      </div>
+    `;
+    const submit = () => {
+      const val = document.getElementById("nameInput").value.trim();
+      if (!val) return;
+      setNickname(val);
+      renderView("map");
+    };
+    document.getElementById("nameSubmit").addEventListener("click", submit);
+    document.getElementById("nameInput").addEventListener("keydown", e => { if (e.key === "Enter") submit(); });
+  }
+
+  async function renderLeaderboard() {
+    const app = document.getElementById("app");
+    app.innerHTML = `<div class="card"><div class="question">Loading leaderboard…</div></div>`;
+
+    if (!firebaseReady) {
+      app.innerHTML = `
+        <div class="card" style="text-align:center;">
+          <div class="question">Leaderboard isn't connected yet.</div>
+          <div class="explain show" style="border-top:none;padding-top:0;">This needs Firebase configured so everyone's progress can sync here.</div>
+          <button class="next-btn show" id="lbBack">Back to map</button>
+        </div>
+      `;
+      document.getElementById("lbBack").addEventListener("click", () => renderView("map"));
+      return;
+    }
+
+    const rows = await fetchLeaderboard();
+    const uid = getUid();
+    let html = `<div class="card"><div class="concept-tag">🏆 Leaderboard</div>`;
+    if (rows.length === 0) {
+      html += `<div class="explain show" style="border-top:none;padding-top:0;">No scores yet — be the first!</div>`;
+    } else {
+      rows.forEach((r, i) => {
+        const isMe = r.id === uid;
+        html += `
+          <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line);
+            ${isMe ? "color:var(--gold);font-weight:700;" : ""}">
+            <span>${i + 1}. ${r.name}${isMe ? " (you)" : ""}</span>
+            <span>${r.masteredCount}/${r.totalQuestions}</span>
+          </div>
+        `;
+      });
+    }
+    html += `<button class="next-btn show" id="lbBack" style="margin-top:18px;">Back to map</button></div>`;
+    app.innerHTML = html;
+    document.getElementById("lbBack").addEventListener("click", () => renderView("map"));
   }
 
   function renderMap() {
@@ -828,6 +943,7 @@
 
     let html = `
       <button class="practice-btn" id="practiceBtn">⚡ Practice weak spots</button>
+      <button class="practice-btn" id="leaderboardBtn" style="background:linear-gradient(135deg, var(--gold), #C98F1F); color:#3A2A05;">🏆 Leaderboard</button>
       <div class="mastery-line">${totalMastered} / ${QUESTIONS.length} mastered</div>
       <div class="path">
     `;
@@ -848,6 +964,7 @@
     const app = document.getElementById("app");
     app.innerHTML = html;
     document.getElementById("practiceBtn").addEventListener("click", () => startSession(null));
+    document.getElementById("leaderboardBtn").addEventListener("click", () => renderView("leaderboard"));
     app.querySelectorAll(".node-circle").forEach(btn => {
       btn.addEventListener("click", () => startSession(btn.dataset.concept));
     });
@@ -923,6 +1040,12 @@
     SESSION.bestStreak = Math.max(SESSION.bestStreak, SESSION.streak);
     document.getElementById("combo").textContent = SESSION.streak > 0 ? "🔥" + SESSION.streak : "";
 
+    const best = loadBest();
+    best.totalCorrect += correct ? 1 : 0;
+    best.bestStreak = Math.max(best.bestStreak, SESSION.streak);
+    saveBest(best);
+    syncLeaderboard();
+
     document.getElementById("explain").classList.add("show");
     document.getElementById("nextBtn").classList.add("show");
     document.getElementById("nextBtn").addEventListener("click", () => {
@@ -936,6 +1059,8 @@
   if (QUESTIONS.length === 0) {
     document.getElementById("app").innerHTML =
       `<div class="empty-state">No questions yet — add some to the QUESTIONS array.</div>`;
+  } else if (!getNickname()) {
+    renderNamePrompt();
   } else {
     renderView("map");
   }
