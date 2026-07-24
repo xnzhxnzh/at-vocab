@@ -29,6 +29,8 @@
     *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
   }
   *{box-sizing:border-box;}
+  button{ outline:none; -webkit-tap-highlight-color:transparent; }
+  button:focus{ outline:none; }
   .page-bg{
     position:fixed;
     inset:0;
@@ -173,11 +175,13 @@
     font-family:inherit;
     color:var(--ink);
     cursor:pointer;
+    outline:none;
+    -webkit-tap-highlight-color:transparent;
     transition:border-color 0.15s, background 0.15s;
   }
   .option:hover:not(:disabled){border-color:var(--petal);}
   .option:disabled{cursor:default;}
-  .option.correct{border-color:var(--gold);background:rgba(242,187,67,0.12);}
+  .option.correct{border-color:var(--strong);background:rgba(79,168,118,0.14);}
   .option.wrong{border-color:var(--crimson);background:rgba(198,67,94,0.12);}
   .option .letter{
     font-family:'IBM Plex Mono',monospace;
@@ -490,7 +494,7 @@
   // On load, if a previously-visited version differs from this one, the
   // page reloads once with a cache-busting query param so the user always
   // gets the latest file without manually clearing browser cache.
-  const APP_VERSION = "2.4";
+  const APP_VERSION = "2.5";
   const VERSION_KEY = "bioreview_app_version";
   (function checkVersionAndReload() {
     const stored = localStorage.getItem(VERSION_KEY);
@@ -1089,6 +1093,7 @@
 
   function renderQuiz() {
     if (SESSION.index >= SESSION.queue.length) { renderView("complete"); return; }
+    if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
     current = SESSION.queue[SESSION.index];
     const pct = Math.round((SESSION.index / SESSION.queue.length) * 100);
 
