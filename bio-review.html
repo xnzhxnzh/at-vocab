@@ -442,7 +442,7 @@
   // On load, if a previously-visited version differs from this one, the
   // page reloads once with a cache-busting query param so the user always
   // gets the latest file without manually clearing browser cache.
-  const APP_VERSION = "1.8";
+  const APP_VERSION = "1.9";
   const VERSION_KEY = "bioreview_app_version";
   (function checkVersionAndReload() {
     const stored = localStorage.getItem(VERSION_KEY);
@@ -721,7 +721,7 @@
   }
 
   function getEntry(progress, id) {
-    return progress[id] || { halfLife: 1, lastSeen: 0, seen: 0 };
+    return progress[id] || { halfLife: 1, lastSeen: 0, seen: 0, lastCorrect: false };
   }
   function updateEntry(progress, id, correct) {
     const e = getEntry(progress, id);
@@ -729,6 +729,7 @@
     // correct answer -> half-life grows; wrong -> resets low
     e.halfLife = correct ? e.halfLife * (1.6 + Math.random() * 0.4) : Math.max(0.5, e.halfLife * 0.5);
     e.lastSeen = Date.now();
+    e.lastCorrect = correct;
     progress[id] = e;
     return e;
   }
@@ -845,7 +846,7 @@
       const e = getEntry(progress, q.id);
       if (e.seen) {
         seenCount++;
-        if (recallProb(e.halfLife, daysSince(e.lastSeen)) >= 0.8) masteredCount++;
+        if (e.lastCorrect && recallProb(e.halfLife, daysSince(e.lastSeen)) >= 0.8) masteredCount++;
       }
     });
     const total = qs.length;
