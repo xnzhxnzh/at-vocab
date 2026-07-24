@@ -22,6 +22,7 @@
     --gold:#F2BB43;
     --crimson:#C6435E;
     --teal:#1FAAB6;
+    --strong:#4FA876;
     --line:#2B2B36;
   }
   @media (prefers-reduced-motion: reduce){
@@ -269,6 +270,34 @@
     color:var(--muted);
     margin-bottom:30px;
   }
+  .chapter-nav{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:16px;
+    margin-bottom:10px;
+  }
+  .chapter-label{
+    font-family:'Playfair Display',Georgia,serif;
+    font-size:16px;
+    font-weight:700;
+    color:var(--ink);
+    min-width:100px;
+    text-align:center;
+  }
+  .chapter-arrow{
+    width:32px;height:32px;
+    border-radius:50%;
+    border:1px solid var(--line);
+    background:var(--surface);
+    color:var(--ink);
+    font-size:16px;
+    cursor:pointer;
+  }
+  .chapter-arrow:disabled{
+    opacity:0.25;
+    cursor:default;
+  }
   .path{
     display:flex;
     flex-direction:column;
@@ -297,6 +326,13 @@
   }
   .path-node.left{ align-self:flex-start; margin-left:14%; }
   .path-node.right{ align-self:flex-end; margin-right:14%; }
+  .node-ring{
+    width:76px;height:76px;
+    border-radius:50%;
+    padding:4px;
+    display:flex;align-items:center;justify-content:center;
+    transition:background 0.3s;
+  }
   .node-circle{
     width:68px;height:68px;
     border-radius:50%;
@@ -308,13 +344,25 @@
     font-weight:700;
     cursor:pointer;
     display:flex;align-items:center;justify-content:center;
+    position:relative;
     transition:transform 0.15s;
+  }
+  .master-badge{
+    position:absolute;
+    top:-4px; right:-4px;
+    width:22px;height:22px;
+    border-radius:50%;
+    background:var(--gold);
+    color:#3A2A05;
+    font-size:12px;
+    display:flex;align-items:center;justify-content:center;
+    border:2px solid var(--bg);
   }
   .node-circle:active{ transform:scale(0.94); }
   .node-circle.progress{
     border-color:var(--petal);
     color:var(--petal);
-    background:rgba(113,134,214,0.1);
+    background:var(--surface-2);
   }
   .node-circle.mastered{
     border-color:var(--gold);
@@ -442,7 +490,7 @@
   // On load, if a previously-visited version differs from this one, the
   // page reloads once with a cache-busting query param so the user always
   // gets the latest file without manually clearing browser cache.
-  const APP_VERSION = "1.9";
+  const APP_VERSION = "2.4";
   const VERSION_KEY = "bioreview_app_version";
   (function checkVersionAndReload() {
     const stored = localStorage.getItem(VERSION_KEY);
@@ -831,27 +879,57 @@
   }
 
   // ---------- Concept map helpers ----------
-  function getConcepts() {
+  function getConcepts(pool = QUESTIONS) {
     const order = [];
     const byId = {};
-    QUESTIONS.forEach(q => {
+    pool.forEach(q => {
       if (!byId[q.concept]) { byId[q.concept] = { concept: q.concept, title: q.conceptTitle, questions: [] }; order.push(q.concept); }
       byId[q.concept].questions.push(q);
     });
     return order.map(c => byId[c]);
   }
+  function getChapters() {
+    const order = [];
+    const byId = {};
+    QUESTIONS.forEach(q => {
+      if (!byId[q.chapter]) { byId[q.chapter] = { chapter: q.chapter, questions: [] }; order.push(q.chapter); }
+      byId[q.chapter].questions.push(q);
+    });
+    return order.map(c => byId[c]);
+  }
+  const CHAPTER_KEY = "bioreview_current_chapter";
+  function getCurrentChapter() {
+    const chapters = getChapters().map(c => c.chapter);
+    let stored = parseInt(localStorage.getItem(CHAPTER_KEY), 10);
+    if (!chapters.includes(stored)) stored = chapters[chapters.length - 1];
+    return stored;
+  }
+  function setCurrentChapter(ch) { localStorage.setItem(CHAPTER_KEY, String(ch)); }
+  function strengthColor(pct) {
+    // pct: 0 (all weak) -> 100 (all strong). Interpolates crimson -> strong-green.
+    const from = [198, 67, 94];   // crimson
+    const to = [79, 168, 118];    // strong green
+    const t = Math.max(0, Math.min(1, pct / 100));
+    const rgb = from.map((c, i) => Math.round(c + (to[i] - c) * t));
+    return `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`;
+  }
+
   function conceptStatus(qs) {
-    let seenCount = 0, masteredCount = 0;
+    let seenCount = 0, masteredCount = 0, weakCount = 0;
     qs.forEach(q => {
       const e = getEntry(progress, q.id);
       if (e.seen) {
         seenCount++;
-        if (e.lastCorrect && recallProb(e.halfLife, daysSince(e.lastSeen)) >= 0.8) masteredCount++;
+        const p = recallProb(e.halfLife, daysSince(e.lastSeen));
+        if (e.lastCorrect && p >= 0.8) masteredCount++;
+        else weakCount++;
+      } else {
+        weakCount++; // never seen counts as weak/due
       }
     });
     const total = qs.length;
     const state = (total > 0 && masteredCount === total) ? "mastered" : (seenCount > 0 ? "progress" : "new");
-    return { state, seenCount, masteredCount, total };
+    return { state, seenCount, masteredCount, weakCount, total };
   }
 
   // ---------- Session state ----------
@@ -953,22 +1031,40 @@
     const streak = loadStreak();
     document.getElementById("streakBadge").textContent = `🔥 ${streak.count} day streak`;
 
-    const concepts = getConcepts();
-    const totalMastered = concepts.reduce((sum, c) => sum + conceptStatus(c.questions).masteredCount, 0);
+    const allConcepts = getConcepts();
+    const totalMastered = allConcepts.reduce((sum, c) => sum + conceptStatus(c.questions).masteredCount, 0);
+    const totalWeak = allConcepts.reduce((sum, c) => sum + conceptStatus(c.questions).weakCount, 0);
+
+    const chapters = getChapters();
+    const currentChapter = getCurrentChapter();
+    const chapterIndex = chapters.findIndex(c => c.chapter === currentChapter);
+    const chapterQuestions = chapters[chapterIndex].questions;
+    const concepts = getConcepts(chapterQuestions);
 
     let html = `
-      <button class="practice-btn" id="practiceBtn">⚡ Practice weak spots</button>
+      <button class="practice-btn" id="practiceBtn">⚡ Practice weak spots (${totalWeak})</button>
       <button class="practice-btn" id="leaderboardBtn" style="background:linear-gradient(135deg, var(--gold), #C98F1F); color:#3A2A05;">🏆 Leaderboard</button>
       <div class="mastery-line">${totalMastered} / ${QUESTIONS.length} mastered</div>
+
+      <div class="chapter-nav">
+        <button class="chapter-arrow" id="chPrev" ${chapterIndex <= 0 ? "disabled" : ""}>‹</button>
+        <div class="chapter-label">Chapter ${currentChapter}</div>
+        <button class="chapter-arrow" id="chNext" ${chapterIndex >= chapters.length - 1 ? "disabled" : ""}>›</button>
+      </div>
+
       <div class="path">
     `;
     concepts.forEach((c, i) => {
       const status = conceptStatus(c.questions);
       const side = i % 2 === 0 ? "left" : "right";
-      const label = status.state === "mastered" ? "★" : c.concept;
+      const pctStrong = Math.round((status.total - status.weakCount) / status.total * 100);
+      const ringColor = strengthColor(pctStrong);
+      const badge = status.state === "mastered" ? `<span class="master-badge">★</span>` : "";
       html += `
         <div class="path-node ${side}">
-          <button class="node-circle ${status.state}" data-concept="${c.concept}">${label}</button>
+          <div class="node-ring" style="background: conic-gradient(${ringColor} ${pctStrong}%, var(--line) 0);">
+            <button class="node-circle ${status.state}" data-concept="${c.concept}">${c.concept}${badge}</button>
+          </div>
           <div class="node-title">${c.title}</div>
           <div class="node-sub">${status.masteredCount}/${status.total} mastered</div>
         </div>
@@ -980,6 +1076,12 @@
     app.innerHTML = html;
     document.getElementById("practiceBtn").addEventListener("click", () => startSession(null));
     document.getElementById("leaderboardBtn").addEventListener("click", () => renderView("leaderboard"));
+    document.getElementById("chPrev").addEventListener("click", () => {
+      if (chapterIndex > 0) { setCurrentChapter(chapters[chapterIndex - 1].chapter); renderMap(); }
+    });
+    document.getElementById("chNext").addEventListener("click", () => {
+      if (chapterIndex < chapters.length - 1) { setCurrentChapter(chapters[chapterIndex + 1].chapter); renderMap(); }
+    });
     app.querySelectorAll(".node-circle").forEach(btn => {
       btn.addEventListener("click", () => startSession(btn.dataset.concept));
     });
