@@ -474,6 +474,55 @@
     margin-bottom:6px;
   }
   .complete-stat b{ color:var(--gold); }
+
+  .transfer-link{
+    display:block;
+    width:100%;
+    background:none;
+    border:none;
+    color:var(--muted);
+    font-family:'IBM Plex Mono','JetBrains Mono',monospace;
+    font-size:11px;
+    text-align:center;
+    padding:10px;
+    cursor:pointer;
+  }
+  .transfer-code{
+    font-family:'IBM Plex Mono','JetBrains Mono',monospace;
+    font-size:11px;
+    color:var(--gold);
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:12px;
+    margin:14px 0 10px;
+    word-break:break-all;
+  }
+  .transfer-msg{
+    font-size:11px;
+    min-height:16px;
+    margin-top:6px;
+    color:var(--muted);
+  }
+  .transfer-divider{
+    width:100%;
+    height:1px;
+    background:var(--line);
+    margin:22px 0;
+  }
+  .transfer-input{
+    width:100%;
+    padding:12px;
+    border-radius:10px;
+    border:1.5px solid var(--line);
+    background:var(--surface-2);
+    color:var(--ink);
+    font-size:13px;
+    font-family:'IBM Plex Mono','JetBrains Mono',monospace;
+    margin:10px 0;
+    box-sizing:border-box;
+    text-align:center;
+  }
 </style>
 </head>
 <body>
@@ -509,7 +558,7 @@
   // On load, if a previously-visited version differs from this one, the
   // page reloads once with a cache-busting query param so the user always
   // gets the latest file without manually clearing browser cache.
-  const APP_VERSION = "2.7";
+  const APP_VERSION = "3.0";
   const VERSION_KEY = "bioreview_app_version";
   (function checkVersionAndReload() {
     const stored = localStorage.getItem(VERSION_KEY);
@@ -750,6 +799,134 @@
       correctIndex: 1,
       explanation: "The double arrow shows the reaction runs both ways. As products build up, the reverse reaction speeds up until the forward and reverse rates match — that's chemical equilibrium, a dynamic state where both reactions keep happening but net concentrations no longer change. It doesn't mean the reaction goes only one way or stops (A and C are false), and equilibrium concentrations are usually not equal to each other — only stable at whatever ratio they settle into (D is false).",
       page: "41"
+    },
+    {
+      id: "ch2-tyu-001",
+      chapter: 2,
+      concept: "2.2",
+      conceptTitle: "Atomic Structure",
+      question: "Compared with phosphorus-31 (31P), the radioactive isotope phosphorus-32 (32P) has",
+      options: [
+        "a different atomic number.",
+        "one more proton.",
+        "one more electron.",
+        "one more neutron."
+      ],
+      correctIndex: 3,
+      explanation: "31P and 32P are both isotopes of phosphorus (atomic number 15), so they have the same number of protons — and, as neutral atoms, the same number of electrons. Only neutron count differs: 31P has 16 neutrons (31−15), while 32P has 17 (32−15), one more. That rules out the atomic-number, proton, and electron options, which each assume something changed that actually didn't.",
+      page: "42"
+    },
+    {
+      id: "ch2-tyu-002",
+      chapter: 2,
+      concept: "2.1",
+      conceptTitle: "Elements & Compounds",
+      question: "In the term trace element, the adjective trace means that",
+      options: [
+        "the element is required in very small amounts.",
+        "the element can be used as a label to trace atoms through an organism's metabolism.",
+        "the element is very rare on Earth.",
+        "the element enhances health but is not essential for the organism's long-term survival."
+      ],
+      correctIndex: 0,
+      explanation: "Trace elements are essential elements needed by an organism in only minute quantities — 'trace' describes the tiny amount required, like the 0.15 mg of iodine needed daily for thyroid function. It's not about being rare in the environment (C), being used as a metabolic tracer (B, that's a different meaning of 'trace' used for radioactive tracers), or being optional (D) — trace elements are still essential, just needed in small amounts.",
+      page: "43"
+    },
+    {
+      id: "ch2-tyu-003",
+      chapter: 2,
+      concept: "2.2",
+      conceptTitle: "Atomic Structure",
+      question: "The reactivity of an atom arises from",
+      options: [
+        "the average distance of the outermost electron shell from the nucleus.",
+        "the existence of unpaired electrons in the valence shell.",
+        "the sum of the potential energies of all the electron shells.",
+        "the potential energy of the valence shell."
+      ],
+      correctIndex: 1,
+      explanation: "An atom is reactive when it has unpaired electrons in its valence (outermost) shell — those unpaired electrons are what get involved when atoms interact to complete their valence shells. Distance from the nucleus (A) relates to energy level, not reactivity directly; total potential energy across all shells (C) and valence-shell potential energy alone (D) describe energy, not the structural reason an atom seeks to bond.",
+      page: "43"
+    },
+    {
+      id: "ch2-tyu-004",
+      chapter: 2,
+      concept: "2.3",
+      conceptTitle: "Chemical Bonding",
+      question: "Which statement is true of all atoms that are anions?",
+      options: [
+        "The atom has more electrons than protons.",
+        "The atom has more protons than electrons.",
+        "The atom has fewer protons than does a neutral atom of the same element.",
+        "The atom has more neutrons than protons."
+      ],
+      correctIndex: 0,
+      explanation: "An anion is a negatively charged ion, which forms when an atom gains one or more electrons — so it ends up with more electrons than protons. Its proton count doesn't change from the neutral atom (C is false, that would change the element itself), having more protons than electrons describes a cation instead (B), and neutron count has nothing to do with charge (D).",
+      page: "43"
+    },
+    {
+      id: "ch2-tyu-005",
+      chapter: 2,
+      concept: "2.4",
+      conceptTitle: "Chemical Reactions",
+      question: "Which of the following statements correctly describes any chemical reaction that has reached equilibrium?",
+      options: [
+        "The concentrations of products and reactants are equal.",
+        "The reaction is now irreversible.",
+        "Both forward and reverse reactions have halted.",
+        "The rates of the forward and reverse reactions are equal."
+      ],
+      correctIndex: 3,
+      explanation: "Equilibrium is defined by the forward and reverse reaction rates becoming equal — both reactions keep happening, just at matching rates, so concentrations stop changing overall. It's a dynamic state, not a stopped one (C is false), reactions remain reversible at equilibrium (B is false), and equilibrium concentrations are usually not equal to each other, only stable at whatever ratio they settle into (A is false).",
+      page: "43"
+    },
+    {
+      id: "ch2-tyu-006",
+      chapter: 2,
+      concept: "2.2",
+      conceptTitle: "Atomic Structure",
+      question: "We can represent atoms by listing protons, neutrons, and electrons — for example, 2p+, 2n0, 2e− for helium. Which of the following represents the oxygen-18 (18O) isotope?",
+      options: [
+        "7p+, 2n0, 9e−",
+        "8p+, 10n0, 8e−",
+        "9p+, 9n0, 9e−",
+        "10p+, 8n0, 9e−"
+      ],
+      correctIndex: 1,
+      explanation: "Oxygen's atomic number is 8, so any oxygen atom has 8 protons and — if neutral — 8 electrons. The mass number 18 means neutrons = 18 − 8 = 10. That gives 8p+, 10n0, 8e−. The other options all use the wrong proton count, which would make the atom a different element entirely, not an oxygen isotope.",
+      page: "43"
+    },
+    {
+      id: "ch2-tyu-007",
+      chapter: 2,
+      concept: "2.3",
+      conceptTitle: "Chemical Bonding",
+      question: "The atomic number of sulfur is 16. Sulfur combines with hydrogen by covalent bonding to form hydrogen sulfide. Based on sulfur's number of valence electrons, predict the molecular formula of the compound.",
+      options: [
+        "HS",
+        "HS2",
+        "H2S",
+        "H4S"
+      ],
+      correctIndex: 2,
+      explanation: "Sulfur's 16 electrons fill as 2, 8, 6 — 6 valence electrons, so it needs 2 more to complete its valence shell, giving it a valence (bonding capacity) of 2. Each hydrogen atom has a valence of 1, so it takes two hydrogens to complete sulfur's valence shell: H2S. The other formulas would leave sulfur's valence shell incomplete or overfilled.",
+      page: "43"
+    },
+    {
+      id: "ch2-tyu-008",
+      chapter: 2,
+      concept: "2.4",
+      conceptTitle: "Chemical Reactions",
+      question: "What coefficients belong in the blanks so all atoms are accounted for? C6H12O6 → __ C2H6O + __ CO2",
+      options: [
+        "2; 1",
+        "3; 1",
+        "1; 3",
+        "2; 2"
+      ],
+      correctIndex: 3,
+      explanation: "Glucose (C6H12O6: 6C, 12H, 6O) ferments into ethanol and carbon dioxide. With coefficients 2 and 2: 2 C2H6O gives 4C, 12H, 2O, and 2 CO2 gives 2C, 4O — totaling 6C, 12H, 6O, matching the reactant exactly. Matter is conserved in a chemical reaction, so the atom counts on both sides must balance; the other coefficient pairs don't balance all three elements at once.",
+      page: "43"
     }
   ];
 
@@ -855,6 +1032,68 @@
       <defs><marker id="arrow2" markerWidth="7" markerHeight="7" refX="5" refY="2.5" orient="auto"><path d="M0,0 L5,2.5 L0,5 Z" fill="var(--muted)"/></marker></defs>
       <circle cx="195" cy="50" r="13" fill="var(--gold)"/><circle cx="222" cy="50" r="13" fill="var(--gold)"/>
       <text x="208" y="80" text-anchor="middle" font-size="9" fill="var(--muted)" font-family="IBM Plex Mono, monospace">2NH3</text>
+    </svg>`,
+    "ch2-tyu-001": `<svg viewBox="0 0 240 100" class="diagram-svg">
+      <circle cx="60" cy="50" r="32" fill="var(--petal)"/>
+      <text x="60" y="46" text-anchor="middle" font-size="12" fill="#0A0A0E" font-weight="700">31P</text>
+      <text x="60" y="60" text-anchor="middle" font-size="9" fill="#0A0A0E">15p 16n</text>
+      <text x="130" y="55" text-anchor="middle" font-size="14" fill="var(--muted)">vs</text>
+      <circle cx="195" cy="50" r="32" fill="var(--gold)"/>
+      <text x="195" y="46" text-anchor="middle" font-size="12" fill="#0A0A0E" font-weight="700">32P</text>
+      <text x="195" y="60" text-anchor="middle" font-size="9" fill="#0A0A0E">15p 17n</text>
+    </svg>`,
+    "ch2-tyu-002": `<svg viewBox="0 0 240 100" class="diagram-svg">
+      <rect x="20" y="30" width="90" height="40" rx="6" fill="var(--petal)" opacity="0.8"/>
+      <text x="65" y="55" text-anchor="middle" font-size="11" fill="#0A0A0E" font-weight="700">96% bulk elements</text>
+      <circle cx="180" cy="50" r="5" fill="var(--gold)"/>
+      <text x="180" y="80" text-anchor="middle" font-size="9" fill="var(--muted)" font-family="IBM Plex Mono, monospace">trace element</text>
+      <text x="180" y="92" text-anchor="middle" font-size="8" fill="var(--muted)">&lt;0.01% of mass</text>
+    </svg>`,
+    "ch2-tyu-003": `<svg viewBox="0 0 180 180" class="diagram-svg">
+      <circle cx="90" cy="90" r="26" fill="none" stroke="var(--teal)" stroke-width="1.5" opacity="0.55"/>
+      <circle cx="90" cy="90" r="46" fill="none" stroke="var(--teal)" stroke-width="1.5" opacity="0.55"/>
+      <circle cx="90" cy="90" r="17" fill="var(--petal)"/>
+      <circle cx="90" cy="64" r="3.4" fill="var(--gold)"/><circle cx="112" cy="76" r="3.4" fill="var(--gold)"/>
+      <circle cx="112" cy="104" r="3.4" fill="var(--gold)"/><circle cx="90" cy="116" r="3.4" fill="var(--gold)"/>
+      <circle cx="68" cy="104" r="3.4" fill="var(--gold)"/><circle cx="68" cy="76" r="3.4" fill="var(--gold)"/>
+      <circle cx="90" cy="44" r="4.2" fill="var(--crimson)"/>
+      <text x="90" y="165" text-anchor="middle" font-size="9" fill="var(--crimson)" font-family="IBM Plex Mono, monospace">1 unpaired electron</text>
+    </svg>`,
+    "ch2-tyu-004": `<svg viewBox="0 0 220 120" class="diagram-svg">
+      <circle cx="70" cy="55" r="24" fill="var(--surface-2)" stroke="var(--line)" stroke-width="2"/>
+      <text x="70" y="60" text-anchor="middle" font-size="10" fill="var(--muted)">17p</text>
+      <text x="70" y="95" text-anchor="middle" font-size="9" fill="var(--muted)" font-family="IBM Plex Mono, monospace">neutral Cl (17e−)</text>
+      <text x="120" y="60" font-size="18" fill="var(--muted)">→</text>
+      <circle cx="170" cy="55" r="24" fill="var(--crimson)" opacity="0.8"/>
+      <text x="170" y="60" text-anchor="middle" font-size="10" fill="#0A0A0E">17p</text>
+      <text x="170" y="95" text-anchor="middle" font-size="9" fill="var(--crimson)" font-family="IBM Plex Mono, monospace">Cl− anion (18e−)</text>
+    </svg>`,
+    "ch2-tyu-005": `<svg viewBox="0 0 220 90" class="diagram-svg">
+      <circle cx="30" cy="45" r="11" fill="var(--petal)"/><circle cx="55" cy="45" r="11" fill="var(--crimson)"/>
+      <path d="M80,38 L140,38" stroke="var(--strong)" stroke-width="3" marker-end="url(#arrowEq)"/>
+      <path d="M140,52 L80,52" stroke="var(--strong)" stroke-width="3" marker-end="url(#arrowEq)"/>
+      <defs><marker id="arrowEq" markerWidth="7" markerHeight="7" refX="5" refY="2.5" orient="auto"><path d="M0,0 L5,2.5 L0,5 Z" fill="var(--strong)"/></marker></defs>
+      <circle cx="165" cy="45" r="11" fill="var(--gold)"/><circle cx="190" cy="45" r="11" fill="var(--gold)"/>
+      <text x="110" y="78" text-anchor="middle" font-size="9" fill="var(--strong)" font-family="IBM Plex Mono, monospace">rate forward = rate reverse</text>
+    </svg>`,
+    "ch2-tyu-006": atomDiagram(8, 10, [2, 6]),
+    "ch2-tyu-007": `<svg viewBox="0 0 220 130" class="diagram-svg">
+      <circle cx="110" cy="55" r="22" fill="var(--gold)"/><text x="110" y="60" text-anchor="middle" font-size="12" fill="#0A0A0E" font-weight="700">S</text>
+      <circle cx="60" cy="95" r="13" fill="var(--surface-2)" stroke="var(--line)"/><text x="60" y="99" text-anchor="middle" font-size="9" fill="var(--muted)">H</text>
+      <circle cx="160" cy="95" r="13" fill="var(--surface-2)" stroke="var(--line)"/><text x="160" y="99" text-anchor="middle" font-size="9" fill="var(--muted)">H</text>
+      <line x1="110" y1="55" x2="60" y2="95" stroke="var(--muted)" stroke-width="2"/>
+      <line x1="110" y1="55" x2="160" y2="95" stroke="var(--muted)" stroke-width="2"/>
+      <text x="110" y="120" text-anchor="middle" font-size="10" fill="var(--muted)" font-family="IBM Plex Mono, monospace">H2S · valence 2</text>
+    </svg>`,
+    "ch2-tyu-008": `<svg viewBox="0 0 260 90" class="diagram-svg">
+      <circle cx="30" cy="45" r="16" fill="var(--gold)"/><text x="30" y="49" text-anchor="middle" font-size="9" fill="#0A0A0E" font-weight="700">C6H12O6</text>
+      <path d="M55,45 L95,45" stroke="var(--muted)" stroke-width="2" marker-end="url(#arrowFerm)"/>
+      <defs><marker id="arrowFerm" markerWidth="7" markerHeight="7" refX="5" refY="2.5" orient="auto"><path d="M0,0 L5,2.5 L0,5 Z" fill="var(--muted)"/></marker></defs>
+      <circle cx="130" cy="30" r="13" fill="var(--petal)"/><circle cx="130" cy="60" r="13" fill="var(--petal)"/>
+      <text x="130" y="80" text-anchor="middle" font-size="8" fill="var(--muted)" font-family="IBM Plex Mono, monospace">2 C2H6O</text>
+      <text x="165" y="45" font-size="14" fill="var(--muted)">+</text>
+      <circle cx="200" cy="30" r="12" fill="var(--crimson)"/><circle cx="200" cy="60" r="12" fill="var(--crimson)"/>
+      <text x="200" y="80" text-anchor="middle" font-size="8" fill="var(--muted)" font-family="IBM Plex Mono, monospace">2 CO2</text>
     </svg>`
   };
   // Same half-life regression model as sat-vocab: recallP(h,d) = 2^(-d/h)
@@ -870,14 +1109,14 @@
   function saveProgress(progress) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
     if (firebaseReady) {
-      db.setDoc(db.doc(db.instance, PROGRESS_COLLECTION, "default-user"), progress)
+      db.setDoc(db.doc(db.instance, PROGRESS_COLLECTION, getUid()), progress)
         .catch(e => console.warn("Firestore sync failed:", e));
     }
   }
   async function loadRemoteIfAvailable(local) {
     if (!firebaseReady) return local;
     try {
-      const snap = await db.getDoc(db.doc(db.instance, PROGRESS_COLLECTION, "default-user"));
+      const snap = await db.getDoc(db.doc(db.instance, PROGRESS_COLLECTION, getUid()));
       if (snap.exists()) return snap.data();
     } catch (e) { console.warn("Firestore load failed:", e); }
     return local;
@@ -1084,6 +1323,7 @@
     if (view === "map") renderMap();
     else if (view === "quiz") renderQuiz();
     else if (view === "leaderboard") renderLeaderboard();
+    else if (view === "transfer") renderTransfer();
     else renderComplete();
   }
 
@@ -1149,6 +1389,55 @@
     document.getElementById("lbBack").addEventListener("click", () => renderView("map"));
   }
 
+  function renderTransfer() {
+    const app = document.getElementById("app");
+    app.innerHTML = `
+      <div class="card" style="text-align:center;">
+        <div class="concept-tag">📱 Device Transfer</div>
+        <div class="question" style="font-size:14px;">To move your progress to another device, copy the code below and paste it there.</div>
+        <div class="transfer-code" id="transferCode">${getUid()}</div>
+        <button class="next-btn show" id="copyBtn">Copy Code</button>
+        <div id="copyMsg" class="transfer-msg"></div>
+        <div class="transfer-divider"></div>
+        <div class="question" style="font-size:14px;">Restore progress from another device:</div>
+        <input id="restoreInput" class="transfer-input" type="text" placeholder="Paste transfer code here">
+        <button class="next-btn show" id="restoreBtn" style="background:var(--strong);">Restore</button>
+        <div id="restoreMsg" class="transfer-msg"></div>
+        <button class="next-btn show" id="transferBack" style="margin-top:20px;">Back to map</button>
+      </div>
+    `;
+    document.getElementById("copyBtn").addEventListener("click", async () => {
+      const msg = document.getElementById("copyMsg");
+      try {
+        await navigator.clipboard.writeText(getUid());
+        msg.style.color = "var(--strong)";
+        msg.textContent = "Copied!";
+      } catch {
+        msg.style.color = "var(--muted)";
+        msg.textContent = "Couldn't copy automatically — select the code above and copy it manually.";
+      }
+    });
+    document.getElementById("restoreBtn").addEventListener("click", async () => {
+      const code = document.getElementById("restoreInput").value.trim();
+      const msg = document.getElementById("restoreMsg");
+      if (!code) return;
+      if (!firebaseReady) { msg.style.color = "var(--crimson)"; msg.textContent = "Firebase isn't connected on this device."; return; }
+      msg.style.color = "var(--muted)"; msg.textContent = "Restoring…";
+      try {
+        const snap = await db.getDoc(db.doc(db.instance, PROGRESS_COLLECTION, code));
+        if (!snap.exists()) { msg.style.color = "var(--crimson)"; msg.textContent = "No progress found for that code."; return; }
+        localStorage.setItem(UID_KEY, code);
+        progress = snap.data();
+        saveProgress(progress);
+        msg.style.color = "var(--strong)"; msg.textContent = "Restored! Returning to map…";
+        setTimeout(() => renderView("map"), 900);
+      } catch (e) {
+        msg.style.color = "var(--crimson)"; msg.textContent = "Restore failed: " + (e.code || e.message || e);
+      }
+    });
+    document.getElementById("transferBack").addEventListener("click", () => renderView("map"));
+  }
+
   function renderMap() {
     const streak = loadStreak();
     document.getElementById("streakBadge").textContent = `🔥 ${streak.count} day streak`;
@@ -1192,12 +1481,15 @@
         </div>
       `;
     });
-    html += `</div>`;
+    html += `</div>
+      <button class="transfer-link" id="transferLink">📱 Device Transfer</button>
+    `;
 
     const app = document.getElementById("app");
     app.innerHTML = html;
     document.getElementById("practiceBtn").addEventListener("click", () => startSession(null));
     document.getElementById("leaderboardBtn").addEventListener("click", () => renderView("leaderboard"));
+    document.getElementById("transferLink").addEventListener("click", () => renderView("transfer"));
     document.getElementById("chPrev").addEventListener("click", () => {
       if (chapterIndex > 0) { setCurrentChapter(chapters[chapterIndex - 1].chapter); renderMap(); }
     });
