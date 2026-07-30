@@ -28,7 +28,7 @@ input:focus{border-color:#58CC02}
 <body>
 <div id="app" style="height:100%;display:flex;flex-direction:column"><div style="flex:1;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#58CC02">Loading...</div></div>
 <script>
-const APP_VERSION = "7.3";
+const APP_VERSION = "7.5";
 // 注意：不再于版本变化时清空localStorage！
 // 账号进度(S.uid/S.wp等)必须跨版本保留，结构变化交给migrateState()处理
 localStorage.setItem("app_version", APP_VERSION);
@@ -41,12 +41,12 @@ try{if(typeof firebase!=="undefined"&&!window._noFB){firebase.initializeApp({api
 function genUUID(){try{return crypto.randomUUID();}catch(e){return 'xxxx-xxxx-xxxx'.replace(/x/g,()=>(0|Math.random()*16).toString(16));}}
 
 // Data
-const FULL_VOCAB=[["abase","v.","əˈbeɪs","to humiliate, degrade","The leader was abased before his conqueror."],["abate","v.","əˈbeɪt","to reduce, lessen","The storm raged, then slowly abated."],["abdicate","v.","ˈæbdɪkeɪt","to give up a position of leadership","The king abdicated his throne."],["aberration","n.","ˌæbəˈreɪʃən","something that differs from the norm","The warm day was an aberration."],["abhor","v.","æbˈhɔːr","to hate, detest","She began to abhor the sport."],["abject","adj.","ˈæbdʒekt","wretched, pitiful","After losing everything, she was abject."],["abjure","v.","əbˈdʒʊr","to reject, renounce","He abjured the evil policies."],["abrogate","v.","ˈæbrəɡeɪt","to abolish, usually by authority","They cannot abrogate our rights."],["abscond","v.","æbˈskɒnd","to sneak away and hide","The spy absconded into the night."],["abstain","v.","əbˈsteɪn","to choose not to do something","He abstained from voting."],["abstruse","adj.","æbˈstruːs","hard to comprehend","John found geometry abstruse."],["accede","v.","əkˈsiːd","to agree","The teacher acceded to their request."],["accentuate","v.","əkˈsentʃueɪt","to stress, highlight","Happy people accentuate the positive."],["acclaim","n.","əˈkleɪm","high praise","Her poem won widespread acclaim."],["accolade","n.","ˈækəleɪd","high praise, special distinction","He received accolades for his work."],["acerbic","adj.","əˈsɜːrbɪk","biting, bitter in tone","Her acerbic remarks hurt everyone."],["acquiesce","v.","ˌækwiˈes","to agree without protesting","He acquiesced to her demands."],["acrimony","n.","ˈækrɪmoʊni","bitterness, discord","Acrimony overwhelmed their friendship."],["abduct","v.","æbˈdʌkt","to kidnap, take by force","The evildoers abducted the fairy princess from her happy home."],["abnegation","n.","ˌæbɪˈɡeɪʃən","denial of comfort to oneself","The holy man slept on the floor, took only cold showers, and generally followed other practices of abnegation."],["abort","v.","əˈbɔːrt","to give up on a half-finished project or effort","After they ran out of food, the men, attempting to jump rope around the world, had to abort and go home."],["absolution","n.","ˌæbsəˈluːʃən","freedom from blame, guilt, sin","Once all the facts were known, the jury gave Angela absolution by giving a verdict of not guilty."],["accessible","adj.","əkˈsesəbl","obtainable, reachable","After studying with SparkNotes and getting a great score on the SAT, Marlena happily realized that her goal of getting into an Ivy-League college was accessible."],["accommodating","adj.","əˈkɒmədeɪtɪŋ","helpful, obliging, polite","Though the apartment was not big enough for three people, Arnold, Mark, and Zebulon were all friends and were accommodating to each other."],["accord","n.","əˈkɔːrd","an agreement","After much negotiating, England and Iceland finally came to a mutually beneficial accord about fishing rights off the cost of Greenland."],["accost","v.","əˈkɒst","to confront verbally","Though Antoinette was normally quite calm, when the waiter spilled soup on her for the fourth time in 15 minutes she stood up and accosted the man."],["accretion","n.","əˈkriːʃən","slow growth in size or amount","Stalactites are formed by the accretion of minerals from the roofs of caves."],["acumen","n.","ˈækjʊmən","keen insight","Because of his mathematical acumen, Larry was able to figure out in minutes problems that took other students hours."],["adamant","adj.","ˈædəmənt","impervious, immovable, unyielding","Though public pressure was intense, the President remained adamant about his proposal."],["adept","adj.","əˈdept","extremely skilled","Tarzan was adept at jumping from tree to tree like a monkey."],["admonish","v.","ədˈmɒnɪʃ","to caution, criticize, reprove","Joe's mother admonished him not to ruin his appetite by eating cookies before dinner."],["adorn","v.","əˈdɔːrn","to decorate","We adorned the tree with ornaments."],["adroit","adj.","əˈdrɔɪt","skillful, dexterous","The adroit thief could pick someone's pocket without attracting notice."],["adulation","n.","ˌædjʊˈleɪʃən","extreme praise","Though the book was pretty good, Marcy did not believe it deserved the adulation it received."],["adumbrate","v.","ˈæd əmbreɪt","to sketch out in a vague way","The coach adumbrated a game plan, but none of the players knew precisely what to do."],["abet","v.","əˈbet",["to aid, help, encourage", "to assist in wrongdoing"],"A friend on the inside abetted the spy."],["abridge","v.","əˈbrɪdʒ",["to cut down, shorten", "shortened (as a book)"],"The publisher abridged the dictionary."],["abide","v.","əˈbaɪd",["to put up with", "to remain"],"Though he did not agree with the decision, Chuck decided to abide by it."],["acute","adj.","əˈkjuːt",["sharp, severe", "having keen insight"],"Arnold could not walk because the pain in his foot was so acute."],["adhere","n.","ədˈhɪr",["to stick to something", "to follow devoutly"],"We adhered the poster to the wall with tape."]];
+const FULL_VOCAB=[["abase","v.","əˈbeɪs","to humiliate, degrade","The leader was abased before his conqueror."],["abate","v.","əˈbeɪt","to reduce, lessen","The storm raged, then slowly abated."],["abdicate","v.","ˈæbdɪkeɪt","to give up a position of leadership","The king abdicated his throne."],["aberration","n.","ˌæbəˈreɪʃən","something that differs from the norm","The warm day was an aberration."],["abhor","v.","æbˈhɔːr","to hate, detest","She began to abhor the sport."],["abject","adj.","ˈæbdʒekt","wretched, pitiful","After losing everything, she was abject."],["abjure","v.","əbˈdʒʊr","to reject, renounce","He abjured the evil policies."],["abrogate","v.","ˈæbrəɡeɪt","to abolish, usually by authority","They cannot abrogate our rights."],["abscond","v.","æbˈskɒnd","to sneak away and hide","The spy absconded into the night."],["abstain","v.","əbˈsteɪn","to choose not to do something","He abstained from voting."],["abstruse","adj.","æbˈstruːs","hard to comprehend","John found geometry abstruse."],["accede","v.","əkˈsiːd","to agree","The teacher acceded to their request."],["accentuate","v.","əkˈsentʃueɪt","to stress, highlight","Happy people accentuate the positive."],["acclaim","n.","əˈkleɪm","high praise","Her poem won widespread acclaim."],["acerbic","adj.","əˈsɜːrbɪk","biting, bitter in tone","Her acerbic remarks hurt everyone."],["acquiesce","v.","ˌækwiˈes","to agree without protesting","He acquiesced to her demands."],["acrimony","n.","ˈækrɪmoʊni","bitterness, discord","Acrimony overwhelmed their friendship."],["abduct","v.","æbˈdʌkt","to kidnap, take by force","The evildoers abducted the fairy princess from her happy home."],["abnegation","n.","ˌæbɪˈɡeɪʃən","denial of comfort to oneself","The holy man slept on the floor, took only cold showers, and generally followed other practices of abnegation."],["abort","v.","əˈbɔːrt","to give up on a half-finished project or effort","After they ran out of food, the men, attempting to jump rope around the world, had to abort and go home."],["absolution","n.","ˌæbsəˈluːʃən","freedom from blame, guilt, sin","Once all the facts were known, the jury gave Angela absolution by giving a verdict of not guilty."],["accessible","adj.","əkˈsesəbl","obtainable, reachable","After studying with SparkNotes and getting a great score on the SAT, Marlena happily realized that her goal of getting into an Ivy-League college was accessible."],["accommodating","adj.","əˈkɒmədeɪtɪŋ","helpful, obliging, polite","Though the apartment was not big enough for three people, Arnold, Mark, and Zebulon were all friends and were accommodating to each other."],["accord","n.","əˈkɔːrd","an agreement","After much negotiating, England and Iceland finally came to a mutually beneficial accord about fishing rights off the cost of Greenland."],["accost","v.","əˈkɒst","to confront verbally","Though Antoinette was normally quite calm, when the waiter spilled soup on her for the fourth time in 15 minutes she stood up and accosted the man."],["accretion","n.","əˈkriːʃən","slow growth in size or amount","Stalactites are formed by the accretion of minerals from the roofs of caves."],["acumen","n.","ˈækjʊmən","keen insight","Because of his mathematical acumen, Larry was able to figure out in minutes problems that took other students hours."],["adamant","adj.","ˈædəmənt","impervious, immovable, unyielding","Though public pressure was intense, the President remained adamant about his proposal."],["adept","adj.","əˈdept","extremely skilled","Tarzan was adept at jumping from tree to tree like a monkey."],["admonish","v.","ədˈmɒnɪʃ","to caution, criticize, reprove","Joe's mother admonished him not to ruin his appetite by eating cookies before dinner."],["adorn","v.","əˈdɔːrn","to decorate","We adorned the tree with ornaments."],["adroit","adj.","əˈdrɔɪt","skillful, dexterous","The adroit thief could pick someone's pocket without attracting notice."],["adulation","n.","ˌædjʊˈleɪʃən","extreme praise","Though the book was pretty good, Marcy did not believe it deserved the adulation it received."],["adumbrate","v.","ˈæd əmbreɪt","to sketch out in a vague way","The coach adumbrated a game plan, but none of the players knew precisely what to do."],["abet","v.","əˈbet",["to aid, help, encourage", "to assist in wrongdoing"],"A friend on the inside abetted the spy."],["abridge","v.","əˈbrɪdʒ",["to cut down, shorten", "shortened (as a book)"],"The publisher abridged the dictionary."],["abide","v.","əˈbaɪd",["to put up with", "to remain"],"Though he did not agree with the decision, Chuck decided to abide by it."],["acute","adj.","əˈkjuːt",["sharp, severe", "having keen insight"],"Arnold could not walk because the pain in his foot was so acute."],["adhere","n.","ədˈhɪr",["to stick to something", "to follow devoutly"],"We adhered the poster to the wall with tape."],["constrain","v.","kənˈstreɪn","To limit or hold; to compel","The tight deadline constrained how much research the team could do."],["mercurial","adj.","mɜːrˈkjʊəriəl","Unpredictable or even temperamental","Her mercurial temperament made her unpredictable to work with."],["garrulous","adj.","ˈɡærələs","Obnoxiously talkative","The garrulous old man kept the bus driver chatting the whole ride."],["panacea","n.","ˌpænəˈsiːə","A remedy to end all diseases; a cure-all","There is no panacea for the country's economic problems."],["disavow","v.","ˌdɪsəˈvaʊ","To deny or disown something","The senator disavowed the offensive remarks made by his aide."],["pervasive","adj.","pərˈveɪsɪv","Widespread or influential, typically undesirably","A pervasive smell of smoke filled the abandoned building."],["destitute","adj.","ˈdɛstɪtjuːt","In a state of poverty; lacking","After the flood, many families were left destitute."],["detriment","n.","ˈdɛtrɪmənt","Disadvantage","He worked overtime to the detriment of his health."],["wily","adj.","ˈwaɪli","Cunning and crafty","The wily fox slipped past the farmer's guard dogs."],["curtail","v.","kɜːrˈteɪl","To decrease or restrict something","The city curtailed public spending to balance the budget."],["fallacious","adj.","fəˈleɪʃəs","Illogical or incorrect","The lawyer exposed the fallacious reasoning behind the witness's testimony."],["capitulate","v.","kəˈpɪtʃʊleɪt","To reluctantly surrender to something","After weeks of protest, the company finally capitulated to the workers' demands."],["demur","v.","dɪˈmɜːr","To raise an objection","She demurred when asked to sign the contract without reading it first."],["quell","v.","kwɛl","To stop or end something, whether by force, or gentle coaxing","The police were called in to quell the riot."],["lavish","adj.","ˈlævɪʃ","Having rich detail; extravagant","They threw a lavish wedding with hundreds of guests."],["enumerate","v.","ɪˈnjuːməreɪt","To list or catalog something","The teacher enumerated the reasons for the historical event."],["mundane","adj.","mʌnˈdeɪn","Considered normal or even boring","He grew tired of the mundane routine of office work."],["vacuous","adj.","ˈvækjuəs","Showing a lack of thought or intelligence","Her vacuous expression revealed she hadn't understood the question."],["nebulous","adj.","ˈnɛbjələs","Hazy or cloudy","The company's plan for expansion remained nebulous."],["genial","adj.","ˈdʒiːniəl","Easygoing and friendly","The genial host made everyone feel welcome at the party."],["chastise","v.","tʃæˈstaɪz","To reprimand or criticize strongly","The coach chastised the team for their lack of effort."],["elucidate","v.","ɪˈluːsɪdeɪt","To bring out more clearly; to explain","The professor elucidated the complex theory with a simple diagram."],["imperative","adj.","ɪmˈpɛrətɪv","Necessary; cannot be neglected","It is imperative that we act quickly to solve this problem."],["extricate","v.","ˈɛkstrɪkeɪt","To free or remove from a position","It took hours to extricate the car from the mud."],["amenable","adj.","əˈmiːnəbl","Easily managed or agreeable to suggestion","She was amenable to changing the meeting time."],["quixotic","adj.","kwɪkˈsɒtɪk","Focused on the romantic ideal rather than reality","His quixotic plan to reform the entire system failed within weeks."],["penitent","adj.","ˈpɛnɪtənt","Apologetic","The penitent thief returned the stolen goods and apologized."],["fathom","v.","ˈfæðəm","To understand or comprehend","I could not fathom why she had made such a decision."],["substantively","adv.","ˈsʌbstəntɪvli","In a manner which is significant and impactful","The new policy substantively changed how the department operated."],["correlation","n.","ˌkɒrəˈleɪʃən","How two or more things compare to each other","Studies show a correlation between exercise and improved mood."],["coherent","adj.","koʊˈhɪərənt","Easily and logically understandable","He gave a coherent explanation of the accident."],["malleable","adj.","ˈmæliəbl","Can be manipulated into many shapes without breakage","Gold is a highly malleable metal."],["sycophant","n.","ˈsɪkəfənt","One who insincerely flatters others to get ahead","The king surrounded himself with sycophants who never challenged his ideas."],["encumber","v.","ɪnˈkʌmbər","To inhibit or hinder something","Heavy debt encumbered the young couple's finances."],["allude","v.","əˈluːd","To indirectly acknowledge or mention something in writing or conversation","She alluded to a past disagreement without mentioning specifics."],["obsolete","adj.","ˈɒbsəliːt","Outdated","The old software became obsolete after the update."],["astute","adj.","əˈstjuːt","Crafty and insightful","The astute investor recognized the opportunity before anyone else."],["hypothesis","n.","haɪˈpɒθəsɪs","An educated guess","The scientist tested her hypothesis with a controlled experiment."],["ostracize","v.","ˈɒstrəsaɪz","To exclude from a position or group","The other students ostracized him after the rumor spread."],["entrenched","adj.","ɪnˈtrɛntʃt","Long-lasting and well established","Corruption was deeply entrenched in the local government."],["adversary","n.","ˈædvərsəri","An opponent or antagonist","The two candidates had been political adversaries for years."],["bourgeois","n.","bʊərˈʒwɑː","A person in the middle-class","The novel satirizes bourgeois values and materialism."],["penultimate","adj.","pɪˈnʌltɪmət","Second to last","The penultimate chapter revealed a shocking twist."],["wallow","v.","ˈwɒloʊ","To revel or indulge in something","He wallowed in self-pity after losing the game."],["diffident","adj.","ˈdɪfɪdənt","Lacking self-assurance; reserved","The diffident student rarely spoke up in class."],["dominion","n.","dəˈmɪniən","A state of dominance","The king's dominion stretched across three continents."],["circumvent","v.","ˌsɜːrkəmˈvɛnt","To bypass or avoid","The company found a loophole to circumvent the new regulations."],["odious","adj.","ˈoʊdiəs","Disgusting and deserving of hatred","His odious behavior at the dinner disgusted everyone present."],["rapport","n.","ræˈpɔːr","A friendly, close relationship built on a mutual understanding","The therapist quickly built rapport with her new client."],["propriety","n.","prəˈpraɪəti","Characteristic of traditional modesty and decency","She always acted with the utmost propriety at formal events."],["juxtaposition","n.","ˌdʒʌkstəpəˈzɪʃən","A comparison of two things","The painting's juxtaposition of light and dark creates striking tension."],["trepidation","n.","ˌtrɛpɪˈdeɪʃən","Nervousness or apprehension","She approached the interview with a mix of excitement and trepidation."],["magnanimous","adj.","mæɡˈnænɪməs","Benevolent and charitable toward one's opponent","The magnanimous winner praised his opponent's effort."],["callous","adj.","ˈkæləs","Unfeeling; showing no sympathy","His callous remarks about the accident shocked the room."],["subordinate","n.","səˈbɔːrdɪnət","A person lesser in rank","The manager treated her subordinates with respect."],["vestige","n.","ˈvɛstɪdʒ","A remnant of something that used to exist but no longer does","The ruins were the last vestige of the ancient civilization."],["taciturn","adj.","ˈtæsɪtɜːrn","Reserved","The taciturn old farmer rarely spoke to strangers."],["cursory","adj.","ˈkɜːrsəri","Superficial and lacking detail or depth","He gave the report only a cursory glance before signing it."],["ascertain","v.","ˌæsərˈteɪn","To seek out the certainty or credibility of something","The detective worked to ascertain the truth behind the alibi."],["pristine","adj.","ˈprɪstiːn","In mint condition or perfect","The lake water was pristine and crystal clear."],["wrought","adj.","rɔːt","Carefully made or molded","The gate was wrought from iron by a skilled blacksmith."],["homage","n.","ˈhɒmɪdʒ","Admiration and recognition of someone","The documentary pays homage to the pioneers of early cinema."],["alacrity","n.","əˈlækrɪti","Cheerful willingness or readiness","She accepted the invitation with alacrity."],["epitome","n.","ɪˈpɪtəmi","The perfect example that embodies a general or expected pattern","The chef's dessert was the epitome of culinary artistry."],["paradigm","n.","ˈpærədaɪm","A standard or generally accepted model","The discovery represented a paradigm shift in modern physics."],["ameliorate","v.","əˈmiːliəreɪt","To alleviate or improve","The new policies helped ameliorate the housing crisis."],["congenial","adj.","kənˈdʒiːniəl","Pleasant and agreeable","The staff created a congenial atmosphere for new employees."],["nonchalant","adj.","ˌnɒnʃəˈlɑːnt","Having a go-with-the-flow type of attitude; unbothered","He remained nonchalant even as the deadline approached."]];
 const UNITS=[
 {name:"Basics 1",words:[["abase","v.","əˈbeɪs","to humiliate, degrade","The leader was abased before his conqueror."],["abate","v.","əˈbeɪt","to reduce, lessen","The storm raged, then slowly abated."],["abdicate","v.","ˈæbdɪkeɪt","to give up a position of leadership","The king abdicated his throne."],["aberration","n.","ˌæbəˈreɪʃən","something that differs from the norm","The warm day was an aberration."],["abet","v.","əˈbet",["to aid, help, encourage","to assist in wrongdoing"],"A friend on the inside abetted the spy."]]},
   {name:"Basics 2",words:[["abhor","v.","æbˈhɔːr","to hate, detest","She began to abhor the sport."],["abject","adj.","ˈæbdʒekt","wretched, pitiful","After losing everything, she was abject."],["abjure","v.","əbˈdʒʊr","to reject, renounce","He abjured the evil policies."],["abridge","v.","əˈbrɪdʒ",["to cut down, shorten","shortened (as a book)"],"The publisher abridged the dictionary."],["abrogate","v.","ˈæbrəɡeɪt","to abolish, usually by authority","They cannot abrogate our rights."]]},
   {name:"Intermediate",words:[["abscond","v.","æbˈskɒnd","to sneak away and hide","The spy absconded into the night."],["abstain","v.","əbˈsteɪn","to choose not to do something","He abstained from voting."],["abstruse","adj.","æbˈstruːs","hard to comprehend","John found geometry abstruse."],["accede","v.","əkˈsiːd","to agree","The teacher acceded to their request."],["accentuate","v.","əkˈsentʃueɪt","to stress, highlight","Happy people accentuate the positive."]]},
-  {name:"Advanced",words:[["acclaim","n.","əˈkleɪm","high praise","Her poem won widespread acclaim."],["accolade","n.","ˈækəleɪd","high praise, special distinction","He received accolades for his work."],["acerbic","adj.","əˈsɜːrbɪk","biting, bitter in tone","Her acerbic remarks hurt everyone."],["acquiesce","v.","ˌækwiˈes","to agree without protesting","He acquiesced to her demands."],["acrimony","n.","ˈækrɪmoʊni","bitterness, discord","Acrimony overwhelmed their friendship."]]},
+  {name:"Advanced",words:[["acclaim","n.","əˈkleɪm","high praise","Her poem won widespread acclaim."],["acerbic","adj.","əˈsɜːrbɪk","biting, bitter in tone","Her acerbic remarks hurt everyone."],["acquiesce","v.","ˌækwiˈes","to agree without protesting","He acquiesced to her demands."],["acrimony","n.","ˈækrɪmoʊni","bitterness, discord","Acrimony overwhelmed their friendship."]]},
   {name:"Level 5",words:[["abduct","v.","æbˈdʌkt","to kidnap, take by force","The evildoers abducted the fairy princess from her happy home."],["abide","v.","əˈbaɪd",["to put up with","to remain"],"Though he did not agree with the decision, Chuck decided to abide by it."],["abnegation","n.","ˌæbɪˈɡeɪʃən","denial of comfort to oneself","The holy man slept on the floor, took only cold showers, and generally followed other practices of abnegation."],["abort","v.","əˈbɔːrt","to give up on a half-finished project or effort","After they ran out of food, the men, attempting to jump rope around the world, had to abort and go home."],["absolution","n.","ˌæbsəˈluːʃən","freedom from blame, guilt, sin","Once all the facts were known, the jury gave Angela absolution by giving a verdict of not guilty."]]},
   {name:"Level 6",words:[["accessible","adj.","əkˈsesəbl","obtainable, reachable","After studying with SparkNotes and getting a great score on the SAT, Marlena happily realized that her goal of getting into an Ivy-League college was accessible."],["accommodating","adj.","əˈkɒmədeɪtɪŋ","helpful, obliging, polite","Though the apartment was not big enough for three people, Arnold, Mark, and Zebulon were all friends and were accommodating to each other."],["accord","n.","əˈkɔːrd","an agreement","After much negotiating, England and Iceland finally came to a mutually beneficial accord about fishing rights off the cost of Greenland."],["accost","v.","əˈkɒst","to confront verbally","Though Antoinette was normally quite calm, when the waiter spilled soup on her for the fourth time in 15 minutes she stood up and accosted the man."],["accretion","n.","əˈkriːʃən","slow growth in size or amount","Stalactites are formed by the accretion of minerals from the roofs of caves."]]},
   {name:"Level 7",words:[["acumen","n.","ˈækjʊmən","keen insight","Because of his mathematical acumen, Larry was able to figure out in minutes problems that took other students hours."],["acute","adj.","əˈkjuːt",["sharp, severe","having keen insight"],"Arnold could not walk because the pain in his foot was so acute."],["adamant","adj.","ˈædəmənt","impervious, immovable, unyielding","Though public pressure was intense, the President remained adamant about his proposal."],["adept","adj.","əˈdept","extremely skilled","Tarzan was adept at jumping from tree to tree like a monkey."],["adhere","n.","ədˈhɪr",["to stick to something","to follow devoutly"],"We adhered the poster to the wall with tape."]]},
@@ -259,6 +259,98 @@ const UNITS=[
   ["placate","v.","ˈpleɪkeɪt","To make a situation or person peaceful","The manager offered a discount to placate the frustrated customer."],
   ["exigent","adj.","ˈɛksɪdʒənt","Necessitating an urgent response","The hospital's exigent need for supplies led to an emergency donation drive."],
   ["ubiquitous","adj.","juːˈbɪkwɪtəs","Being present everywhere","Smartphones have become ubiquitous in classrooms across the country."]
+]},
+{name:"Advanced 29",words:[
+  ["constrain","v.","kənˈstreɪn","To limit or hold; to compel","The tight deadline constrained how much research the team could do."],
+  ["mercurial","adj.","mɜːrˈkjʊəriəl","Unpredictable or even temperamental","Her mercurial temperament made her unpredictable to work with."],
+  ["garrulous","adj.","ˈɡærələs","Obnoxiously talkative","The garrulous old man kept the bus driver chatting the whole ride."],
+  ["panacea","n.","ˌpænəˈsiːə","A remedy to end all diseases; a cure-all","There is no panacea for the country's economic problems."],
+  ["disavow","v.","ˌdɪsəˈvaʊ","To deny or disown something","The senator disavowed the offensive remarks made by his aide."],
+  ["pervasive","adj.","pərˈveɪsɪv","Widespread or influential, typically undesirably","A pervasive smell of smoke filled the abandoned building."]
+]},
+{name:"Advanced 30",words:[
+  ["destitute","adj.","ˈdɛstɪtjuːt","In a state of poverty; lacking","After the flood, many families were left destitute."],
+  ["detriment","n.","ˈdɛtrɪmənt","Disadvantage","He worked overtime to the detriment of his health."],
+  ["wily","adj.","ˈwaɪli","Cunning and crafty","The wily fox slipped past the farmer's guard dogs."],
+  ["curtail","v.","kɜːrˈteɪl","To decrease or restrict something","The city curtailed public spending to balance the budget."],
+  ["fallacious","adj.","fəˈleɪʃəs","Illogical or incorrect","The lawyer exposed the fallacious reasoning behind the witness's testimony."],
+  ["capitulate","v.","kəˈpɪtʃʊleɪt","To reluctantly surrender to something","After weeks of protest, the company finally capitulated to the workers' demands."]
+]},
+{name:"Advanced 31",words:[
+  ["demur","v.","dɪˈmɜːr","To raise an objection","She demurred when asked to sign the contract without reading it first."],
+  ["quell","v.","kwɛl","To stop or end something, whether by force, or gentle coaxing","The police were called in to quell the riot."],
+  ["lavish","adj.","ˈlævɪʃ","Having rich detail; extravagant","They threw a lavish wedding with hundreds of guests."],
+  ["enumerate","v.","ɪˈnjuːməreɪt","To list or catalog something","The teacher enumerated the reasons for the historical event."],
+  ["mundane","adj.","mʌnˈdeɪn","Considered normal or even boring","He grew tired of the mundane routine of office work."],
+  ["vacuous","adj.","ˈvækjuəs","Showing a lack of thought or intelligence","Her vacuous expression revealed she hadn't understood the question."]
+]},
+{name:"Advanced 32",words:[
+  ["nebulous","adj.","ˈnɛbjələs","Hazy or cloudy","The company's plan for expansion remained nebulous."],
+  ["genial","adj.","ˈdʒiːniəl","Easygoing and friendly","The genial host made everyone feel welcome at the party."],
+  ["chastise","v.","tʃæˈstaɪz","To reprimand or criticize strongly","The coach chastised the team for their lack of effort."],
+  ["elucidate","v.","ɪˈluːsɪdeɪt","To bring out more clearly; to explain","The professor elucidated the complex theory with a simple diagram."],
+  ["imperative","adj.","ɪmˈpɛrətɪv","Necessary; cannot be neglected","It is imperative that we act quickly to solve this problem."],
+  ["extricate","v.","ˈɛkstrɪkeɪt","To free or remove from a position","It took hours to extricate the car from the mud."]
+]},
+{name:"Advanced 33",words:[
+  ["amenable","adj.","əˈmiːnəbl","Easily managed or agreeable to suggestion","She was amenable to changing the meeting time."],
+  ["quixotic","adj.","kwɪkˈsɒtɪk","Focused on the romantic ideal rather than reality","His quixotic plan to reform the entire system failed within weeks."],
+  ["penitent","adj.","ˈpɛnɪtənt","Apologetic","The penitent thief returned the stolen goods and apologized."],
+  ["fathom","v.","ˈfæðəm","To understand or comprehend","I could not fathom why she had made such a decision."],
+  ["substantively","adv.","ˈsʌbstəntɪvli","In a manner which is significant and impactful","The new policy substantively changed how the department operated."],
+  ["correlation","n.","ˌkɒrəˈleɪʃən","How two or more things compare to each other","Studies show a correlation between exercise and improved mood."]
+]},
+{name:"Advanced 34",words:[
+  ["coherent","adj.","koʊˈhɪərənt","Easily and logically understandable","He gave a coherent explanation of the accident."],
+  ["malleable","adj.","ˈmæliəbl","Can be manipulated into many shapes without breakage","Gold is a highly malleable metal."],
+  ["sycophant","n.","ˈsɪkəfənt","One who insincerely flatters others to get ahead","The king surrounded himself with sycophants who never challenged his ideas."],
+  ["encumber","v.","ɪnˈkʌmbər","To inhibit or hinder something","Heavy debt encumbered the young couple's finances."],
+  ["allude","v.","əˈluːd","To indirectly acknowledge or mention something in writing or conversation","She alluded to a past disagreement without mentioning specifics."],
+  ["obsolete","adj.","ˈɒbsəliːt","Outdated","The old software became obsolete after the update."]
+]},
+{name:"Advanced 35",words:[
+  ["astute","adj.","əˈstjuːt","Crafty and insightful","The astute investor recognized the opportunity before anyone else."],
+  ["hypothesis","n.","haɪˈpɒθəsɪs","An educated guess","The scientist tested her hypothesis with a controlled experiment."],
+  ["ostracize","v.","ˈɒstrəsaɪz","To exclude from a position or group","The other students ostracized him after the rumor spread."],
+  ["entrenched","adj.","ɪnˈtrɛntʃt","Long-lasting and well established","Corruption was deeply entrenched in the local government."],
+  ["adversary","n.","ˈædvərsəri","An opponent or antagonist","The two candidates had been political adversaries for years."],
+  ["bourgeois","n.","bʊərˈʒwɑː","A person in the middle-class","The novel satirizes bourgeois values and materialism."]
+]},
+{name:"Advanced 36",words:[
+  ["penultimate","adj.","pɪˈnʌltɪmət","Second to last","The penultimate chapter revealed a shocking twist."],
+  ["wallow","v.","ˈwɒloʊ","To revel or indulge in something","He wallowed in self-pity after losing the game."],
+  ["diffident","adj.","ˈdɪfɪdənt","Lacking self-assurance; reserved","The diffident student rarely spoke up in class."],
+  ["dominion","n.","dəˈmɪniən","A state of dominance","The king's dominion stretched across three continents."],
+  ["circumvent","v.","ˌsɜːrkəmˈvɛnt","To bypass or avoid","The company found a loophole to circumvent the new regulations."],
+  ["odious","adj.","ˈoʊdiəs","Disgusting and deserving of hatred","His odious behavior at the dinner disgusted everyone present."]
+]},
+{name:"Advanced 37",words:[
+  ["rapport","n.","ræˈpɔːr","A friendly, close relationship built on a mutual understanding","The therapist quickly built rapport with her new client."],
+  ["propriety","n.","prəˈpraɪəti","Characteristic of traditional modesty and decency","She always acted with the utmost propriety at formal events."],
+  ["juxtaposition","n.","ˌdʒʌkstəpəˈzɪʃən","A comparison of two things","The painting's juxtaposition of light and dark creates striking tension."],
+  ["trepidation","n.","ˌtrɛpɪˈdeɪʃən","Nervousness or apprehension","She approached the interview with a mix of excitement and trepidation."],
+  ["magnanimous","adj.","mæɡˈnænɪməs","Benevolent and charitable toward one's opponent","The magnanimous winner praised his opponent's effort."],
+  ["callous","adj.","ˈkæləs","Unfeeling; showing no sympathy","His callous remarks about the accident shocked the room."]
+]},
+{name:"Advanced 38",words:[
+  ["subordinate","n.","səˈbɔːrdɪnət","A person lesser in rank","The manager treated her subordinates with respect."],
+  ["vestige","n.","ˈvɛstɪdʒ","A remnant of something that used to exist but no longer does","The ruins were the last vestige of the ancient civilization."],
+  ["taciturn","adj.","ˈtæsɪtɜːrn","Reserved","The taciturn old farmer rarely spoke to strangers."],
+  ["cursory","adj.","ˈkɜːrsəri","Superficial and lacking detail or depth","He gave the report only a cursory glance before signing it."],
+  ["ascertain","v.","ˌæsərˈteɪn","To seek out the certainty or credibility of something","The detective worked to ascertain the truth behind the alibi."],
+  ["pristine","adj.","ˈprɪstiːn","In mint condition or perfect","The lake water was pristine and crystal clear."]
+]},
+{name:"Advanced 39",words:[
+  ["wrought","adj.","rɔːt","Carefully made or molded","The gate was wrought from iron by a skilled blacksmith."],
+  ["homage","n.","ˈhɒmɪdʒ","Admiration and recognition of someone","The documentary pays homage to the pioneers of early cinema."],
+  ["alacrity","n.","əˈlækrɪti","Cheerful willingness or readiness","She accepted the invitation with alacrity."],
+  ["epitome","n.","ɪˈpɪtəmi","The perfect example that embodies a general or expected pattern","The chef's dessert was the epitome of culinary artistry."],
+  ["paradigm","n.","ˈpærədaɪm","A standard or generally accepted model","The discovery represented a paradigm shift in modern physics."],
+  ["ameliorate","v.","əˈmiːliəreɪt","To alleviate or improve","The new policies helped ameliorate the housing crisis."]
+]},
+{name:"Advanced 40",words:[
+  ["congenial","adj.","kənˈdʒiːniəl","Pleasant and agreeable","The staff created a congenial atmosphere for new employees."],
+  ["nonchalant","adj.","ˌnɒnʃəˈlɑːnt","Having a go-with-the-flow type of attitude; unbothered","He remained nonchalant even as the deadline approached."]
 ]}
 
 ];
@@ -432,6 +524,72 @@ const abstractWordMap={
   grandiose:"excess",incessant:"excess",
   condone:"agree",
   exigent:"urgent",
+  adversary:"twoFaced",
+  alacrity:"bold",
+  allude:"foggy",
+  ameliorate:"praise",
+  amenable:"agree",
+  ascertain:"sharp",
+  astute:"sharp",
+  callous:"twoFaced",
+  capitulate:"release",
+  chastise:"criticize",
+  circumvent:"release",
+  coherent:"sharp",
+  congenial:"kind",
+  constrain:"burden",
+  correlation:"measure",
+  cursory:"decline",
+  curtail:"release",
+  demur:"foggy",
+  destitute:"decline",
+  detriment:"pain",
+  diffident:"decline",
+  disavow:"release",
+  dominion:"power",
+  elucidate:"honest",
+  encumber:"burden",
+  entrenched:"stubborn",
+  enumerate:"measure",
+  epitome:"praise",
+  extricate:"release",
+  fallacious:"foggy",
+  fathom:"sharp",
+  garrulous:"excess",
+  genial:"kind",
+  homage:"praise",
+  hypothesis:"sharp",
+  imperative:"urgent",
+  juxtaposition:"measure",
+  lavish:"excess",
+  magnanimous:"kind",
+  malleable:"foggy",
+  mercurial:"foggy",
+  mundane:"decline",
+  nebulous:"foggy",
+  nonchalant:"kind",
+  obsolete:"decline",
+  odious:"twoFaced",
+  ostracize:"outcast",
+  panacea:"praise",
+  paradigm:"praise",
+  penitent:"guilt",
+  penultimate:"measure",
+  pervasive:"power",
+  pristine:"praise",
+  propriety:"honest",
+  quell:"power",
+  quixotic:"foggy",
+  rapport:"kind",
+  subordinate:"power",
+  sycophant:"twoFaced",
+  taciturn:"decline",
+  trepidation:"pain",
+  vacuous:"decline",
+  vestige:"decline",
+  wallow:"excess",
+  wily:"twoFaced",
+  wrought:"sharp",
   intrepid:"bold",impetuous:"bold",
   arbitrary:"foggy",
   deficient:"decline",
