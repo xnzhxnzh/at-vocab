@@ -558,7 +558,7 @@
   // On load, if a previously-visited version differs from this one, the
   // page reloads once with a cache-busting query param so the user always
   // gets the latest file without manually clearing browser cache.
-  const APP_VERSION = "3.0";
+  const APP_VERSION = "4.1";
   const VERSION_KEY = "bioreview_app_version";
   (function checkVersionAndReload() {
     const stored = localStorage.getItem(VERSION_KEY);
@@ -599,6 +599,7 @@
       document.getElementById("syncNote").textContent = `v${APP_VERSION} · synced`;
     } catch (e) {
       console.warn("Firebase init failed, falling back to local mode:", e);
+      document.getElementById("syncNote").textContent = `v${APP_VERSION} · local mode`;
     }
   } else {
     document.getElementById("syncNote").textContent = `v${APP_VERSION} · local mode`;
@@ -927,6 +928,264 @@
       correctIndex: 3,
       explanation: "Glucose (C6H12O6: 6C, 12H, 6O) ferments into ethanol and carbon dioxide. With coefficients 2 and 2: 2 C2H6O gives 4C, 12H, 2O, and 2 CO2 gives 2C, 4O — totaling 6C, 12H, 6O, matching the reactant exactly. Matter is conserved in a chemical reaction, so the atom counts on both sides must balance; the other coefficient pairs don't balance all three elements at once.",
       page: "43"
+    },
+    {
+      id: "ch2-usabo-2023-q9",
+      chapter: 2,
+      concept: "2.2",
+      conceptTitle: "Atomic Structure",
+      question: "Which of these atoms has a preferred oxidation number of -3?",
+      options: [
+        "Carbon",
+        "Hydrogen",
+        "Phosphorus",
+        "Calcium",
+        "All the above"
+      ],
+      correctIndex: 2,
+      explanation: "Phosphorus has 5 valence electrons and typically needs 3 more to complete its outer shell (as in PH3 or the phosphide ion P3-), giving it a preferred oxidation state of -3. Carbon (+4/-4 depending on context), hydrogen (+1 or -1), and calcium (+2) don't share this -3 preference.",
+      citation: "USABO 2023 Open Exam, Q9"
+    },
+    {
+      id: "ch2-usabo-2019-q4",
+      chapter: 2,
+      concept: "2.3",
+      conceptTitle: "Chemical Bonding",
+      question: "The molecule shown is pumiliotoxin, a substance produced by poison dart frogs. At which labeled position could a hydrogen bond form?",
+      options: [
+        "A — on the plain alkyl side chain",
+        "B — on a ring carbon near the nitrogen",
+        "C — at the ring nitrogen (N)",
+        "D — at the hydroxyl group (OH)",
+        "E — at a stereo-center C–H"
+      ],
+      correctIndex: 3,
+      explanation: "A hydrogen bond needs a hydrogen attached to a strongly electronegative atom (O or N) that carries a partial positive charge, able to be attracted to another electronegative atom nearby. The O–H at D fits exactly — hydroxyl groups are classic hydrogen-bond donors (and acceptors) in biological molecules, the same role oxygen plays in water. The alkyl chain (A) and plain C–H positions (B, E) are just carbon and hydrogen with too small an electronegativity difference to set up a meaningful partial charge. The ring nitrogen (C) has no hydrogen attached in this structure, so it isn't a donor site here either — it's only a plain ring carbon or nitrogen position, not the O–H.",
+      citation: "USABO 2019 Open Exam, Q4"
+    },
+    {
+      id: "ch3-3.1-001",
+      chapter: 3,
+      concept: "3.1",
+      conceptTitle: "Hydrogen Bonding in Water",
+      question: "Why does a hydrogen bond form between two water molecules?",
+      options: [
+        "A partially negatively charged region on the oxygen of one water molecule is attracted to the partially positively charged hydrogen of a nearby water molecule.",
+        "Two water molecules share a pair of electrons equally, forming a nonpolar covalent bond between them.",
+        "One water molecule transfers an electron completely to another, forming oppositely charged ions.",
+        "The oxygen atoms of two water molecules are attracted directly to each other's oxygen atoms."
+      ],
+      correctIndex: 0,
+      explanation: "Water is a polar molecule: its oxygen carries a partial negative charge and its hydrogens carry partial positive charges. A hydrogen bond forms when the partially negative oxygen of one water molecule attracts the partially positive hydrogen of a neighboring molecule. This is a weak intermolecular attraction, not electron sharing between molecules (B) or an electron transfer forming ions (C), and it's oxygen attracted to hydrogen, not oxygen to oxygen (D).",
+      page: "45"
+    },
+    {
+      id: "ch3-3.2-001",
+      chapter: 3,
+      concept: "3.2",
+      conceptTitle: "Emergent Properties of Water",
+      question: "Hydrogen bonding keeps water molecules close to each other, giving water two related properties. What are they?",
+      options: [
+        "Cohesion and surface tension",
+        "High specific heat and buffering capacity",
+        "Density and molarity",
+        "Acidity and solvent capacity"
+      ],
+      correctIndex: 0,
+      explanation: "Hydrogen bonds pull water molecules together, producing cohesion (water molecules sticking to each other) and, at the water's surface, surface tension. The other pairings mix in properties from elsewhere in the chapter that aren't the direct result described by this bullet.",
+      page: "45–50"
+    },
+    {
+      id: "ch3-3.2-002",
+      chapter: 3,
+      concept: "3.2",
+      conceptTitle: "Emergent Properties of Water",
+      question: "Water's high specific heat means that heat is absorbed when hydrogen bonds ___, and released when hydrogen bonds ___. This helps keep temperatures relatively steady within limits that permit life.",
+      options: [
+        "break; form",
+        "form; break",
+        "freeze; melt",
+        "evaporate; condense"
+      ],
+      correctIndex: 0,
+      explanation: "Breaking hydrogen bonds absorbs heat energy; forming them releases heat energy. Because water has so many hydrogen bonds, this buffers temperature swings. 'Freeze/melt' and 'evaporate/condense' describe phase changes, not the bond-breaking/forming mechanism this bullet is specifically about.",
+      page: "45–50"
+    },
+    {
+      id: "ch3-3.2-003",
+      chapter: 3,
+      concept: "3.2",
+      conceptTitle: "Emergent Properties of Water",
+      question: "Why does ice float on liquid water, and why does this matter for life?",
+      options: [
+        "Ice is less dense than liquid water, so it floats and insulates the water below, letting life persist under frozen surfaces.",
+        "Ice is denser than liquid water, so it sinks and keeps deep water from freezing.",
+        "Ice has stronger covalent bonds than liquid water, which makes it lighter.",
+        "Ice forms only at the surface because hydrogen bonds don't exist in solid water."
+      ],
+      correctIndex: 0,
+      explanation: "Ice floats because its open, hydrogen-bonded crystal lattice makes it less dense than liquid water — this lets ice insulate the water below, allowing life to exist under frozen lake and polar-sea surfaces. B has the density relationship backwards. C misattributes the cause to covalent bonds, when it's actually about how hydrogen bonds arrange molecules in the solid. D is false — ice actually has more stable hydrogen bonds than liquid water, which is exactly why its lattice is so open.",
+      page: "45–50"
+    },
+    {
+      id: "ch3-3.2-004",
+      chapter: 3,
+      concept: "3.2",
+      conceptTitle: "Emergent Properties of Water",
+      question: "Why is water described as an unusually versatile solvent, and what distinguishes hydrophilic from hydrophobic substances?",
+      options: [
+        "Water's polar molecules are attracted to ions and other polar substances that can form hydrogen bonds; hydrophilic substances have an affinity for water, while hydrophobic substances do not.",
+        "Water's nonpolar molecules mix easily with oils; hydrophilic substances repel water, while hydrophobic substances attract it.",
+        "Water dissolves substances by permanently breaking their covalent bonds; hydrophilic and hydrophobic substances dissolve equally well.",
+        "Water is a versatile solvent because of its very low molecular mass, unrelated to polarity or hydrogen bonding."
+      ],
+      correctIndex: 0,
+      explanation: "Water's polarity lets it surround and dissolve ions and other polar substances via hydrogen bonding — that versatility is why it dissolves so many different things. Hydrophilic substances have an affinity for water; hydrophobic ones don't. B reverses both water's polarity and the hydrophilic/hydrophobic definitions. C misdescribes dissolving as bond-breaking and wrongly says both types dissolve equally. D ignores the actual mechanism (polarity and hydrogen bonding).",
+      page: "45–50"
+    },
+    {
+      id: "ch3-3.2-005",
+      chapter: 3,
+      concept: "3.2",
+      conceptTitle: "Emergent Properties of Water",
+      question: "What is the broader significance of water's emergent properties — cohesion, high specific heat, ice floating, and its role as a solvent?",
+      options: [
+        "They support life on Earth and may contribute to the potential for life to have evolved on other planets.",
+        "They only matter for chemistry experiments and have no connection to biology or astrobiology.",
+        "They explain why water is the only liquid capable of dissolving any substance.",
+        "They are properties unique to Earth's water and could never occur on any other planet."
+      ],
+      correctIndex: 0,
+      explanation: "These emergent properties aren't just chemistry trivia — they're why water can support life on Earth, and the same reasoning is used in astrobiology to evaluate whether life could exist elsewhere. Water is versatile as a solvent, not universal — many hydrophobic substances don't dissolve in it (C is false), and nothing about water's chemistry is exclusive to Earth (D is false).",
+      page: "45–50"
+    },
+    {
+      id: "ch3-3.3-001",
+      chapter: 3,
+      concept: "3.3",
+      conceptTitle: "Acids, Bases & pH",
+      question: "What happens when a water molecule transfers a proton (H+) to another water molecule?",
+      options: [
+        "It forms H3O+ (commonly represented simply as H+) and OH−.",
+        "It forms two separate O2 molecules.",
+        "It forms a covalent bond directly between the two oxygen atoms.",
+        "It breaks down into hydrogen gas and oxygen gas."
+      ],
+      correctIndex: 0,
+      explanation: "One water molecule can donate a proton to another, producing a hydronium ion (H3O+, usually simplified to H+) and a hydroxide ion (OH−). This reversible reaction is the basis for pH. The other options describe chemically unrelated processes that don't happen from a simple proton transfer between two water molecules.",
+      page: "51–54"
+    },
+    {
+      id: "ch3-3.3-002",
+      chapter: 3,
+      concept: "3.3",
+      conceptTitle: "Acids, Bases & pH",
+      question: "How is pH defined, and what does a buffer do?",
+      options: [
+        "pH = −log[H+]; a buffer is an acid-base pair that combines reversibly with hydrogen ions, helping a solution resist changes in pH.",
+        "pH = log[OH−]; a buffer is a strong acid that permanently neutralizes all H+ in a solution.",
+        "pH = [H+] × [OH−]; a buffer increases the concentration of H+ in a solution.",
+        "pH = −log[OH−]; a buffer prevents water molecules from ionizing at all."
+      ],
+      correctIndex: 0,
+      explanation: "pH is defined as the negative log of the hydrogen ion concentration: pH = −log[H+]. A buffer is an acid-base pair that reversibly binds and releases H+, which resists sharp swings in pH when acids or bases are added. The other options misstate the pH formula and describe buffers incorrectly — a buffer moderates pH changes rather than permanently neutralizing, adding, or blocking ions.",
+      page: "51–54"
+    },
+    {
+      id: "ch3-3.3-003",
+      chapter: 3,
+      concept: "3.3",
+      conceptTitle: "Acids, Bases & pH",
+      question: "How does burning fossil fuels contribute to ocean acidification?",
+      options: [
+        "It increases atmospheric CO2, some of which dissolves in the oceans, lowering ocean pH and threatening marine organisms that rely on calcification.",
+        "It directly releases acidic chemicals into the ocean through rainfall, unrelated to CO2 or atmospheric gases.",
+        "It reduces atmospheric CO2, which raises ocean pH and benefits calcifying organisms.",
+        "It has no measurable effect on ocean chemistry since oceans are too large to be affected by atmospheric changes."
+      ],
+      correctIndex: 0,
+      explanation: "Burning fossil fuels raises atmospheric CO2. Some of that CO2 dissolves into the oceans, which lowers ocean pH — this is ocean acidification, and it poses a serious threat to marine organisms that build shells or skeletons through calcification. C reverses the actual direction of the effect, and B and D describe mechanisms and outcomes that don't match what's actually happening.",
+      page: "51–54"
+    },
+    {
+      id: "ch3-tyu-001",
+      chapter: 3,
+      concept: "3.2",
+      conceptTitle: "Emergent Properties of Water",
+      question: "Which of the following is a hydrophobic material?",
+      options: [
+        "Paper",
+        "Table salt",
+        "Wax",
+        "Sugar"
+      ],
+      correctIndex: 2,
+      explanation: "Hydrophobic substances lack an affinity for water — typically because they're nonpolar, like wax. Paper (cellulose, full of polar hydroxyl groups), table salt (an ionic compound), and sugar (a polar molecule) are all hydrophilic and interact readily with water.",
+      page: "55"
+    },
+    {
+      id: "ch3-tyu-002",
+      chapter: 3,
+      concept: "3.2",
+      conceptTitle: "Emergent Properties of Water",
+      question: "We can be sure that a mole of table sugar and a mole of vitamin C are equal in their",
+      options: [
+        "mass.",
+        "volume.",
+        "number of atoms.",
+        "number of molecules."
+      ],
+      correctIndex: 3,
+      explanation: "A mole is defined as a specific number of molecules (Avogadro's number), no matter the substance. Since table sugar and vitamin C have different molecular formulas, a mole of each has a different mass, different volume, and a different total number of atoms — but always the same number of molecules.",
+      page: "55"
+    },
+    {
+      id: "ch3-tyu-003",
+      chapter: 3,
+      concept: "3.3",
+      conceptTitle: "Acids, Bases & pH",
+      question: "Measurements show that the pH of a particular lake is 4.0. What is the hydrogen ion concentration of the lake?",
+      options: [
+        "4.0 M",
+        "10⁻¹⁰ M",
+        "10⁻⁴ M",
+        "10⁴ M"
+      ],
+      correctIndex: 2,
+      explanation: "Since pH = −log[H+], solving for concentration gives [H+] = 10⁻ᵖᴴ = 10⁻⁴·⁰ M. The pH value itself (4.0) isn't the concentration — that's a common mix-up — and the other options use the wrong sign or exponent.",
+      page: "55"
+    },
+    {
+      id: "ch3-tyu-004",
+      chapter: 3,
+      concept: "3.3",
+      conceptTitle: "Acids, Bases & pH",
+      question: "What is the hydroxide ion concentration of the lake described in the previous question (pH 4.0)?",
+      options: [
+        "10⁻¹⁰ M",
+        "10⁻⁴ M",
+        "10⁻⁷ M",
+        "10.0 M"
+      ],
+      correctIndex: 0,
+      explanation: "At 25°C, [H+][OH−] = 10⁻¹⁴. With [H+] = 10⁻⁴ M, solving gives [OH−] = 10⁻¹⁴ ÷ 10⁻⁴ = 10⁻¹⁰ M. 10⁻⁴ M is the hydrogen ion concentration, not the hydroxide (that's the previous question's answer), and 10⁻⁷ M would only be correct at neutral pH 7, not this acidic lake.",
+      page: "55"
+    },
+    {
+      id: "ch3-tyu-005",
+      chapter: 3,
+      concept: "3.2",
+      conceptTitle: "Emergent Properties of Water",
+      question: "A slice of pizza has 500 kcal. If we could burn the pizza and use all the heat to warm a 50-L container of cold water, what would be the approximate increase in temperature? (A liter of cold water weighs about 1 kg.)",
+      options: [
+        "50°C",
+        "5°C",
+        "100°C",
+        "10°C"
+      ],
+      correctIndex: 3,
+      explanation: "Water's specific heat is about 1 kcal per kg per °C. With 50 kg of water absorbing 500 kcal, the temperature rise is 500 kcal ÷ (50 kg × 1 kcal/kg°C) = 10°C.",
+      page: "55"
     }
   ];
 
@@ -1094,6 +1353,136 @@
       <text x="165" y="45" font-size="14" fill="var(--muted)">+</text>
       <circle cx="200" cy="30" r="12" fill="var(--crimson)"/><circle cx="200" cy="60" r="12" fill="var(--crimson)"/>
       <text x="200" y="80" text-anchor="middle" font-size="8" fill="var(--muted)" font-family="IBM Plex Mono, monospace">2 CO2</text>
+    </svg>`,
+    "ch2-usabo-2019-q4": `<svg viewBox="0 0 330 210" class="diagram-svg">
+      <polygon points="110,80 150,60 190,80 190,130 150,150 110,130" fill="none" stroke="var(--muted)" stroke-width="1.8"/>
+      <polygon points="110,80 75,58 45,90 58,130 110,130" fill="none" stroke="var(--muted)" stroke-width="1.8"/>
+      <text x="102" y="76" font-size="13" fill="var(--petal)" font-weight="700">N</text>
+      <path d="M190,80 L215,55 L240,68 L265,50 L288,64 L310,50" fill="none" stroke="var(--muted)" stroke-width="1.8"/>
+      <line x1="265" y1="50" x2="270" y2="28" stroke="var(--muted)" stroke-width="1.6"/>
+      <line x1="150" y1="150" x2="168" y2="178" stroke="var(--muted)" stroke-width="1.6"/>
+      <text x="163" y="196" font-size="13" fill="var(--crimson)" font-weight="700">OH</text>
+      <line x1="150" y1="150" x2="128" y2="178" stroke="var(--muted)" stroke-width="1.6" stroke-dasharray="2 2"/>
+      <line x1="110" y1="130" x2="85" y2="158" stroke="var(--muted)" stroke-width="2.2"/>
+      <text x="78" y="176" font-size="13" fill="var(--ink)" font-weight="700">H</text>
+      <path d="M300,32 L285,52" stroke="var(--gold)" stroke-width="2" marker-end="url(#uArrow)"/>
+      <text x="303" y="26" font-size="13" fill="var(--gold)" font-weight="700">A</text>
+      <path d="M150,32 L150,54" stroke="var(--gold)" stroke-width="2" marker-end="url(#uArrow)"/>
+      <text x="145" y="24" font-size="13" fill="var(--gold)" font-weight="700">B</text>
+      <path d="M60,45 L95,70" stroke="var(--gold)" stroke-width="2" marker-end="url(#uArrow)"/>
+      <text x="40" y="38" font-size="13" fill="var(--gold)" font-weight="700">C</text>
+      <path d="M205,178 L172,180" stroke="var(--strong)" stroke-width="2.4" marker-end="url(#uArrowStrong)"/>
+      <text x="210" y="182" font-size="13" fill="var(--strong)" font-weight="700">D</text>
+      <path d="M40,178 L75,162" stroke="var(--gold)" stroke-width="2" marker-end="url(#uArrow)"/>
+      <text x="18" y="188" font-size="13" fill="var(--gold)" font-weight="700">E</text>
+      <defs>
+        <marker id="uArrow" markerWidth="7" markerHeight="7" refX="5" refY="2.5" orient="auto"><path d="M0,0 L5,2.5 L0,5 Z" fill="var(--gold)"/></marker>
+        <marker id="uArrowStrong" markerWidth="7" markerHeight="7" refX="5" refY="2.5" orient="auto"><path d="M0,0 L5,2.5 L0,5 Z" fill="var(--strong)"/></marker>
+      </defs>
+    </svg>`,
+    "ch3-3.1-001": `<svg viewBox="0 0 220 130" class="diagram-svg">
+      <circle cx="55" cy="45" r="16" fill="var(--crimson)"/>
+      <circle cx="30" cy="75" r="10" fill="var(--surface-2)" stroke="var(--line)"/><circle cx="80" cy="75" r="10" fill="var(--surface-2)" stroke="var(--line)"/>
+      <line x1="55" y1="45" x2="30" y2="75" stroke="var(--muted)" stroke-width="2"/><line x1="55" y1="45" x2="80" y2="75" stroke="var(--muted)" stroke-width="2"/>
+      <text x="55" y="26" text-anchor="middle" font-size="10" fill="var(--crimson)">δ−</text>
+      <line x1="80" y1="75" x2="150" y2="55" stroke="var(--muted)" stroke-width="1.6" stroke-dasharray="3 3"/>
+      <circle cx="165" cy="45" r="16" fill="var(--crimson)"/>
+      <circle cx="140" cy="75" r="10" fill="var(--surface-2)" stroke="var(--line)"/><circle cx="190" cy="75" r="10" fill="var(--surface-2)" stroke="var(--line)"/>
+      <line x1="165" y1="45" x2="140" y2="75" stroke="var(--muted)" stroke-width="2"/><line x1="165" y1="45" x2="190" y2="75" stroke="var(--muted)" stroke-width="2"/>
+      <text x="80" y="65" text-anchor="middle" font-size="9" fill="var(--petal)">δ+</text>
+      <text x="110" y="110" text-anchor="middle" font-size="10" fill="var(--muted)" font-family="IBM Plex Mono, monospace">hydrogen bond</text>
+    </svg>`,
+    "ch3-3.2-001": `<svg viewBox="0 0 220 140" class="diagram-svg">
+      <circle cx="60" cy="50" r="8" fill="var(--crimson)"/><circle cx="110" cy="40" r="8" fill="var(--crimson)"/><circle cx="160" cy="55" r="8" fill="var(--crimson)"/>
+      <circle cx="85" cy="90" r="8" fill="var(--crimson)"/><circle cx="135" cy="95" r="8" fill="var(--crimson)"/>
+      <line x1="60" y1="50" x2="110" y2="40" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="3 3"/>
+      <line x1="110" y1="40" x2="160" y2="55" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="3 3"/>
+      <line x1="60" y1="50" x2="85" y2="90" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="3 3"/>
+      <line x1="110" y1="40" x2="85" y2="90" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="3 3"/>
+      <line x1="110" y1="40" x2="135" y2="95" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="3 3"/>
+      <line x1="160" y1="55" x2="135" y2="95" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="3 3"/>
+      <text x="110" y="125" text-anchor="middle" font-size="10" fill="var(--muted)" font-family="IBM Plex Mono, monospace">cohesion · surface tension</text>
+    </svg>`,
+    "ch3-3.2-002": `<svg viewBox="0 0 240 110" class="diagram-svg">
+      <circle cx="45" cy="50" r="10" fill="var(--crimson)"/><circle cx="80" cy="50" r="10" fill="var(--crimson)"/>
+      <line x1="45" y1="50" x2="80" y2="50" stroke="var(--gold)" stroke-width="2" stroke-dasharray="3 3"/>
+      <text x="62" y="30" text-anchor="middle" font-size="10" fill="var(--gold)">+heat → break</text>
+      <path d="M100,50 L140,50" stroke="var(--muted)" stroke-width="2" marker-end="url(#arrowH)"/>
+      <defs><marker id="arrowH" markerWidth="7" markerHeight="7" refX="5" refY="2.5" orient="auto"><path d="M0,0 L5,2.5 L0,5 Z" fill="var(--muted)"/></marker></defs>
+      <circle cx="165" cy="50" r="10" fill="var(--crimson)"/><circle cx="200" cy="50" r="10" fill="var(--crimson)"/>
+      <text x="182" y="30" text-anchor="middle" font-size="10" fill="var(--strong)">heat out ← form</text>
+      <line x1="165" y1="50" x2="200" y2="50" stroke="var(--strong)" stroke-width="2" stroke-dasharray="3 3"/>
+    </svg>`,
+    "ch3-3.2-003": `<svg viewBox="0 0 220 130" class="diagram-svg">
+      <line x1="10" y1="55" x2="210" y2="55" stroke="var(--petal)" stroke-width="1.5"/>
+      <polygon points="50,25 70,25 80,42 70,58 50,58 40,42" fill="none" stroke="var(--muted)" stroke-width="1.6"/>
+      <polygon points="90,20 112,20 122,38 112,55 90,55 80,38" fill="none" stroke="var(--muted)" stroke-width="1.6"/>
+      <text x="80" y="14" text-anchor="middle" font-size="9" fill="var(--muted)" font-family="IBM Plex Mono, monospace">ice (open lattice)</text>
+      <circle cx="40" cy="85" r="6" fill="var(--crimson)"/><circle cx="65" cy="90" r="6" fill="var(--crimson)"/><circle cx="90" cy="82" r="6" fill="var(--crimson)"/>
+      <circle cx="115" cy="92" r="6" fill="var(--crimson)"/><circle cx="140" cy="85" r="6" fill="var(--crimson)"/><circle cx="165" cy="90" r="6" fill="var(--crimson)"/>
+      <circle cx="55" cy="105" r="6" fill="var(--crimson)"/><circle cx="105" cy="108" r="6" fill="var(--crimson)"/><circle cx="150" cy="105" r="6" fill="var(--crimson)"/>
+      <text x="110" y="125" text-anchor="middle" font-size="9" fill="var(--muted)" font-family="IBM Plex Mono, monospace">liquid water (denser)</text>
+    </svg>`,
+    "ch3-3.2-004": `<svg viewBox="0 0 260 120" class="diagram-svg">
+      <circle cx="55" cy="55" r="14" fill="var(--gold)"/><text x="55" y="59" text-anchor="middle" font-size="9" fill="#0A0A0E">Na+</text>
+      <circle cx="30" cy="30" r="6" fill="var(--surface-2)" stroke="var(--line)"/><circle cx="80" cy="30" r="6" fill="var(--surface-2)" stroke="var(--line)"/>
+      <circle cx="25" cy="60" r="6" fill="var(--surface-2)" stroke="var(--line)"/><circle cx="85" cy="60" r="6" fill="var(--surface-2)" stroke="var(--line)"/>
+      <circle cx="55" cy="85" r="6" fill="var(--surface-2)" stroke="var(--line)"/>
+      <text x="55" y="105" text-anchor="middle" font-size="9" fill="var(--muted)" font-family="IBM Plex Mono, monospace">hydrophilic</text>
+      <circle cx="190" cy="55" r="22" fill="var(--crimson)" opacity="0.55"/>
+      <circle cx="140" cy="35" r="5" fill="var(--surface-2)" stroke="var(--line)"/><circle cx="245" cy="35" r="5" fill="var(--surface-2)" stroke="var(--line)"/>
+      <circle cx="135" cy="75" r="5" fill="var(--surface-2)" stroke="var(--line)"/><circle cx="248" cy="78" r="5" fill="var(--surface-2)" stroke="var(--line)"/>
+      <text x="190" y="105" text-anchor="middle" font-size="9" fill="var(--muted)" font-family="IBM Plex Mono, monospace">hydrophobic (oil)</text>
+    </svg>`,
+    "ch3-3.3-001": `<svg viewBox="0 0 260 110" class="diagram-svg">
+      <circle cx="50" cy="50" r="16" fill="var(--crimson)"/><circle cx="28" cy="75" r="9" fill="var(--surface-2)" stroke="var(--line)"/><circle cx="72" cy="75" r="9" fill="var(--surface-2)" stroke="var(--line)"/>
+      <line x1="50" y1="50" x2="28" y2="75" stroke="var(--muted)" stroke-width="1.6"/><line x1="50" y1="50" x2="72" y2="75" stroke="var(--muted)" stroke-width="1.6"/>
+      <path d="M85,60 L130,60" stroke="var(--gold)" stroke-width="2" marker-end="url(#arrowP)"/>
+      <text x="107" y="50" text-anchor="middle" font-size="9" fill="var(--gold)">H+</text>
+      <defs><marker id="arrowP" markerWidth="7" markerHeight="7" refX="5" refY="2.5" orient="auto"><path d="M0,0 L5,2.5 L0,5 Z" fill="var(--gold)"/></marker></defs>
+      <circle cx="165" cy="50" r="16" fill="var(--crimson)"/><circle cx="143" cy="75" r="9" fill="var(--surface-2)" stroke="var(--line)"/><circle cx="187" cy="75" r="9" fill="var(--surface-2)" stroke="var(--line)"/>
+      <line x1="165" y1="50" x2="143" y2="75" stroke="var(--muted)" stroke-width="1.6"/><line x1="165" y1="50" x2="187" y2="75" stroke="var(--muted)" stroke-width="1.6"/>
+      <text x="165" y="98" text-anchor="middle" font-size="10" fill="var(--strong)" font-weight="700">H3O+</text>
+      <circle cx="230" cy="50" r="14" fill="var(--petal)"/><circle cx="230" cy="80" r="8" fill="var(--surface-2)" stroke="var(--line)"/>
+      <line x1="230" y1="50" x2="230" y2="80" stroke="var(--muted)" stroke-width="1.6"/>
+      <text x="230" y="100" text-anchor="middle" font-size="10" fill="var(--crimson)" font-weight="700">OH−</text>
+    </svg>`,
+    "ch3-3.3-002": `<svg viewBox="0 0 260 90" class="diagram-svg">
+      <rect x="10" y="35" width="240" height="14" rx="7" fill="url(#phgrad)"/>
+      <defs>
+        <linearGradient id="phgrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="var(--crimson)"/>
+          <stop offset="50%" stop-color="var(--muted)"/>
+          <stop offset="100%" stop-color="var(--petal)"/>
+        </linearGradient>
+      </defs>
+      <text x="10" y="30" font-size="9" fill="var(--crimson)">0 acidic</text>
+      <text x="115" y="30" font-size="9" fill="var(--muted)">7 neutral</text>
+      <text x="205" y="30" font-size="9" fill="var(--petal)">14 basic</text>
+      <text x="130" y="70" text-anchor="middle" font-size="9" fill="var(--muted)" font-family="IBM Plex Mono, monospace">pH = −log[H+]</text>
+    </svg>`,
+    "ch3-3.3-003": `<svg viewBox="0 0 240 110" class="diagram-svg">
+      <text x="35" y="45" font-size="13" fill="var(--muted)" font-weight="700">CO2</text>
+      <path d="M60,45 L100,45" stroke="var(--muted)" stroke-width="2" marker-end="url(#arrowC)"/>
+      <defs><marker id="arrowC" markerWidth="7" markerHeight="7" refX="5" refY="2.5" orient="auto"><path d="M0,0 L5,2.5 L0,5 Z" fill="var(--muted)"/></marker></defs>
+      <path d="M0,65 Q60,55 120,65 T240,65" stroke="var(--petal)" stroke-width="2" fill="none"/>
+      <text x="150" y="45" font-size="10" fill="var(--crimson)">pH ↓</text>
+      <path d="M175,50 L175,75" stroke="var(--crimson)" stroke-width="2" marker-end="url(#arrowD)"/>
+      <defs><marker id="arrowD" markerWidth="7" markerHeight="7" refX="2.5" refY="5" orient="auto"><path d="M0,0 L5,0 L2.5,5 Z" fill="var(--crimson)"/></marker></defs>
+      <text x="120" y="95" text-anchor="middle" font-size="9" fill="var(--muted)" font-family="IBM Plex Mono, monospace">ocean acidification</text>
+    </svg>`,
+    "ch3-tyu-001": `<svg viewBox="0 0 200 110" class="diagram-svg">
+      <line x1="20" y1="80" x2="180" y2="80" stroke="var(--line)" stroke-width="2"/>
+      <ellipse cx="100" cy="65" rx="18" ry="12" fill="var(--petal)" opacity="0.8"/>
+      <text x="100" y="100" text-anchor="middle" font-size="9" fill="var(--muted)" font-family="IBM Plex Mono, monospace">water beads on wax</text>
+      <text x="100" y="30" text-anchor="middle" font-size="10" fill="var(--crimson)">hydrophobic surface</text>
+    </svg>`,
+    "ch3-tyu-002": `<svg viewBox="0 0 240 100" class="diagram-svg">
+      <circle cx="30" cy="40" r="9" fill="var(--gold)"/><circle cx="55" cy="40" r="9" fill="var(--gold)"/><circle cx="80" cy="40" r="9" fill="var(--gold)"/>
+      <text x="55" y="65" text-anchor="middle" font-size="9" fill="var(--muted)" font-family="IBM Plex Mono, monospace">1 mol sugar</text>
+      <circle cx="160" cy="40" r="6" fill="var(--strong)"/><circle cx="180" cy="40" r="6" fill="var(--strong)"/><circle cx="200" cy="40" r="6" fill="var(--strong)"/>
+      <text x="180" y="65" text-anchor="middle" font-size="9" fill="var(--muted)" font-family="IBM Plex Mono, monospace">1 mol vitamin C</text>
+      <text x="120" y="90" text-anchor="middle" font-size="9" fill="var(--gold)" font-family="IBM Plex Mono, monospace">same # molecules</text>
     </svg>`
   };
   // Same half-life regression model as sat-vocab: recallP(h,d) = 2^(-d/h)
@@ -1521,7 +1910,7 @@
         <div class="options" id="options"></div>
         <div class="explain" id="explain">
           ${current.explanation}
-          <div class="pages-ref">Campbell Biology, p. ${current.page}</div>
+          <div class="pages-ref">${current.citation || `Campbell Biology, p. ${current.page}`}</div>
         </div>
         <button class="next-btn" id="nextBtn">Next</button>
       </div>
