@@ -28,7 +28,7 @@ input:focus{border-color:#58CC02}
 <body>
 <div id="app" style="height:100%;display:flex;flex-direction:column"><div style="flex:1;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#58CC02">Loading...</div></div>
 <script>
-const APP_VERSION = "7.8";
+const APP_VERSION = "7.9";
 // 注意：不再于版本变化时清空localStorage！
 // 账号进度(S.uid/S.wp等)必须跨版本保留，结构变化交给migrateState()处理
 localStorage.setItem("app_version", APP_VERSION);
@@ -981,6 +981,14 @@ async function loadLeaderboard(){
 }
 
 let _cloudQueue=Promise.resolve();  // 云端保存队列，防止并发写入导致XP倒退
+window.resetFakeCompletedUnitsConfirm=function(){
+  const fakeUnits=window.__fakeUnitsToReset||[];
+  if(!fakeUnits.length)return;
+  if(!confirm('这会把 '+fakeUnits.join('、')+' 这几个单元重置成未完成，需要重新做一遍，确定吗？'))return;
+  resetFakeCompletedUnits(fakeUnits);
+  screen='path';
+  render();
+};
 window.resetFakeCompletedUnits=function(unitNames){
   // 只重置指定单元名称对应的learn/review节点+词进度，不影响其他单元
   const affectedUnitIdx=UNITS.map((u,i)=>unitNames.includes(u.name)?i:-1).filter(i=>i!==-1);
@@ -1473,7 +1481,7 @@ function render(){
           ${unseenDetail.map(d=>`<div style="display:flex;justify-content:space-between;font-size:11px;padding:3px 0;border-bottom:1px solid ${BC}">
             <span>${d.word} <span style="color:#5a7a84">(${d.unit})</span></span><span style="color:${d.npStatus===2?R:'#8BA4AE'}">np=${d.npStatus}</span>
           </div>`).join("")}
-          ${(()=>{const fakeUnits=[...new Set(unseenDetail.filter(d=>d.npStatus===2).map(d=>d.unit))];return fakeUnits.length?`<button onclick="if(confirm('这会把 ${fakeUnits.join('、')} 这几个单元重置成未完成，需要重新做一遍，确定吗？')){resetFakeCompletedUnits(${JSON.stringify(fakeUnits)});screen='path';render();}" style="width:100%;margin-top:10px;padding:12px;background:#D32F2F;border:none;border-radius:10px;color:#fff;font-weight:800;font-size:12px">⚠️ 重置这些"假完成"的单元 (${fakeUnits.join('、')})</button>`:"";})()}
+          ${(()=>{const fakeUnits=[...new Set(unseenDetail.filter(d=>d.npStatus===2).map(d=>d.unit))];if(!fakeUnits.length)return"";window.__fakeUnitsToReset=fakeUnits;return `<button onclick="resetFakeCompletedUnitsConfirm()" style="width:100%;margin-top:10px;padding:12px;background:#D32F2F;border:none;border-radius:10px;color:#fff;font-weight:800;font-size:12px">⚠️ 重置这些假完成的单元 (${fakeUnits.join('、')})</button>`;})()}
         </div>`:""}
         <div style="background:${CB};border:1px solid ${BC};border-radius:12px;padding:14px">
           <div style="font-size:11px;font-weight:800;color:${G};margin-bottom:8px">全局WEAK词完整列表 (${weakSorted.length}个，按弱到强排序):</div>
