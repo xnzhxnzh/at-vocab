@@ -28,7 +28,7 @@ input:focus{border-color:#58CC02}
 <body>
 <div id="app" style="height:100%;display:flex;flex-direction:column"><div style="flex:1;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#58CC02">Loading...</div></div>
 <script>
-const APP_VERSION = "7.6";
+const APP_VERSION = "7.8";
 // 注意：不再于版本变化时清空localStorage！
 // 账号进度(S.uid/S.wp等)必须跨版本保留，结构变化交给migrateState()处理
 localStorage.setItem("app_version", APP_VERSION);
@@ -351,8 +351,58 @@ const UNITS=[
 {name:"Advanced 40",words:[
   ["congenial","adj.","kənˈdʒiːniəl","Pleasant and agreeable","The staff created a congenial atmosphere for new employees."],
   ["nonchalant","adj.","ˌnɒnʃəˈlɑːnt","Having a go-with-the-flow type of attitude; unbothered","He remained nonchalant even as the deadline approached."]
+]},
+{name:"Advanced 41",words:[
+  ["caustic", "adj.", "ˈkɔːstɪk", "Corrosive or bitingly sarcastic", "His caustic remarks left several coworkers in tears."],
+  ["desiccate", "v.", "ˈdɛsɪkeɪt", "To dehydrate something; to remove moisture", "The desert sun quickly desiccated the abandoned plants."],
+  ["proliferate", "v.", "prəˈlɪfəreɪt", "To reproduce at an accelerated rate", "Illegal street vendors began to proliferate throughout the city."],
+  ["heterogeneous", "adj.", "ˌhɛtərəˈdʒiːniəs", "Different; not the same", "The classroom was wonderfully heterogeneous, with students from a dozen countries."],
+  ["tantamount", "adj.", "ˈtæntəmaʊnt", "Equal to", "Ignoring the warning signs was tantamount to inviting disaster."],
+  ["confound", "v.", "kənˈfaʊnd", "To surprise or startle someone", "The magician's trick confounded even the most skeptical audience members."]
+]},
+{name:"Advanced 42",words:[
+  ["incisive", "adj.", "ɪnˈsaɪsɪv", "Keen and sharp", "Her incisive questions exposed the flaws in his argument immediately."],
+  ["viscous", "adj.", "ˈvɪskəs", "Thick and sticky", "The honey was too viscous to pour easily in the cold kitchen."],
+  ["zealous", "adj.", "ˈzɛləs", "Passionate and enthusiastic", "The zealous volunteers spent the whole weekend cleaning the park."],
+  ["lucrative", "adj.", "ˈluːkrətɪv", "Highly profitable", "She left her teaching job for a more lucrative career in finance."],
+  ["eminent", "adj.", "ˈɛmɪnənt", "Distinguished and renowned", "The eminent scientist was invited to speak at every major conference."],
+  ["collusion", "n.", "kəˈluːʒən", "Secret cooperation between two or more parties for illegal or conspiratorial reasons", "Investigators suspected collusion between the two rival companies."]
+]},
+{name:"Advanced 43",words:[
+  ["sinister", "adj.", "ˈsɪnɪstər", "Threatening to the safety or comfort of others", "A sinister figure lurked in the shadows outside the warehouse."],
+  ["zenith", "n.", "ˈziːnɪθ", "The highest point", "The band's popularity reached its zenith in the late 1990s."],
+  ["penchant", "n.", "ˈpɛntʃənt", "A bias or tendency in favor of something", "He has always had a penchant for spicy food."],
+  ["bona fide", "adj.", "ˌboʊnə ˈfaɪd", "Authentic or genuine", "She presented bona fide credentials before entering the lab."],
+  ["inept", "adj.", "ɪˈnɛpt", "Incompetent", "His inept handling of the crisis cost the company millions."],
+  ["feign", "v.", "feɪn", "To pretend", "She feigned interest in the lecture while secretly checking her phone."]
+]},
+{name:"Advanced 44",words:[
+  ["trite", "adj.", "traɪt", "Overused or cliché", "The speech was full of trite phrases that failed to inspire anyone."],
+  ["lament", "v.", "ləˈmɛnt", "To grieve or mourn", "The villagers gathered to lament the loss of their beloved elder."],
+  ["emulate", "v.", "ˈɛmjəleɪt", "To mimic or reproduce", "Young athletes often try to emulate their favorite professional players."],
+  ["taut", "adj.", "tɔːt", "Stretched tight", "The rope was pulled taut between the two poles."],
+  ["vindicate", "v.", "ˈvɪndɪkeɪt", "To absolve someone of their guilt; to prove someone's innocence", "New DNA evidence finally vindicated the man after twenty years in prison."],
+  ["sovereign", "adj.", "ˈsɒvrɪn", "Possessing full power or authority", "The newly sovereign nation quickly established its own currency."]
+]},
+{name:"Advanced 45",words:[
+  ["desolate", "adj.", "ˈdɛsələt", "Barren", "The desolate landscape stretched for miles without a single tree."],
+  ["denigrate", "v.", "ˈdɛnɪɡreɪt", "To belittle or attack", "He was quick to denigrate any idea that wasn't his own."],
+  ["susceptible", "adj.", "səˈsɛptəbl", "Vulnerable to something", "Young children are especially susceptible to colds in winter."],
+  ["incite", "v.", "ɪnˈsaɪt", "To instigate and encourage bad behavior", "The speaker was arrested for inciting the crowd to violence."],
+  ["clemency", "n.", "ˈklɛmənsi", "An act of mercy and compassion towards an offender", "The governor granted clemency to the prisoner at the last moment."],
+  ["gallivant", "v.", "ˈɡælɪvænt", "To wander about looking for fun or pleasure", "They spent the summer gallivanting around Europe with no fixed plans."]
+]},
+{name:"Advanced 46",words:[
+  ["wistful", "adj.", "ˈwɪstfəl", "Nostalgic or yearning for another time or person", "She gave a wistful smile while looking through old photographs."],
+  ["foresight", "n.", "ˈfɔːrsaɪt", "The quality of being able to predict future occurrences", "His foresight in buying the land early saved the company millions."],
+  ["capricious", "adj.", "kəˈprɪʃəs", "Inconsistent or impulsive", "The capricious weather made it impossible to plan the picnic."],
+  ["incorrigible", "adj.", "ɪnˈkɒrɪdʒəbl", "Refusing to be corrected or reformed", "The incorrigible prankster was suspended for the third time this year."],
+  ["inundate", "v.", "ˈɪnəndeɪt", "To fill with an overflowing abundance", "The office was inundated with complaints after the price increase."],
+  ["neophyte", "n.", "ˈniːəfaɪt", "A novice or beginner at something", "As a neophyte in the kitchen, he burned the toast twice."]
+]},
+{name:"Advanced 47",words:[
+  ["bane", "n.", "beɪn", "Something that harms to a severe degree", "Traffic on Fridays has become the bane of her commute."]
 ]}
-
 ];
 const ALL=UNITS.flatMap(u=>u.words);
 // UNIT_START[i] = 第i个unit第一个词在ALL中的全局索引（支持每个unit不同词数）
@@ -601,7 +651,26 @@ const abstractWordMap={
   superfluous:"excess",
   boon:"gift",
   goad:"provoke",
-  tremulous:"shake"
+  tremulous:"shake",
+  caustic:"criticize",denigrate:"criticize",
+  desiccate:"decline",inept:"decline",
+  proliferate:"excess",inundate:"excess",
+  heterogeneous:"generic",trite:"generic",emulate:"generic",penchant:"generic",
+  tantamount:"measure",foresight:"measure",
+  confound:"shake",capricious:"shake",
+  incisive:"sharp",
+  zealous:"bold",sovereign:"power",zenith:"power",
+  lucrative:"gift",
+  eminent:"praise",
+  collusion:"twoFaced",feign:"twoFaced",
+  sinister:"provoke",incite:"provoke",
+  vindicate:"release",
+  desolate:"outcast",
+  susceptible:"decline",
+  clemency:"kind",
+  gallivant:"flee",
+  wistful:"decline",lament:"decline",
+  incorrigible:"stubborn"
 };
 // ══════ 专属单词图标（每个词根据词意/例句单独手绘，非模板复用）══════
 const wordIcons={
@@ -912,6 +981,31 @@ async function loadLeaderboard(){
 }
 
 let _cloudQueue=Promise.resolve();  // 云端保存队列，防止并发写入导致XP倒退
+window.resetFakeCompletedUnits=function(unitNames){
+  // 只重置指定单元名称对应的learn/review节点+词进度，不影响其他单元
+  const affectedUnitIdx=UNITS.map((u,i)=>unitNames.includes(u.name)?i:-1).filter(i=>i!==-1);
+  if(!affectedUnitIdx.length)return;
+  // 重置这些单元的词的 seen/wp
+  affectedUnitIdx.forEach(ui=>{
+    const b=UNIT_START[ui],n=UNITS[ui].words.length;
+    for(let i=b;i<b+n;i++){
+      S.ws[i]={i,nc:0,nw:0,h:0,lp:0,seen:false};
+      delete S.wp[ALL[i][0]];
+    }
+  });
+  // 只重置受影响单元自己的learn节点+紧跟其后的review节点，不碰后面真实完成的单元(Advanced33+)
+  affectedUnitIdx.forEach(ui=>{
+    const learnIdx=PATH.findIndex(p=>p.type==="learn"&&p.unit===ui);
+    if(learnIdx===-1)return;
+    S.np[learnIdx]=0;
+    if(learnIdx+1<S.np.length&&PATH[learnIdx+1].type==="review")S.np[learnIdx+1]=0;
+  });
+  // 解锁第一个受影响单元，让Kevin可以重新开始做；后续单元会在他做完前一个时按正常逻辑依次解锁
+  const firstUi=Math.min(...affectedUnitIdx);
+  const firstLearnIdx=PATH.findIndex(p=>p.type==="learn"&&p.unit===firstUi);
+  if(firstLearnIdx!==-1)S.np[firstLearnIdx]=1;
+  saveAll();
+};
 function saveAll(){
   saveLocal();
   // 排队执行云端保存：等前一个写入完成后，才用最新的S.xp发起下一个写入
@@ -1379,6 +1473,7 @@ function render(){
           ${unseenDetail.map(d=>`<div style="display:flex;justify-content:space-between;font-size:11px;padding:3px 0;border-bottom:1px solid ${BC}">
             <span>${d.word} <span style="color:#5a7a84">(${d.unit})</span></span><span style="color:${d.npStatus===2?R:'#8BA4AE'}">np=${d.npStatus}</span>
           </div>`).join("")}
+          ${(()=>{const fakeUnits=[...new Set(unseenDetail.filter(d=>d.npStatus===2).map(d=>d.unit))];return fakeUnits.length?`<button onclick="if(confirm('这会把 ${fakeUnits.join('、')} 这几个单元重置成未完成，需要重新做一遍，确定吗？')){resetFakeCompletedUnits(${JSON.stringify(fakeUnits)});screen='path';render();}" style="width:100%;margin-top:10px;padding:12px;background:#D32F2F;border:none;border-radius:10px;color:#fff;font-weight:800;font-size:12px">⚠️ 重置这些"假完成"的单元 (${fakeUnits.join('、')})</button>`:"";})()}
         </div>`:""}
         <div style="background:${CB};border:1px solid ${BC};border-radius:12px;padding:14px">
           <div style="font-size:11px;font-weight:800;color:${G};margin-bottom:8px">全局WEAK词完整列表 (${weakSorted.length}个，按弱到强排序):</div>
