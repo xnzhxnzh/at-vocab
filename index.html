@@ -28,7 +28,7 @@ input:focus{border-color:#58CC02}
 <body>
 <div id="app" style="height:100%;display:flex;flex-direction:column"><div style="flex:1;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#58CC02">Loading...</div></div>
 <script>
-const APP_VERSION = "7.5";
+const APP_VERSION = "7.6";
 // 注意：不再于版本变化时清空localStorage！
 // 账号进度(S.uid/S.wp等)必须跨版本保留，结构变化交给migrateState()处理
 localStorage.setItem("app_version", APP_VERSION);
@@ -1343,6 +1343,14 @@ function render(){
     const dupNames=Object.entries(nameCounts).filter(([n,c])=>c>1);
     // 按记忆强度排序展示weak列表
     const weakSorted=[...globalWeak].sort((a,b)=>recallP(a.h,today-a.lp)-recallP(b.h,today-b.lp));
+    // 找出"从未被seen过"的词，并检查它们所在unit的完成状态（排查236/260之谜用）
+    const unseenIdx=S.ws.map((w,i)=>w.seen?null:i).filter(i=>i!==null);
+    const unseenDetail=unseenIdx.map(i=>{
+      const ui=unitIndexOf(i);
+      const learnNodeIdx=PATH.findIndex(p=>p.type==="learn"&&p.unit===ui);
+      const npStatus=learnNodeIdx>=0?S.np[learnNodeIdx]:-1;
+      return {word:ALL[i]?ALL[i][0]:"[越界"+i+"]",unit:UNITS[ui]?UNITS[ui].name:"?",npStatus};
+    });
 
     h+=`<div style="flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden">
       <div style="padding:12px 18px;border-bottom:1px solid ${BC};display:flex;align-items:center;gap:10px;flex-shrink:0">
@@ -1365,6 +1373,12 @@ function render(){
         ${dupNames.length?`<div style="background:#3a2a1a;border:1px solid #FF9800;border-radius:12px;padding:14px;margin-bottom:12px">
           <div style="font-size:11px;font-weight:800;color:#FFB74D;margin-bottom:6px">⚠️ DUPLICATE WORDS:</div>
           <div style="font-size:11px;color:#e0c090">${dupNames.map(([n,c])=>n+" (x"+c+")").join(", ")}</div>
+        </div>`:""}
+        ${unseenDetail.length?`<div style="background:#1a2a3a;border:1px solid #4FC3F7;border-radius:12px;padding:14px;margin-bottom:12px">
+          <div style="font-size:11px;font-weight:800;color:#4FC3F7;margin-bottom:6px">🔍 从未被seen过的词 (${unseenDetail.length}个) — npStatus: 0=locked 1=available 2=done:</div>
+          ${unseenDetail.map(d=>`<div style="display:flex;justify-content:space-between;font-size:11px;padding:3px 0;border-bottom:1px solid ${BC}">
+            <span>${d.word} <span style="color:#5a7a84">(${d.unit})</span></span><span style="color:${d.npStatus===2?R:'#8BA4AE'}">np=${d.npStatus}</span>
+          </div>`).join("")}
         </div>`:""}
         <div style="background:${CB};border:1px solid ${BC};border-radius:12px;padding:14px">
           <div style="font-size:11px;font-weight:800;color:${G};margin-bottom:8px">全局WEAK词完整列表 (${weakSorted.length}个，按弱到强排序):</div>
