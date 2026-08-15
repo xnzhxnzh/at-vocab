@@ -28,7 +28,7 @@ input:focus{border-color:#58CC02}
 <body>
 <div id="app" style="height:100%;display:flex;flex-direction:column"><div style="flex:1;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#58CC02">Loading...</div></div>
 <script>
-const APP_VERSION = "7.9";
+const APP_VERSION = "7.10";
 // 注意：不再于版本变化时清空localStorage！
 // 账号进度(S.uid/S.wp等)必须跨版本保留，结构变化交给migrateState()处理
 localStorage.setItem("app_version", APP_VERSION);
@@ -402,6 +402,75 @@ const UNITS=[
 ]},
 {name:"Advanced 47",words:[
   ["bane", "n.", "beɪn", "Something that harms to a severe degree", "Traffic on Fridays has become the bane of her commute."]
+]},
+{name:"Advanced 48",words:[
+  ["complement", "n.", "ˈkɒmplɪmənt", "Something that accompanies something else in a way that is fitting and pleasant", "The scarf was a perfect complement to her winter coat."],
+  ["aesthetic", "adj.", "ɛsˈθɛtɪk", "Relating to the beauty or artistic atmosphere of something", "The renovated lobby had a sleek, modern aesthetic."],
+  ["beguile", "v.", "bɪˈɡaɪl", "To charm or persuade, typically with a negative connotation", "The con artist beguiled investors with promises of huge returns."],
+  ["pretentious", "adj.", "prɪˈtɛnʃəs", "Excessively self-important", "His pretentious review name-dropped every obscure director he could think of."],
+  ["surreptitious", "adj.", "ˌsʌrəpˈtɪʃəs", "Secretive or concealed", "She took a surreptitious glance at her phone during the meeting."],
+  ["winsome", "adj.", "ˈwɪnsəm", "Charming or attractive in personality or appearance", "The puppy's winsome expression won over the entire office."]
+]},
+{name:"Advanced 49",words:[
+  ["construe", "v.", "kənˈstruː", "To interpret or understand in a particular manner", "His silence was construed as agreement by the rest of the board."],
+  ["fortuitous", "adj.", "fɔːrˈtjuːɪtəs", "Fortunate; occurring by happenstance", "Their meeting at the airport turned out to be a fortuitous coincidence."],
+  ["exacerbate", "v.", "ɪɡˈzæsərbeɪt", "To increase the intensity of an unpleasant situation or problem", "Skipping physical therapy only exacerbated his knee injury."],
+  ["debase", "v.", "dɪˈbeɪs", "To devalue something or someone", "Critics argued the sequel debased the legacy of the original film."],
+  ["providence", "n.", "ˈprɒvɪdəns", "A spiritual authority and security in someone's protection in life", "She thanked providence for guiding her safely through the storm."],
+  ["exploit", "v.", "ɪkˈsplɔɪt", "To utilize something or someone for personal gain", "The company was accused of exploiting workers in overseas factories."]
+]},
+{name:"Advanced 50",words:[
+  ["bequeath", "v.", "bɪˈkwiːð", "To pass on something of significance to a person or even a community", "Her grandmother bequeathed the family recipes to the youngest daughter."],
+  ["confidant", "n.", "ˈkɒnfɪdænt", "Someone who is trusted enough to be confided in regarding personal or private matters", "He had been her closest confidant since middle school."],
+  ["incredulity", "n.", "ˌɪnkrɪˈdjuːləti", "The condition of being unwilling or incapable of believing something", "He stared at the results with a look of pure incredulity."],
+  ["subsequent", "adj.", "ˈsʌbsɪkwənt", "Following another thing", "The first meeting went badly, and subsequent ones were even worse."],
+  ["virtuous", "adj.", "ˈvɜːrtʃuəs", "Righteous and ethical", "The mayor was known throughout the town for her virtuous conduct."],
+  ["paramount", "adj.", "ˈpærəmaʊnt", "Ranked highest in importance", "Passenger safety is paramount to the airline's entire operation."]
+]},
+{name:"Advanced 51",words:[
+  ["rescind", "v.", "rɪˈsɪnd", "To revoke or cancel", "The university rescinded his admission after the incident came to light."],
+  ["yield", "v.", "jiːld", "To produce or supply", "The new farming technique yielded twice as much wheat per acre."],
+  ["venerate", "v.", "ˈvɛnəreɪt", "To worship or praise", "The temple was built to venerate the ancient river god."],
+  ["caveat", "n.", "ˈkæviæt", "An expression of caution regarding the conditions of something", "She agreed to help, with the caveat that she couldn't stay late."],
+  ["feasibility", "n.", "ˌfiːzəˈbɪləti", "How easily a task can be accomplished", "The engineers spent months studying the feasibility of the bridge design."],
+  ["satiate", "v.", "ˈseɪʃieɪt", "To quench one's desire or need for something", "A single slice of pizza was nowhere near enough to satiate his hunger."]
+]},
+{name:"Advanced 52",words:[
+  ["atrophy", "v.", "ˈætrəfi", "To deteriorate or degenerate due to lack of use or practice", "Muscles begin to atrophy quickly after weeks in a cast."],
+  ["vehemently", "adv.", "ˈviːəməntli", "Forcefully and with passion", "She vehemently denied any involvement in the scandal."],
+  ["lethargic", "adj.", "lɪˈθɑːrdʒɪk", "Inactive and slow; feeling lazy and lifeless", "The heat left everyone in the office feeling lethargic by mid-afternoon."],
+  ["cajole", "v.", "kəˈdʒoʊl", "To coax or persuade someone using flattery", "He cajoled his little brother into trading lunches with him."],
+  ["disparate", "adj.", "ˈdɪspərət", "Unalike or contrasting", "The committee struggled to unite such disparate opinions into one plan."],
+  ["turgid", "adj.", "ˈtɜːrdʒɪd", "Swollen or embellished", "The professor's turgid prose made a simple idea nearly unreadable."]
+]},
+{name:"Advanced 53",words:[
+  ["dire", "adj.", "daɪər", "Horrible or severely negative", "Doctors warned that the patient's condition was dire."],
+  ["tenable", "adj.", "ˈtɛnəbl", "Defensible or justifiable", "Her argument was tenable only if you ignored half the evidence."],
+  ["lucid", "adj.", "ˈluːsɪd", "Clear; easy to understand", "The professor gave a remarkably lucid explanation of a difficult topic."],
+  ["notorious", "adj.", "noʊˈtɔːriəs", "Well known for something unfavorable", "The alley was notorious for pickpockets after dark."],
+  ["impervious", "adj.", "ɪmˈpɜːrviəs", "Impenetrable", "The coating made the fabric impervious to water and stains."],
+  ["vilify", "v.", "ˈvɪlɪfaɪ", "To defame or make someone out to be a villain or unfavorable", "The tabloids vilified the actress before all the facts were known."]
+]},
+{name:"Advanced 54",words:[
+  ["farce", "n.", "fɑːrs", "An absurd comedy; something that is absurd to a comical or ridiculous degree", "The trial quickly turned into a farce with contradictory testimony."],
+  ["edict", "n.", "ˈiːdɪkt", "A mandate from an authoritative figure", "The king issued an edict banning hunting in the royal forest."],
+  ["wry", "adj.", "raɪ", "Ironic or sarcastic", "She gave a wry smile at his overly confident prediction."],
+  ["cohesion", "n.", "koʊˈhiːʒən", "A sense of togetherness or solidarity", "Team-building exercises helped improve cohesion among the new hires."],
+  ["unctuous", "adj.", "ˈʌŋktʃuəs", "Excessively flattering in an unnecessary and over-the-top manner", "The unctuous waiter's constant compliments made her uncomfortable."],
+  ["sacrosanct", "adj.", "ˈsækroʊsæŋkt", "Sacred or holy", "Sunday dinner with the family was sacrosanct in their household."]
+]},
+{name:"Advanced 55",words:[
+  ["dissent", "n.", "dɪˈsɛnt", "A contrary opinion", "One justice's dissent argued the ruling would set a dangerous precedent."],
+  ["apathetic", "adj.", "ˌæpəˈθɛtɪk", "Uninterested or unconcerned", "Voter turnout dropped as young people grew apathetic about the election."],
+  ["impregnable", "adj.", "ɪmˈprɛɡnəbl", "Unable to be penetrated or conquered", "The fortress had stood impregnable for over three centuries."],
+  ["conduit", "n.", "ˈkɒndjuɪt", "Something that allows a resource or substance to pass through it", "The river served as the main conduit for trade goods."],
+  ["disdain", "n.", "dɪsˈdeɪn", "Disappointment or contempt", "He viewed the tabloids with open disdain."],
+  ["qualitative", "adj.", "ˈkwɒlɪteɪtɪv", "Related to various attributes; measured or assessed by various attributes", "The researchers conducted qualitative interviews alongside the survey data."]
+]},
+{name:"Advanced 56",words:[
+  ["intuitive", "adj.", "ɪnˈtjuːɪtɪv", "Showing an innate or inherent understanding", "The app's intuitive design meant no one needed a tutorial."],
+  ["auspicious", "adj.", "ɔːˈspɪʃəs", "Favorable to success", "The company chose an auspicious date for its public launch."],
+  ["facile", "adj.", "ˈfæsaɪl", "Easy; oversimplified", "His facile solution ignored the deeper causes of the problem."]
 ]}
 ];
 const ALL=UNITS.flatMap(u=>u.words);
@@ -670,7 +739,20 @@ const abstractWordMap={
   clemency:"kind",
   gallivant:"flee",
   wistful:"decline",lament:"decline",
-  incorrigible:"stubborn"
+  incorrigible:"stubborn",
+  aesthetic:"generic",beguile:"twoFaced",pretentious:"criticize",surreptitious:"foggy",
+  winsome:"kind",construe:"generic",fortuitous:"gift",
+  exacerbate:"excess",debase:"decline",providence:"power",exploit:"twoFaced",
+  bequeath:"gift",confidant:"kind",incredulity:"foggy",subsequent:"origin",
+  virtuous:"honest",paramount:"power",rescind:"release",venerate:"praise",
+  caveat:"measure",feasibility:"measure",satiate:"excess",
+  atrophy:"decline",vehemently:"bold",lethargic:"decline",cajole:"twoFaced",
+  disparate:"generic",turgid:"excess",dire:"pain",tenable:"honest",
+  lucid:"sharp",notorious:"criticize",impervious:"power",vilify:"criticize",
+  edict:"power",wry:"twoFaced",cohesion:"kind",unctuous:"twoFaced",
+  sacrosanct:"power",dissent:"provoke",apathetic:"decline",impregnable:"power",
+  conduit:"origin",disdain:"criticize",
+  qualitative:"measure",intuitive:"sharp",auspicious:"gift",facile:"decline"
 };
 // ══════ 专属单词图标（每个词根据词意/例句单独手绘，非模板复用）══════
 const wordIcons={
