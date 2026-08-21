@@ -28,7 +28,7 @@ input:focus{border-color:#58CC02}
 <body>
 <div id="app" style="height:100%;display:flex;flex-direction:column"><div style="flex:1;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#58CC02">Loading...</div></div>
 <script>
-const APP_VERSION = "7.10";
+const APP_VERSION = "7.11";
 // 注意：不再于版本变化时清空localStorage！
 // 账号进度(S.uid/S.wp等)必须跨版本保留，结构变化交给migrateState()处理
 localStorage.setItem("app_version", APP_VERSION);
@@ -471,6 +471,43 @@ const UNITS=[
   ["intuitive", "adj.", "ɪnˈtjuːɪtɪv", "Showing an innate or inherent understanding", "The app's intuitive design meant no one needed a tutorial."],
   ["auspicious", "adj.", "ɔːˈspɪʃəs", "Favorable to success", "The company chose an auspicious date for its public launch."],
   ["facile", "adj.", "ˈfæsaɪl", "Easy; oversimplified", "His facile solution ignored the deeper causes of the problem."]
+]},
+{name:"Advanced 57",words:[
+  ["insatiable", "adj.", "ɪnˈseɪʃəbl", "Unable to be satisfied", "His insatiable curiosity kept him reading long after midnight."],
+  ["efface", "v.", "ɪˈfeɪs", "To remove something from a platform or surface", "Years of rain had effaced the inscription on the old gravestone."],
+  ["travesty", "n.", "ˈtrævəsti", "A misrepresentation or perversion of something", "Critics called the film adaptation a travesty of the original novel."],
+  ["arbitrate", "v.", "ˈɑːrbɪtreɪt", "To make a decision as an independent judgment; deciding as an outside party", "A neutral committee was brought in to arbitrate the labor dispute."],
+  ["aloof", "adj.", "əˈluːf", "Indifferent, distant, or reserved", "He remained aloof at the party, barely speaking to anyone."],
+  ["idiosyncratic", "adj.", "ˌɪdioʊsɪŋˈkrætɪk", "Distinct; abnormal", "Her idiosyncratic filing system made sense only to her."]
+]},
+{name:"Advanced 58",words:[
+  ["constitution", "n.", "ˌkɒnstɪˈtjuːʃən", "An agreed upon set of regulation and the composition of values; standards agreed upon", "The committee drafted a new constitution for the student union."],
+  ["iniquity", "n.", "ɪˈnɪkwɪti", "Wicked or evil behavior", "The novel exposes the iniquity hidden beneath the city's polished surface."],
+  ["swathe", "v.", "sweɪð", "To swaddle or bundle into multiple layers", "The nurse swathed the newborn in a soft blanket."],
+  ["vapid", "adj.", "ˈvæpɪd", "Uninteresting", "The sitcom's vapid dialogue made it hard to sit through a full episode."],
+  ["rife", "adj.", "raɪf", "Widespread or rampant", "Rumors were rife in the office after the surprise announcement."],
+  ["mediation", "n.", "ˌmiːdiˈeɪʃən", "The act of stepping in and reconciling an argument between others", "The couple agreed to try mediation before going to court."]
+]},
+{name:"Advanced 59",words:[
+  ["usurp", "v.", "juːˈzɜːrp", "To forcefully take the place of", "The general usurped the throne after the king's sudden death."],
+  ["torrid", "adj.", "ˈtɒrɪd", "Scorching", "Farmers struggled through weeks of torrid summer heat."],
+  ["harangue", "v.", "həˈræŋ", "To lecture a person while using an aggressive tone", "The coach harangued the team for their sloppy defense."],
+  ["flagrant", "adj.", "ˈfleɪɡrənt", "Blatantly offensive", "The referee called a flagrant foul after the reckless tackle."],
+  ["platitude", "n.", "ˈplætɪtjuːd", "A statement that has been so overused that it becomes meaningless or dull", "The commencement speech was full of platitudes about following your dreams."],
+  ["buffet", "v.", "ˈbʌfɪt", "To hit repeatedly", "Strong winds buffeted the small boat throughout the crossing."]
+]},
+{name:"Advanced 60",words:[
+  ["chide", "v.", "tʃaɪd", "To scold or express disapproval", "She chided her son for leaving his bike out in the rain."],
+  ["imperishable", "adj.", "ɪmˈpɛrɪʃəbl", "Without ending; long-lasting", "The monument was built to be an imperishable tribute to the fallen soldiers."],
+  ["fortitude", "n.", "ˈfɔːrtɪtjuːd", "Strength in difficult times; persistence", "She faced the diagnosis with remarkable fortitude."],
+  ["calamity", "n.", "kəˈlæmɪti", "A catastrophe", "The flood was the worst calamity the town had faced in a century."],
+  ["brevity", "n.", "ˈbrɛvɪti", "The quality of being succinct", "The editor praised the article's brevity and clarity."],
+  ["coerce", "v.", "koʊˈɜːrs", "To force someone or something to do something", "The witness claimed she had been coerced into signing the statement."]
+]},
+{name:"Advanced 61",words:[
+  ["adverse", "adj.", "ædˈvɜːrs", "Unfavorable or negative", "The medication can cause adverse side effects in rare cases."],
+  ["ruse", "n.", "ruːz", "A ploy or strategy to trick someone", "The escape was just a ruse to distract the guards."],
+  ["anomaly", "n.", "əˈnɒməli", "Something outside of the norm", "Astronomers flagged the signal as a statistical anomaly worth investigating."]
 ]}
 ];
 const ALL=UNITS.flatMap(u=>u.words);
@@ -752,7 +789,13 @@ const abstractWordMap={
   edict:"power",wry:"twoFaced",cohesion:"kind",unctuous:"twoFaced",
   sacrosanct:"power",dissent:"provoke",apathetic:"decline",impregnable:"power",
   conduit:"origin",disdain:"criticize",
-  qualitative:"measure",intuitive:"sharp",auspicious:"gift",facile:"decline"
+  qualitative:"measure",intuitive:"sharp",auspicious:"gift",facile:"decline",
+  insatiable:"excess",efface:"decline",travesty:"twoFaced",arbitrate:"measure",
+  aloof:"decline",idiosyncratic:"generic",constitution:"origin",iniquity:"criticize",
+  vapid:"decline",rife:"excess",mediation:"kind",usurp:"power",
+  harangue:"criticize",flagrant:"criticize",platitude:"generic",chide:"criticize",
+  imperishable:"power",fortitude:"bold",calamity:"pain",
+  coerce:"power",adverse:"pain",ruse:"twoFaced",anomaly:"foggy"
 };
 // ══════ 专属单词图标（每个词根据词意/例句单独手绘，非模板复用）══════
 const wordIcons={
